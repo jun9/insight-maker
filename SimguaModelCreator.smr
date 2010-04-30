@@ -1,0 +1,190 @@
+Module SimguaModelCreator
+	Private Const PrimitiveSeparator = "<insight-PrimSep>"
+	Private Const PropertySeparator  = "<insight-PropSep>"
+	
+	Protected Function CreateModel(MyModel as String) as Model
+		Dim PrimitiveInfo() as String = split(myModel, PrimitiveSeparator)
+		Dim Properties() as string
+		Dim Primitives() as Primitive
+		Dim indexes() as string
+		
+		dim m as Model = newModel()
+		m.root.item("Data Display").delete
+		
+		dim timeUnits as string
+		dim customUnits() as string
+		
+		dim s as stock
+		dim f as flow
+		dim p as Parameter
+		dim l as link
+		dim disp as display
+		dim conv as converter
+		dim fold as folder
+		
+		dim i,j,k as integer
+		for i=0 to PrimitiveInfo.ubound
+			properties = split(primitiveInfo(i),PropertySeparator)
+			select case properties(0)
+				case "stock"
+				s=m.root.createStock(properties(2))
+				s.value=properties(4)
+				select case properties(5)
+					case "store"
+					s.serializedType="not"
+					case "tank"
+					s.serializedType="volume"
+					case "conveyor"
+					s.serializedType="delay"
+				end select
+				s.fixedDelay=val(properties(6))
+				s.volume=val(properties(7))
+				loadConstraints(s, properties,8)
+				primitives.append s
+				case "flow"
+				f=m.root.createFlow(properties(2))
+				f.value=properties(6)
+				f.onlyPositiveFlows=(properties(7)="true")
+				f.timeIndependent=(properties(8)="true")
+				loadConstraints(f, properties,9)
+				primitives.append f
+				case "parameter"
+				p=m.root.createParameter(properties(2))
+				p.value=properties(4)
+				loadConstraints(p, properties,5)
+				primitives.append p
+				case "setting"
+				timeUnits=properties(4)
+				m.settings.timeUnits=timeUnits
+				m.settings.timeLength=val(properties(5))
+				m.settings.timeStep=val(properties(6))
+				customUnits=split(properties(7),chr(10))
+				m.settings.timeStart=val(properties(8))
+				m.settings.order=1
+				primitives.append m.settings
+				case "link"
+				l=m.root.createLink(properties(2))
+				primitives.append l
+				case "display"
+				disp=m.root.createDisplay(properties(2))
+				disp.Type=properties(4)
+				disp.Chart3D=(properties(6)="true")
+				disp.XAxisLabel=properties(7)
+				disp.YAxisLabel=properties(8)
+				disp.TimeUnits=timeUnits
+				if disp.Type="Scatterplot" then
+					disp.legendPosition="Do not Show"
+				end if
+				
+				primitives.append disp
+				case "converter"
+				conv=m.root.createConverter(properties(2))
+				dim interp as string = properties(5)
+				select case interp
+					case "none"
+					conv.interpolation=0
+					case "linear"
+					conv.interpolation=1
+				end select
+				dim inputs() as string=split(properties(6),",")
+				dim outputs() as string=split(properties(7),",")
+				for j=0 to inputs.ubound
+					conv.add(val(inputs(j)),val(outputs(j)))
+				next
+				loadConstraints(conv, properties,8)
+				primitives.append conv
+				case "folder"
+				fold = m.root.createFolder(properties(2))
+				fold.expanded = false
+				primitives.append fold
+			end select
+			primitives(ubound(primitives)).info=properties(3)
+			indexes.append properties(1)
+		next
+		
+		//carry out linking
+		for i=0 to ubound(primitives)
+			if Primitives(i) isa connection then
+				properties = split(primitiveInfo(i),PropertySeparator)
+				if properties(4)<>"" then
+					connection(primitives(i)).alpha=valued(primitives(indexes.indexof(properties(4))))
+				end if
+				if properties(5)<>"" then
+					connection(primitives(i)).omega=valued(primitives(indexes.indexof(properties(5))))
+				end if
+				if Primitives(i) isa flow then
+					flow(primitives(i)).per=Microseconds(1,TimeUnits)
+				end if
+			elseif Primitives(i) isa display then
+				properties = split(primitiveInfo(i),PropertySeparator)
+				dim dids() as string=split(properties(5),",")
+				for j=0 to dids.ubound
+					display(primitives(i)).add(primitives(indexes.indexof(dids(j))))
+				next
+			elseif Primitives(i) isa converter then
+				properties = split(primitiveInfo(i),PropertySeparator)
+				if str(val(properties(4)))=properties(4) then
+					converter(Primitives(i)).input=valued(primitives(indexes.indexof(properties(4))))
+				else
+					converter(Primitives(i)).input=timeUnits
+				end if
+			elseif Primitives(i) isa folder then
+				properties = split(primitiveInfo(i),PropertySeparator)
+				folder(Primitives(i)).expanded = true
+				dim childrenIDs() as string = split(properties(4),",")
+				
+				for j=0 to childrenIDs.ubound
+					m.move(primitives(indexes.indexof(childrenIDs(j))), folder(primitives(i)))
+				next
+			end if
+		next
+		
+		
+		//create custom units
+		for i=0 to ubound(customUnits)
+			if customUnits(i)<>"" then
+				dim items() as string = split(customUnits(i), "<>")
+				dim mat as material
+				mat=m.root.createMaterial(items(0))
+				mat.setUnitConversion(items(2), val(items(1)))
+				primitives.append mat
+			end if
+		next
+		
+		//handle flows folder
+		for i=0 to ubound(primitives)
+			if primitives(i) isa flow then
+				if flow(primitives(i)).alpha<>nil and flow(primitives(i)).alpha.parent<>m.root then
+					m.move(primitives(i), flow(primitives(i)).alpha.parent)
+				end if
+			elseif primitives(i) isa stock then
+				stock(primitives(i)).fixedDelay=baseTime(stock(primitives(i)).fixedDelay, timeUnits)
+			end if
+		next
+		
+		return m
+	End Function
+	
+	Private Sub LoadConstraints(v as valued, properties() as string, index as integer)
+		v.units=properties(index)
+		
+		if properties(index+1) = "true" then
+			v.MaximumConstraintType=1
+		else
+			v.MaximumConstraintType=0
+		end if
+		v.MaximumConstraint=val(properties(index+2))
+		if properties(index+3) = "true" then
+			v.MinimumConstraintType=1
+		else
+			v.MinimumConstraintType=0
+		end if
+		v.MinimumConstraint=val(properties(index+4))
+		
+		if not v isa Converter then
+			v.showSlider=properties(index+5) = "true"
+			v.sliderMaximum=val(properties(index+6))
+			v.sliderMinimum=val(properties(index+7))
+		end if
+	End Sub
+End Module

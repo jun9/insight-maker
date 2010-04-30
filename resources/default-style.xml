@@ -1,0 +1,105 @@
+<mxStylesheet>
+	<add as="defaultVertex" extend="defaultVertex">
+		<add as="strokeColor" value="#666666"/>
+		<add as="fontColor" value="#333333"/>
+		<add as="fontSize" value="14"/>
+		<add as="fontFamily" value="Comic Sans MS"/>
+		<add as="strokeWidth" value="2"/>
+	</add>
+	<add as="defaultEdge" extend="defaultEdge">
+		<add as="labelBackgroundColor" value="white"/>
+		<add as="rounded" value="1"/>
+		<add as="fontSize" value="14"/>
+		<add as="edgeStyle" value="elbowEdgeStyle"/>
+		<add as="fontFamily" value="Comic Sans MS"/>
+		<add as="strokeWidth" value="4"/>
+	</add>
+	<add as="stock" extend="defaultVertex">
+		<add as="fillColor" value="#C3D9FF"/>
+	</add>
+	<add as="textArea" extend="defaultVertex">
+		<add as="strokeColor" value="none"/>
+		<add as="color" value="none"/>
+		<add as="fillColor" value="none"/>
+		<add as="fontColor" value="black"/>
+		<add as="fontSize" value="30"/>
+		<add as="fontStyle" value="4"/>
+	</add>
+	<add as="parameter" extend="defaultVertex">
+		<add as="shape" value="ellipse"/>
+		<add as="perimeter" value="ellipsePerimeter"/>
+		<add as="fillColor" value="#FFD9C3"/>
+	</add>
+	<add as="converter" extend="defaultVertex">
+		<add as="shape" value="ellipse"/>
+		<add as="perimeter" value="ellipsePerimeter"/>
+		<add as="fillColor" value="#D9FFC3"/>
+	</add>
+	<add as="display" extend="defaultVertex">
+		<add as="shape" value="image"/>
+		<add as="verticalLabelPosition" value="bottom"/>
+		<add as="verticalAlign" value="top"/>
+		<add as="image" value="/builder/images/DisplayFull.png"/>
+	</add>
+	<add as="picture" extend="defaultVertex">
+		<add as="shape" value="image"/>
+		<add as="verticalLabelPosition" value="bottom"/>
+		<add as="verticalAlign" value="top"/>
+		<add as="image" value="/builder/images/DisplayFull.png"/>
+	</add>
+	<add as="entity" extend="defaultEdge">
+		<add as="strokeColor" value="#DD6666"/>
+		<add as="opacity" value="70"/>
+		<add as="edgeStyle" value="straight"/>
+		<add as="strokeWidth" value="2"/>
+		<add as="dashed" value="1"/>
+		<add as="noLabel" value="1"/>
+	</add>
+	<add as="vertical" extend="defaultEdge">
+		<add as="elbow" value="vertical"/>
+	</add>
+	<add as="straight" extend="defaultVertex">
+		<add as="shape" value="connector"/>
+		<add as="endArrow" value="classic"/>
+	</add>
+	<add as="arrow" extend="defaultVertex">
+		<add as="shape" value="arrow"/>
+	</add>
+	<add as="ellipse" extend="defaultVertex">
+		<add as="shape" value="ellipse"/>
+		<add as="perimeter" value="ellipsePerimeter"/>
+		<add as="fillColor" value="#FFD9C3"/>
+	</add>
+	<add as="rhombus" extend="defaultVertex">
+		<add as="shape" value="rhombus"/>
+		<add as="perimeter" value="rhombusPerimeter"/>
+	</add>
+	<add as="triangle" extend="defaultVertex">
+		<add as="shape" value="triangle"/>
+		<add as="perimeter" value="trianglePerimeter"/>
+	</add>
+	<add as="line" extend="defaultVertex">
+		<add as="shape" value="line"/>
+		<add as="strokeWidth" value="4"/>
+		<add as="labelBackgroundColor" value="white"/>
+		<add as="verticalAlign" value="top"/>
+		<add as="spacingTop" value="8"/>
+	</add>
+	<add as="image" extend="defaultVertex">
+		<add as="shape" value="image"/>
+		<add as="verticalLabelPosition" value="bottom"/>
+		<add as="verticalAlign" value="top"/>
+	</add>
+	<add as="roundImage" extend="image">
+		<add as="perimeter" value="ellipsePerimeter"/>
+	</add>
+	<add as="rhombusImage" extend="image">
+		<add as="perimeter" value="rhombusPerimeter"/>
+	</add>
+	<add as="folder" extend="defaultVertex">
+		<add as="verticalAlign" value="top"/>
+		<add as="dashed" value="1"/>
+		<add as="fillColor" value="none"/>
+		<add as="rounded" value="1"/>
+	</add>
+</mxStylesheet>

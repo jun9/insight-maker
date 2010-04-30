@@ -1,0 +1,8 @@
+
+Function GetImageLink(extends r as results, d as display, width as integer = 320, height as integer = 240) as String
+	dim resID as string = hex(rnd*1000000)
+	dim resFolder as folderitem = new Folderitem
+	dim name as string = d.name+"-"+resID+".png"
+	r.SaveDisplayPicture(d, width, height, resFolder.child(name))
+	return "http://insightica.com/builder/results/"+name
+End Function

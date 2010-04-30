@@ -1,0 +1,47 @@
+#!/var/www/i/insight/builder/bin/Simgua
+
+#include("SimguaModelCreator.smr")
+
+dim i as integer
+dim m as model = SimguaModelCreator.CreateModel(options.value("Model"))
+dim r as results = m.runSilently()
+write "SUCCESS"
+
+if r.errorCount>0 then
+	write "ERROR<ul>"
+	for i=0 to r.errorCount-1
+		if (r.error(i).myPrimitive<>nil) then
+			write "<li>"+r.error(i).errorMessage+" - In the primitive '"+r.error(i).myPrimitive.name+"'.</li>"
+		else
+			write "<li>"+r.error(i).errorMessage+"</li>"
+		end if
+	next
+	write "</ul>"
+else
+	dim primitives() as primitive = m.root.flatten
+	dim resID as string = hex(rnd*1000000)
+	dim resFolder as folderitem = new Folderitem
+	
+	resFolder = resFolder.child(resID)
+	call resFolder.CreateAsDirectory
+	
+	dim displayNames() as string
+	dim tables() as string
+	for i=0 to primitives.ubound
+		if primitives(i) isa display and (display(primitives(i)).type="scatterplot" or display(primitives(i)).type="time series") then
+			displayNames.append "picture"
+			displayNames.append primitives(i).name
+			r.SaveDisplayPicture(display(primitives(i)), 500, 350, resFolder.child(str(displayNames.ubound+1)+".png"))
+		elseif primitives(i) isa display then
+			displayNames.append "table"
+			displayNames.append primitives(i).name
+			tables.append r.DisplayCSV(display(primitives(i)))
+		end if
+	next
+	
+	
+	write resID+chr(10)+"<sfrdiv>"+chr(10)
+	write displayNames.join("/")+chr(10)+"<sfrdiv>"+chr(10)
+	write escapeentities(r.console)+chr(10)+"<sfrdiv>"+chr(10)
+	write tables.join(chr(10)+"<sfrdiv>"+chr(10))
+end if
