@@ -981,7 +981,7 @@ function main()
         if (cell == null || cellType == "Text" || graph.getSelectionCells().length > 1) {
         	//no primitive has been selected. Stick in empty text and sliders.
             if (drupal_node_ID == -1) {
-                iHs = "<br><br><center><a href='/builder/resources/QuickStart.pdf' target='_blank'><img src='/builder/images/Help.jpg' /></a><br/><br/><br/>Or take a look at the <a href='http://InsightMaker.com/help' target='_blank'>Detailed Insight Maker Manual</a></center>";
+                iHs = "<br><br><center><a href='/builder/resources/QuickStart.pdf' target='_blank'><img src='/builder/images/Help.jpg' /></a><br/><br/><br/>Or take a look at the <a href='http://InsightMaker.com/help' target='_blank'>Detailed Insight Maker Manual</a><br/><br/>There is also a <a href=' http://www.systemswiki.org/index.php?title=Thoughts_on_Interaction' target='_blank'>free, on-line education course</a> which teaches you how to think in a systems manner using Insight Maker.</center>";
             } else {
                 iHs = "<big>" + graph_description + "</big>";
                 var slids=sliderPrimitives();
