@@ -15,14 +15,14 @@ require("SharedHeader.php")
 		window.location="http://InsightMaker.com/";
 	}
 </script>
-<div id="header"><div style="float:right;margin:5px;" class="x-small-editor"></div></div>
+	<div id="header"><div style="float:right;margin:5px;" class="x-small-editor"></div></div>
 
-<div id="config-win" class="x-hidden">
-</div>
-<div id="property-win" class="x-hidden">
-</div>
-<div id="units-win" class="x-hidden">
-</div>
+	<div id="config-win" class="x-hidden">
+	</div>
+	<div id="property-win" class="x-hidden">
+	</div>
+	<div id="units-win" class="x-hidden">
+	</div>
 
 	<link rel="stylesheet" type="text/css" href="/builder/css/Ext.ux.form.LovCombo.css" />
 	<script type="text/javascript" src="/builder/js/Ext.ux.util.js"></script>
