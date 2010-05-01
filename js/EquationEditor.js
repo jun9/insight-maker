@@ -142,7 +142,7 @@ Ext.MultiSelectWindow = function(args)
     var keyWordData = [];
 
     for (var i = 1; i < KW.length; i++) {
-    	if(! /Input\/Output/.test(KW[i][KW[i].length - 1])){ //input/output are simgua only functions
+    	if(! /Input\/Output/.test(KW[i][KW[i].length - 1])){ //input/output are Simgua only functions and do not work in Insight Maker
 	        var buttons = [];
 	        var alength = KW[i].length - 2;
 	        if (i == KW.length - 1) {
@@ -212,6 +212,7 @@ Ext.MultiSelectWindow = function(args)
                 var newCode = codeEditor.getValue();
                 newCode = newCode.replace(/\n|\r/g, "\\n");
                 obj.args.parent.setValue(newCode);
+				obj.args.parent.fireEvent('change', newCode);
                 grid.stopEditing();
                 obj.args.parent.setEditable(!/\\n/.test(newCode));
                 obj.win.close();

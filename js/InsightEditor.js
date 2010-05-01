@@ -794,7 +794,7 @@ function main()
             cellType = cell.value.nodeName;
         }
 
-        if (cell != null && graph.getSelectionCells().length == 1 && (!(cellType == "Link" || cellType == "Text" || cellType == "Ghost"))) {
+        if (cell != null && graph.getSelectionCells().length == 1 && (!(cellType == "Text" || cellType == "Ghost"))) {
             Ext.getCmp('configPanel').setTitle(cellType);
 
 
@@ -1004,7 +1004,7 @@ function main()
                 'value': cell.getAttribute("InitialValue"),
                 'group': ' Configuration',
                 'editor': new Ext.grid.GridEditor(new Ext.form.customFields['code']({}), {
-                    allowBlur: true
+                    allowBlur: false
                 }),
                 'renderer': equationRenderer
             });
@@ -1044,7 +1044,7 @@ function main()
                 'value': cell.getAttribute("Equation"),
                 'group': ' Configuration',
                 'editor': new Ext.grid.GridEditor(new Ext.form.customFields['code']({}), {
-                    allowBlur: true
+                    allowBlur: false
                 }),
                 'renderer': equationRenderer
             });
@@ -1058,7 +1058,7 @@ function main()
                 'value': cell.getAttribute("FlowRate"),
                 'group': ' Configuration',
                 'editor': new Ext.grid.GridEditor(new Ext.form.customFields['code']({}), {
-                    allowBlur: true
+                    allowBlur: false
                 }),
                 'renderer': equationRenderer
             });
@@ -1174,7 +1174,7 @@ function main()
                 'value': cell.getAttribute("Data"),
                 'group': 'Input/Output Table',
                 'editor': new Ext.grid.GridEditor(new Ext.form.customFields['converter']({}), {
-                    allowBlur: true,
+                    allowBlur: false,
                     selectOnFocus: true
                  })
             });
