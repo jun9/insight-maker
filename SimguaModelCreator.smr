@@ -23,6 +23,24 @@ Module SimguaModelCreator
 		dim fold as folder
 		
 		dim i,j,k as integer
+		
+		//first find the settings object to initalize the time units
+		for i=0 to PrimitiveInfo.ubound
+			properties = split(primitiveInfo(i),PropertySeparator)
+			select case properties(0)
+			case "setting"
+			timeUnits=properties(4)
+			m.settings.timeUnits=timeUnits
+			m.settings.timeLength=val(properties(5))
+			m.settings.timeStep=val(properties(6))
+			customUnits=split(properties(7),chr(10))
+			m.settings.timeStart=val(properties(8))
+			m.settings.order=1
+			exit
+			end select
+		next
+		
+		//load the other primitives
 		for i=0 to PrimitiveInfo.ubound
 			properties = split(primitiveInfo(i),PropertySeparator)
 			select case properties(0)
@@ -54,13 +72,6 @@ Module SimguaModelCreator
 				loadConstraints(p, properties,5)
 				primitives.append p
 				case "setting"
-				timeUnits=properties(4)
-				m.settings.timeUnits=timeUnits
-				m.settings.timeLength=val(properties(5))
-				m.settings.timeStep=val(properties(6))
-				customUnits=split(properties(7),chr(10))
-				m.settings.timeStart=val(properties(8))
-				m.settings.order=1
 				primitives.append m.settings
 				case "link"
 				l=m.root.createLink(properties(2))
@@ -121,7 +132,6 @@ Module SimguaModelCreator
 				for j=0 to dids.ubound
 					display(primitives(i)).add(primitives(indexes.indexof(dids(j))))
 				next
-				display(Primitives(i)).timeUnits=TimeUnits
 			elseif Primitives(i) isa converter then
 				properties = split(primitiveInfo(i),PropertySeparator)
 				if str(val(properties(4)))=properties(4) then
