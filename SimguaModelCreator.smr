@@ -121,6 +121,7 @@ Module SimguaModelCreator
 				for j=0 to dids.ubound
 					display(primitives(i)).add(primitives(indexes.indexof(dids(j))))
 				next
+				display(Primitives(i)).timeUnits=TimeUnits
 			elseif Primitives(i) isa converter then
 				properties = split(primitiveInfo(i),PropertySeparator)
 				if str(val(properties(4)))=properties(4) then

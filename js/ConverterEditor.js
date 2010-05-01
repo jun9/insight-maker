@@ -5,7 +5,8 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
     {
         this.editorWindow = new Ext.ConverterWindow({
             parent: this,
-            oldKeys: this.getValue()
+            oldKeys: this.getValue(),
+			interpolation: this.interpolation
         });
         this.editorWindow.show();
     },
@@ -29,11 +30,51 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
     }
 });
 
+
+
     Ext.ConverterWindow = function(args)
 	 {
 	    var obj = this;
 
 	    obj.args = args;
+	
+		var discreteStore = null;
+		function makeDiscrete(){
+			var oldKeys="";
+			for (var i = 0; i < store.getCount(); i++)
+			{
+			  if(i>0){oldKeys=oldKeys+";";}
+				oldKeys=oldKeys+store.getAt(i).data.xVal+","+store.getAt(i).data.yVal;
+			}
+			var data = [];
+			var items = oldKeys.split(";");
+			var oldXY=[];
+			for(var i=0;i<items.length;i++){
+				var xy=items[i].split(",")
+				if(i>0){
+					data.push({
+			             xVal : parseFloat(xy[0]),
+			             yVal: parseFloat(oldXY[1])
+			        });
+				}
+
+		        data.push({
+		             xVal : parseFloat(xy[0]),
+		             yVal: parseFloat(xy[1])
+		        });
+				oldXY=xy;
+			}
+
+			if(discreteStore==null){
+		    	discreteStore = new Ext.data.GroupingStore({
+		        	reader: new Ext.data.JsonReader({fields: DataEntry}),
+		        	data: data
+		    	});
+			}else{
+				discreteStore.removeAll();
+				discreteStore.loadData(data);
+			}
+		}
 
     var DataEntry = Ext.data.Record.create([{
         name: 'xVal',
@@ -43,16 +84,15 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
         type: 'float'
     }]);
 
-        var data = [];
-		var items = obj.args.oldKeys.split(";");
-		for(var i=0;i<items.length;i++){
-			var xy=items[i].split(",")
-                data.push({
-                    xVal : parseFloat(xy[0]),
-                    yVal: parseFloat(xy[1])
-                });
-			}
-
+    var data = [];
+	var items = obj.args.oldKeys.split(";");
+	for(var i=0;i<items.length;i++){
+		var xy=items[i].split(",")
+        data.push({
+             xVal : parseFloat(xy[0]),
+             yVal: parseFloat(xy[1])
+        });
+	}
 
     var store = new Ext.data.GroupingStore({
         reader: new Ext.data.JsonReader({fields: DataEntry}),
@@ -128,7 +168,14 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
         ]
     });
 
-   
+	makeDiscrete();
+    var chartStore;
+	if(obj.args.interpolation=="Linear"){
+		chartStore=store;
+	}else{
+		chartStore=discreteStore;
+	}
+	
 
     var chart = new Ext.Panel({
         width:600,
@@ -142,7 +189,7 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
 
         items: {
             xtype: 'linechart',
-            store: store,
+            store: chartStore,
             url:'/builder/js/resources/charts.swf',
             xField: 'xVal',
             yAxis: new Ext.chart.NumericAxis({
@@ -229,8 +276,15 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
         gridPan.removeBtn.setDisabled(sm.getCount() < 1);
     });
 
-	store.on('update', function(e){
+	
+	
+	store.on('update', function(){
         store.sort('xVal', 'ASC');
+		makeDiscrete();
+    });
+
+	store.on('dataChanged', function(){
+        makeDiscrete();
     });
 	
 	obj.show = function()

@@ -1173,7 +1173,7 @@ function main()
                 'text': 'Data',
                 'value': cell.getAttribute("Data"),
                 'group': 'Input/Output Table',
-                'editor': new Ext.grid.GridEditor(new Ext.form.customFields['converter']({}), {
+                'editor': new Ext.grid.GridEditor(new Ext.form.customFields['converter']({interpolation: cell.getAttribute("Interpolation")}), {
                     allowBlur: false,
                     selectOnFocus: true
                  })
