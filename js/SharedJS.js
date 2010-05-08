@@ -59,7 +59,7 @@ function setTopLinks() {
             }
             links = links + ' | <a href="http://InsightMaker.com/node/' + drupal_node_ID + '/edit">Edit Insight Properties</a></div>';
         } else {
-           
+           links = links + '<div style="float:left;padding:0.2em;"><a href="http://InsightMaker.com/node/' + drupal_node_ID + '/">Insight Properties</a></div>';
         }
         links = links + '<div style="float:right;padding:0.2em;"><nobr>';
         if(is_embed){

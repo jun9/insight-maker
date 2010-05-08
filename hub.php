@@ -10,16 +10,39 @@ $root = "hubnexus";
 
 if (! is_dir($root."/".$document))
 {
-  mkdir($root."/".$document);
-  chmod($root."/".$document, 0777);
+	mkdir($root."/".$document);
+	chmod($root."/".$document, 0777);
+}else{
+	//first clear out old files if needed
+	$handle = opendir($root."/".$document);
+	$didntDeleteData = false;
+	date_default_timezone_set(date_default_timezone_get()); //date_default_timezone_set('America/Los_Angeles');
+	while ($filename = readdir($handle)){
+		if(eregi("timestamp",$filename)){
+			if(filemtime($root."/".$document."/".$filename) < strtotime("-2 minutes")){
+				unlink($root."/".$document."/".$filename);
+				unlink($root."/".$document."/".substr($filename,0,-10));
+			}else{
+				$didntDeleteData = true;
+			}
+		}
+	}
+	closedir($handle);
+	if( false == $didntDeleteData){
+		if (is_file($root."/".$document."/delta.xml")){
+			unlink($root."/".$document."/delta.xml");
+		}
+	}
 }
 
 $filename = $root."/".$document."/".$sid;
 $delta = $root."/".$document."/delta.xml";
+
 if (isset($_GET["init"]))
 {
   session_start();
   session_commit();
+
 
   header("Pragma: public");
   header("Expires: 0");
@@ -50,6 +73,7 @@ if (isset($_GET["init"]))
   }
   
   touch($filename);
+  touch($filename.".timestamp");
   chmod($filename, 0777);
 }
 else
@@ -146,6 +170,8 @@ else
       // Sync the session state
       session_start();
       session_commit();
+
+      touch($filename.".timestamp");
 
       if ($_SESSION['requestid'] != $requestid)
       {
