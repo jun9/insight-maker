@@ -524,33 +524,33 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 handler: function()
                 {
                     graph.getModel().beginUpdate();
-                    try
-                    {
+                   
                         var myCells = graph.getSelectionCells();
                         if (myCells != null) {
                             for (var i = 0; i < myCells.length; i++)
                             {
                                 if (myCells[i].isEdge()) {
                                     var geo = myCells[i].getGeometry();
+
                                     var tmp = myCells[i].source;
-                                    myCells[i].source = myCells[i].target;
-                                    myCells[i].target = tmp;
+									var edit = new mxTerminalChange(graph.getModel(), myCells[i], myCells[i].target, true);
+                                    graph.getModel().execute(edit);
+									edit = new mxTerminalChange(graph.getModel(), myCells[i], tmp, false);
+                                    graph.getModel().execute(edit);
+
                                     tmp = geo.sourcePoint;
                                     geo.sourcePoint = geo.targetPoint;
                                     geo.targetPoint = tmp;
-                                    myCells[i].setGeometry(geo);
-
+									if (geo.points != null){
+										geo.points.reverse();
+									}
+									edit = new mxGeometryChange(graph.getModel(), myCells[i], geo);
+                                    graph.getModel().execute(edit);
                                 }
                             }
                         }
-
-
-                        graph.refresh();
-                    }
-                    finally
-                    {
                         graph.getModel().endUpdate();
-                    }
+                    
 
                 },
                 scope: this

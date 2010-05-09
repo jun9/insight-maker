@@ -16,7 +16,10 @@ if (! is_dir($root."/".$document))
 	//first clear out old files if needed
 	$handle = opendir($root."/".$document);
 	$didntDeleteData = false;
-	date_default_timezone_set(date_default_timezone_get()); //date_default_timezone_set('America/Los_Angeles');
+	
+	//date_default_timezone_set(date_default_timezone_get());
+	date_default_timezone_set('America/Los_Angeles');
+	
 	while ($filename = readdir($handle)){
 		if(eregi("timestamp",$filename)){
 			if(filemtime($root."/".$document."/".$filename) < strtotime("-2 minutes")){
