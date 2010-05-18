@@ -368,7 +368,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
         border: false,
         items: [mainPanel, configPanel],
         collapsible: false,
-        tbar: [
+        tbar: new Ext.Toolbar({enableOverflow: true, items: [
 
         {
         	hidden: (! is_editor) || is_embed,
@@ -1288,7 +1288,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             scale: 'large',
             cls: 'button',
             rowspan: 3,
-            id: 'run',
+            id: 'run_embed',
             text: 'Run Simulation',
             iconCls: 'run-icon',
             tooltip: 'Run',
@@ -1325,7 +1325,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 }
             }
         })
-        ]
+        ]})
 
     });
 };
