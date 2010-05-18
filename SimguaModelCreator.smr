@@ -90,6 +90,9 @@ Module SimguaModelCreator
 				primitives.append disp
 				case "converter"
 				conv=m.root.createConverter(properties(2))
+				while conv.count>0 
+					conv.remove 0
+				wend
 				dim interp as string = properties(5)
 				select case interp
 					case "none"
@@ -109,7 +112,7 @@ Module SimguaModelCreator
 				fold.expanded = false
 				primitives.append fold
 			end select
-			primitives(ubound(primitives)).info=properties(3)
+			primitives(ubound(primitives)).info=replaceall(properties(3),"\n", eol)
 			indexes.append properties(1)
 		next
 		

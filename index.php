@@ -20,6 +20,11 @@ require("SharedHeader.php")
 	<div id="config-win" class="x-hidden"</div>
 	<div id="property-win" class="x-hidden"></div>
 	<div id="units-win" class="x-hidden"></div>
+	
+	<form id="downloader" name="downloader" method="POST" action="/builder/downloader.php" class="x-hidden">
+		<input type="hidden" name="title" value="">
+		<input type="hidden" name="code" value="">
+	</form>
 
 	<script type="text/javascript" src="/builder/js/Ext.ux.util.js"></script>
 	<script type="text/javascript" src="/builder/js/Ext.ux.form.LovCombo.js"></script>

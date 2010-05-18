@@ -369,7 +369,11 @@ function testConverterSource(target){
 function downloadModel() {
     var data = getGraphXml(graph);
     surpressCloseWarning = true;
-    location.href = "/builder/downloader.php?code=" + encodeURIComponent(data) + "&title=" + encodeURIComponent(graph_title);
+    document.getElementById('downloader').title.value=encodeURIComponent(graph_title);
+    document.getElementById('downloader').code.value=encodeURIComponent(data);
+    document.getElementById('downloader').submit()
+    //alert(encodeURIComponent(data));
+    //location.href = "/builder/downloader.php?code=" + encodeURIComponent(data) + "&title=" + encodeURIComponent(graph_title);
 }
 
 function getSetting() {

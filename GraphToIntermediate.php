@@ -20,6 +20,15 @@
 		return $myCells;
 	}
 	
+	function cleanNote($note){
+		//returns a note with the new lines stripped from it and replaced with "\n".
+		// Order of replacement
+		$order   = array("\r\n", "\n", "\r");
+		$replace = '\\n';
+		
+		// Processes \r\n's first so they aren't converted twice.
+		return str_replace($order, $replace, $note);
+	}
 	
 	function simguaPrimitives($cells){
 		$scells = array();
@@ -95,7 +104,7 @@
 				array_push($properties, "stock");
 				array_push($properties, $cell->id);
 				array_push($properties, $cell->getAttribute("name"));
-				array_push($properties, $cell->getAttribute("Note"));
+				array_push($properties, cleanNote($cell->getAttribute("Note")));
 				array_push($properties, str_replace("\\n","\n",$cell->getAttribute("InitialValue")));
 				array_push($properties, $cell->getAttribute("StockMode"));
 				array_push($properties, $cell->getAttribute("Delay"));
@@ -113,7 +122,7 @@
 				array_push($properties, "parameter");
 				array_push($properties, $cell->id);
 				array_push($properties, $cell->getAttribute("name"));
-				array_push($properties, $cell->getAttribute("Note"));
+				array_push($properties, cleanNote($cell->getAttribute("Note")));
 				array_push($properties, str_replace("\\n","\n",$cell->getAttribute("Equation")));
 				array_push($properties, $cell->getAttribute("Units"));
 				array_push($properties, $cell->getAttribute("MaxConstraintUsed"));
@@ -128,7 +137,7 @@
 				array_push($properties, "converter");
 				array_push($properties, $cell->id);
 				array_push($properties, $cell->getAttribute("name"));
-				array_push($properties, $cell->getAttribute("Note"));
+				array_push($properties, cleanNote($cell->getAttribute("Note")));
 				array_push($properties, $cell->getAttribute("Source"));
 				array_push($properties, $cell->getAttribute("Interpolation"));
 				$items = split(";", $cell->getAttribute("Data"));
@@ -151,7 +160,7 @@
 				array_push($properties, "flow");
 				array_push($properties, $cell->id);
 				array_push($properties, $cell->getAttribute("name"));
-				array_push($properties, $cell->getAttribute("Note"));
+				array_push($properties, cleanNote($cell->getAttribute("Note")));
 				array_push($properties, connectionValue(orig($cell->source)));
 				array_push($properties, connectionValue(orig($cell->target)));
 				array_push($properties, str_replace("\\n","\n",$cell->getAttribute("FlowRate")));
@@ -170,7 +179,7 @@
 				array_push($properties, "link");
 				array_push($properties, $cell->id);
 				array_push($properties, $cell->getAttribute("name"));
-				array_push($properties, $cell->getAttribute("Note"));
+				array_push($properties, cleanNote($cell->getAttribute("Note")));
 				array_push($properties, connectionValue(orig($cell->source)));
 				array_push($properties, connectionValue(orig($cell->target)));
 				break;
@@ -178,7 +187,7 @@
 				array_push($properties, "display");
 				array_push($properties, $cell->id);
 				array_push($properties, $cell->getAttribute("name"));
-				array_push($properties, $cell->getAttribute("Note"));
+				array_push($properties, cleanNote($cell->getAttribute("Note")));
 				array_push($properties, $cell->getAttribute("Type"));
 				$p = $cell->getAttribute("Primitives");
 				if($cell->getAttribute("ScatterplotOrder") == "Y Primitive, X Primitive"){
@@ -197,7 +206,7 @@
 				array_push($properties, "folder");
 				array_push($properties, $cell->id);
 				array_push($properties, $cell->getAttribute("name"));
-				array_push($properties, $cell->getAttribute("Note"));
+				array_push($properties, cleanNote($cell->getAttribute("Note")));
 				$children = simguaPrimitives(childrenCells($cell));
 				$children = join(",",array_map("getID", $children));
 				array_push($properties, $children);

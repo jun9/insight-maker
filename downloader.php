@@ -1,13 +1,13 @@
 <?php 
 	header('Content-type: application/vnd.yourlingua.simgua');
 	$typeString='Content-disposition: attachment; filename=';
-		if($_GET["title"]==""){
+		if($_POST["title"]==""){
 			$typeString=$typeString."MyModel.smr";
 		}else{
-			$typeString=$typeString.$_GET["title"].".smr";
+			$typeString=$typeString.$_POST["title"].".smr";
 		}
 	header($typeString);
-	$modelData=rawurldecode($_GET["code"]);
+	$modelData=rawurldecode($_POST["code"]);
 	$modelData=str_replace("\\'","'",str_replace("\\\"",'"',$modelData));
 	require("./GraphToIntermediate.php");
 ?>
