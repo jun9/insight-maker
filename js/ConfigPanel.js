@@ -210,7 +210,7 @@ ConfigPanel = function()
         title: "Configuration",
         border: true,
         bodyCfg: {cls: 'x-panel-body', style: {'overflow-x': 'hidden', 'overflow-y':'auto'}},
-        html: "<div id='gridArea' name='gridArea'></div><div id='descriptionArea' name='descriptionArea' style='padding: 0.5em'></div>"
+        html: "<div id='gridArea' name='gridArea'></div><div id='descriptionArea' name='descriptionArea' style='padding: 0.5em;'></div>"
     });
 
 

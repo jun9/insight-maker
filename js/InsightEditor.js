@@ -1050,6 +1050,21 @@ function main()
             });
         } else if (cell.value.nodeName == "Link") {
             iHs = "Links connect the different parts of your model. If one primitive in your model refers to another in its equation, the two primitives must either be directly connected or connected through a link. Once connected with links, square-brackets may be used to reference values of other primitives. So if you have a stock call <i>Bank Balance</i>, you could refer to it in another primitive's equation with <i>[Bank Balance]</i>.";
+			//the following hack allows the link description value to appear. It deals with the problem of overflow being hidden for the grid, the panel, and a couple of other things around the grid 
+			properties.push({
+	                'name': 'zfiller',
+	                'text': '.',
+	                'value': "",
+	                'group': '  General',
+					'disabled': true
+	            });
+				 properties.push({
+		                'name': 'zzfiller',
+		                'text': '.',
+		                'value': "",
+		                'group': '  General',
+						'disabled': true
+		            });
         } else if (cell.value.nodeName == "Flow") {
             iHs = "Flows represent the transfer of material from one stock to another. For example given the case of a lake, the flows for the lake might be: River Inflow, River Outflow, Precipitation, and Evaporation. Flows are given a flow rate and they operator over one unit of time; in effect: flow per one second or per one minute. <hr><br><h1>Flow Rate Examples:</h1><center><table class='undefined'><tr><td align=center>Using the Current Simulation Time</td></tr><tr><td align=center><i>minutes/3</i></td></tr><tr><td align=center>Referencing Other Primitives</td></tr><tr><td align=center><i>[Lake Volume]*0.05+[Rain]/4</i></td></tr></table></center>";
             properties.push({
