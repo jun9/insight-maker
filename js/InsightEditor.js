@@ -395,7 +395,7 @@ function main()
     };
     
     
-    if(false && is_editor && drupal_node_ID != -1 ){
+    if(true && is_editor && drupal_node_ID != -1 ){
     	var sharer = new mxSession(graph.getModel(), "/builder/hub.php?init&id="+drupal_node_ID, "/builder/hub.php?id="+drupal_node_ID, "/builder/hub.php?id="+drupal_node_ID);
     	sharer.start();
     	sharer.createUndoableEdit = function(changes)
