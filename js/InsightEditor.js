@@ -105,8 +105,8 @@ function main()
 
     var doc = mxUtils.createXmlDocument();
 
-    var textArea = doc.createElement('Text');
-    textArea.setAttribute('name', 'Text Area');
+    var textAreaThing = doc.createElement('Text');
+    textAreaThing.setAttribute('name', 'Text Area');
 
     var folder = doc.createElement('Folder');
     folder.setAttribute('name', 'New Folder');
@@ -275,7 +275,7 @@ function main()
                     } else if (panel.get('parameter').pressed) {
                         vertex = graph.insertVertex(parent, null, parameter.cloneNode(true), pt.x - 50, pt.y - 25, 120, 50, "parameter");
                     } else if (panel.get('text').pressed) {
-                        vertex = graph.insertVertex(parent, null, textArea.cloneNode(true), pt.x - 100, pt.y - 25, 200, 50, "textArea");
+                        vertex = graph.insertVertex(parent, null, textAreaThing.cloneNode(true), pt.x - 100, pt.y - 25, 200, 50, "textArea");
                         vertex.setConnectable(false);
                     } else if (panel.get('display').pressed) {
                         vertex = graph.insertVertex(parent, null, display.cloneNode(true), pt.x - 32, pt.y - 32, 64, 64, "display");
@@ -427,7 +427,6 @@ function main()
         	}
         	getSetting().setAttribute("Version",3);
         }
-        
         setConnectability();
     }
     
