@@ -17,7 +17,7 @@ require("SharedHeader.php")
 </script>
 	<div id="header"><div style="float:right;margin:5px;" class="x-small-editor"></div></div>
 
-	<div id="config-win" class="x-hidden"</div>
+	<div id="config-win" class="x-hidden"></div>
 	<div id="property-win" class="x-hidden"></div>
 	<div id="units-win" class="x-hidden"></div>
 	

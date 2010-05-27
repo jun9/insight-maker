@@ -282,7 +282,7 @@ function isValued(cell) {
 
 function setSaveEnabled(e) {
 	if(is_editor){
-    var b = ribbonPanel.getTopToolbar().items.get('save').get('savebut');
+    var b = ribbonPanel.getTopToolbar().items.get('savegroup').get('savebut');
     if (e) {
         b.setDisabled(false);
         b.setText('Save Insight');

@@ -1282,7 +1282,7 @@ function main()
     updateWindowTitle();
 
     if (!saved_enabled) {
-        ribbonPanel.getTopToolbar().items.get('save').setVisible(false);
+        ribbonPanel.getTopToolbar().items.get('savegroup').setVisible(false);
     }
 
     handelCursors();
@@ -1297,7 +1297,7 @@ function main()
 var surpressCloseWarning = false;
 function confirmClose() {
     if (!surpressCloseWarning) {
-        if ((!saved_enabled) || ribbonPanel.getTopToolbar().items.get('save').get('savebut').disabled) {
+        if ((!saved_enabled) || ribbonPanel.getTopToolbar().items.get('savegroup').get('savebut').disabled) {
 
             }
         else {

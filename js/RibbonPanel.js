@@ -840,7 +840,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                             modal: true,
                             width: 430,
                             title: "Simulation Time Settings",
-                            height: 340,
+                            height: 350,
                             resizable: false,
                             closeAction: 'hide',
                             plain: true,
@@ -1250,14 +1250,14 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 text: 'Zoom',
                 iconCls: 'zoom-large-icon',
                 tooltip: 'Zoom Diagram',
-                id: 'zoomlargebut',
+                id: 'zoomlargebutgrouped',
                 handler: function(menu) {},
                 menu: zoomMenu 
             }]
         },
         '-', {
-        	hidden: (! is_editor) || is_embed,
-            id: 'save',
+        	hidden: ((! is_editor) || is_embed),
+            id: 'savegroup',
             xtype: 'buttongroup',
             columns: 1,
             height: 95,
