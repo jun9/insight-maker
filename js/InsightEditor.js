@@ -259,11 +259,11 @@ function main()
     {
 
         cell = evt.getProperty('cell');
-        evt = evt.getProperty('event');
-        if (!mxEvent.isConsumed(evt)) {
+        var realEvt = evt.getProperty('event');
+        if (!evt.isConsumed()) {
             var panel = ribbonPanel.getTopToolbar().items.get('valued');
             if (cell == null && nodeInsertSelected()) {
-                var pt = graph.getPointForEvent(evt);
+                var pt = graph.getPointForEvent(realEvt);
                 var parent = graph.getDefaultParent();
 
                 var vertex;
@@ -318,7 +318,7 @@ function main()
 
                     graph.setSelectionCell(vertex);
                     graph.getModel().endUpdate();
-                    mxEvent.consume(evt);
+                    evt.consume();
                     graph.cellEditor.startEditing(vertex);
                 }
             } else if (cell == null) {
