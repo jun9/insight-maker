@@ -676,14 +676,7 @@ function main()
     keyHandler.bindControlKey(65,
     function()
     {
-        var myCells = graph.getModel().getChildren(graph.getModel().getChildren(graph.getModel().getRoot())[0]);
-        for (var i = myCells.length - 1; i >= 0; i--)
-        {
-            if (myCells[i].value.nodeName == "Setting") {
-                myCells.remove(i);
-            }
-        }
-        graph.selectCells(myCells);
+        graph.selectAll();
     });
 
     keyHandler.bindControlKey(89,
