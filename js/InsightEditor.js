@@ -1238,19 +1238,17 @@ function main()
 				
 				for(var i=0; i<slids.length; i++){
 					var perc = Math.floor(-(Math.log(slids[i].getAttribute("SliderMax"))/Math.log(10)-4));
-					sliders.push(new Ext.Slider({ renderTo: 'slider'+slids[i].id, width: slider_width,  minValue: parseFloat(slids[i].getAttribute("SliderMin")), sliderCell: slids[i],  maxValue: parseFloat(slids[i].getAttribute("SliderMax")), decimalPrecision: perc, listeners: {
+					sliders.push(new Ext.Slider({ renderTo: 'slider'+slids[i].id, width: slider_width,  minValue: parseFloat(slids[i].getAttribute("SliderMin")), sliderCell: slids[i], value: parseFloat(getValue(slids[i])), maxValue: parseFloat(slids[i].getAttribute("SliderMax")), decimalPrecision: perc, listeners: {
 						        change: function(slider,newValue)
 						        {
-						        	var other ="sliderVal"+slider.sliderCell.id;
+						        	var other = "sliderVal"+slider.sliderCell.id;
 						            Ext.get(other).dom.value=parseFloat(newValue);
 						            setValue(slider.sliderCell, parseFloat(newValue));
-						        
 						        }
 						}}));
 						
 						
 						Ext.apply(sliders[sliders.length-1], { normalizeValue : function(v){return this.doSnap(Ext.round(v, this.decimalPrecision)).constrain(this.minValue, this.maxValue); }});
-						sliders[i].setValue(parseFloat(getValue(slids[i])))
 						Ext.get("sliderVal"+sliders[i].sliderCell.id).dom.value=parseFloat(getValue(slids[i]));
 						
 			}
