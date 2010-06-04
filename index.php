@@ -34,7 +34,7 @@ require("SharedHeader.php")
 	var scriptBase = 'http://InsightMaker.com/builder';
 	var mxBasePath = 'http://InsightMaker.com/builder';
 	</script>
-	<script type="text/javascript" src="http://www.mxgraph.com/demo/mxgraph/src/js/mxclient.php?version=1.4.0.0&key=hnaAe6eohX6cmCE%3D"></script>
+	<script type="text/javascript" src="http://www.mxgraph.com/demo/mxgraph/src/js/mxclient.php?version=1.4.0.0&key=hnaBe6mnfn%2BinCc%3D"></script>
 	
 	<script type="text/javascript" src="/builder/js/PropertyGrid.js"></script>
     <script type="text/javascript" src="/builder/js/InsightEditor.js"></script>
