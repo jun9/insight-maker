@@ -7,8 +7,7 @@ using the internet to encourage giving and greater
 understanding.
 
 This file may distributed and/or modified under the
-terms of the Insight Maker Public License which is
-available in the LICENSE.TXT file of this directory.
+terms of the Insight Maker Public License.
 
 Insight Maker and Give Team are trademarks.
 
@@ -49,26 +48,28 @@ function replace_html(el, html) {
 function setTopLinks() {
     var links = "";
     if (drupal_node_ID == -1) {
-        links = '<div style="float:right;padding:0.2em;"><nobr><a href="http://InsightMaker.com/help" target="_Blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_Blank">Find More Insights</div>';
+        links = '<div style="float:right;padding:0.2em;"><nobr><a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</div>';
     } else {
         if (is_editor) {
-            if (editLocation == 'graph') {
-                links = '<div style="float:left;padding:0.2em;"><a href="http://InsightMaker.com/insight/' + drupal_node_ID + '/view">Edit Insight User Interface</a>';
+			links = '<div style="float:left;padding:0.2em;">';
+            links = links + '<a href="http://InsightMaker.com/node/' + drupal_node_ID + '/edit" target="_blank">Edit Insight Properties</a> | ';
+			if (editLocation == 'graph') {
+                links =  links + '<a href="http://InsightMaker.com/insight/' + drupal_node_ID + '/view" target="_blank">Edit Insight User Interface</a>';
             } else {
-                links = '<div style="float:left;padding:0.2em;"><a href="http://InsightMaker.com/insight/' + drupal_node_ID + '/">Edit Insight Model</a>';
+                links =  links + '<a href="http://InsightMaker.com/insight/' + drupal_node_ID + '/" target="_blank">Edit Insight Model</a>';
             }
-            links = links + ' | <a href="http://InsightMaker.com/node/' + drupal_node_ID + '/edit">Edit Insight Properties</a></div>';
+			links = links+'</div> ';
         } else {
-           links = links + '<div style="float:left;padding:0.2em;"><a href="http://InsightMaker.com/node/' + drupal_node_ID + '/">Insight Properties</a></div>';
+           links = links + '<div style="float:left;padding:0.2em;"><a href="http://InsightMaker.com/node/' + drupal_node_ID + '/" target="_blank">Insight Properties</a></div>';
         }
         links = links + '<div style="float:right;padding:0.2em;"><nobr>';
         if(is_embed){
-        	links = links + '<a target="_Blank" href="http://InsightMaker.com/insight/' + drupal_node_ID + '">Full Screen Insight</a> | ';
+        	links = links + '<a target="_blank" href="http://InsightMaker.com/insight/' + drupal_node_ID + '">Full Screen Insight</a> | ';
         }else{
-        	links = links + '<a target="_Blank" href="http://InsightMaker.com/insight/">Make a New Insight</a> | ';
-        	links = links + '<a target="_Blank" href="http://InsightMaker.com/node/' + drupal_node_ID + '/clone">Duplicate Insight</a> | ';
+        	links = links + '<a target="_blank" href="http://InsightMaker.com/insight/">Make a New Insight</a> | ';
+        	links = links + '<a target="_blank" href="http://InsightMaker.com/node/' + drupal_node_ID + '/clone">Duplicate Insight</a> | ';
         }
-        links = links + '<a href="http://InsightMaker.com/help" target="_Blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_Blank">Find More Insights</a></nobr></div>';
+        links = links + '<a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</a></nobr></div>';
     }
     replace_html(document.getElementById("toplinks-holder"), links);
 }

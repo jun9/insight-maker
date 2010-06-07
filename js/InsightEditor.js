@@ -7,8 +7,7 @@ using the internet to encourage giving and greater
 understanding.
 
 This file may distributed and/or modified under the
-terms of the Insight Maker Public License which is
-available in the LICENSE.TXT file of this directory.
+terms of the Insight Maker Public License.
 
 Insight Maker and Give Team are trademarks.
 
@@ -346,7 +345,7 @@ function main()
     {
         settingCell = graph.insertVertex(parent, null, setting, 20, 20, 80, 40);
         settingCell.visible = false;
-        var firstdisp = graph.insertVertex(parent, null, display.cloneNode(true), 20, 20, 64, 64, "roundImage;image=/builder/images/DisplayFull.png;");
+        var firstdisp = graph.insertVertex(parent, null, display.cloneNode(true), 50, 20, 64, 64, "roundImage;image=/builder/images/DisplayFull.png;");
         firstdisp.setAttribute("AutoAddPrimitives", true);
         firstdisp.setConnectable(false);
         firstdisp.setAttribute("name", "Data Display");

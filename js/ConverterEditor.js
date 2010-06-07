@@ -1,4 +1,17 @@
+/*
 
+Copyright 2010 Give Team. All rights reserved.
+
+Give Team is a non-profit organization dedicated to
+using the internet to encourage giving and greater
+understanding.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License.
+
+Insight Maker and Give Team are trademarks.
+
+*/
 
 Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter'], {
     onTriggerClick: function()

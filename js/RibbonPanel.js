@@ -7,8 +7,7 @@ using the internet to encourage giving and greater
 understanding.
 
 This file may distributed and/or modified under the
-terms of the Insight Maker Public License which is
-available in the LICENSE.TXT file of this directory.
+terms of the Insight Maker Public License.
 
 Insight Maker and Give Team are trademarks.
 
