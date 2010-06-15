@@ -12,11 +12,13 @@ terms of the Insight Maker Public License.
 Insight Maker and Give Team are trademarks.
 
 */
-
+var sizeCombo;
+var fontCombo;
 RibbonPanel = function(graph, history, mainPanel, configPanel)
  {
     Ext.Ajax.timeout = 60000;
 
+	
     var handlePrimToggle = function(item, pressed) {
 
         if (item.id == "flow" && pressed) {
@@ -170,7 +172,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
         ['Courier New', 'Courier New']]
     });
 
-    var fontCombo = new Ext.form.ComboBox(
+    fontCombo = new Ext.form.ComboBox(
     {
         store: fonts,
         displayField: 'label',
@@ -185,6 +187,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             if (entry != null)
             {
                 graph.setCellStyles(mxConstants.STYLE_FONTFAMILY, entry.data.font);
+				this.setValue(entry.data.font);
                 this.collapse();
             }
         }
@@ -203,6 +206,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             family.length > 0)
             {
                 graph.setCellStyles(mxConstants.STYLE_FONTFAMILY, family);
+				this.setValue(family);
             }
         }
     });
@@ -215,7 +219,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
         ['48pt', 48], ['60pt', 60]]
     });
 
-    var sizeCombo = new Ext.form.ComboBox(
+    sizeCombo = new Ext.form.ComboBox(
     {
         colspan: 2,
         store: sizes,
@@ -230,6 +234,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             if (entry != null)
             {
                 graph.setCellStyles(mxConstants.STYLE_FONTSIZE, entry.data.size);
+				this.setValue(entry.data.size);
                 this.collapse();
             }
         }
@@ -247,6 +252,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             if (!isNaN(size) &&
             size > 0)
             {
+				this.setValue(size);
                 graph.setCellStyles(mxConstants.STYLE_FONTSIZE, size);
             }
         }
@@ -698,6 +704,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 handler: function()
                 {
                     graph.toggleCellStyleFlags(mxConstants.STYLE_FONTSTYLE, mxConstants.FONT_BOLD);
+					setStyles();
                 },
                 scope: this
             },
@@ -709,17 +716,19 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 handler: function()
                 {
                     graph.toggleCellStyleFlags(mxConstants.STYLE_FONTSTYLE, mxConstants.FONT_ITALIC);
+					setStyles();
                 },
                 scope: this
             },
             {
                 id: 'underline',
-                text: '',
+                text: '',enableToggle:true,
                 tooltip: 'Underline',
                 iconCls: 'underline-icon',
                 handler: function()
                 {
                     graph.toggleCellStyleFlags(mxConstants.STYLE_FONTSTYLE, mxConstants.FONT_UNDERLINE);
+					setStyles();
                 },
                 scope: this
             },

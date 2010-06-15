@@ -775,3 +775,36 @@ function orig(cell){
 		return cell;
 	}
 }
+
+function currentStyleIs(val){
+	var tmp=graph.getCellStyle(graph.getSelectionCell())[mxConstants.STYLE_FONTSTYLE];
+	for(var i=3;i>=1;i--){
+		
+		tmp=tmp-val*(Math.pow(2,i));
+		if(tmp<0){
+			tmp=tmp+val*Math.pow(2,i);
+		}
+	}
+	return (tmp>=val);
+}
+
+function setStyles(){
+	var selected = !graph.isSelectionEmpty();
+	
+	if (selected){
+		ribbonPanel.getTopToolbar().items.get('style').get('bold').toggle(currentStyleIs(mxConstants.FONT_BOLD));
+		ribbonPanel.getTopToolbar().items.get('style').get('italic').toggle(currentStyleIs(mxConstants.FONT_ITALIC));
+		ribbonPanel.getTopToolbar().items.get('style').get('underline').toggle(currentStyleIs(mxConstants.FONT_UNDERLINE));
+		var style=graph.getCellStyle(graph.getSelectionCell());
+		sizeCombo.setValue(style[mxConstants.STYLE_FONTSIZE]);
+		fontCombo.setValue(style[mxConstants.STYLE_FONTFAMILY]);
+	}else{
+		
+		ribbonPanel.getTopToolbar().items.get('style').get('bold').toggle(false);
+		ribbonPanel.getTopToolbar().items.get('style').get('italic').toggle(false);
+		ribbonPanel.getTopToolbar().items.get('style').get('underline').toggle(false);
+		sizeCombo.setValue("");
+		fontCombo.setValue("");
+	}
+	
+}

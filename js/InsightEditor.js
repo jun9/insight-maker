@@ -466,10 +466,14 @@ function main()
         toolbarItems.get('style').get('bold').setDisabled(!selected);
         toolbarItems.get('style').get('italic').setDisabled(!selected);
         toolbarItems.get('style').get('underline').setDisabled(!selected);
+ 		fontCombo.setDisabled(!selected);
+ 		sizeCombo.setDisabled(!selected);
         toolbarItems.get('style').get('align').setDisabled(!selected);
         toolbarItems.get('style').get('movefront').setDisabled(!selected);
         toolbarItems.get('style').get('moveback').setDisabled(!selected);
         toolbarItems.get('connect').get('reverse').setDisabled(!(selected && (cellsContainNodename(graph.getSelectionCells(), "Link") || cellsContainNodename(graph.getSelectionCells(), "Flow"))));
+
+		setStyles();
     };
 
     graph.getSelectionModel().addListener(mxEvent.CHANGED, selectionListener);
