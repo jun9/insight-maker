@@ -47,7 +47,7 @@ function main()
     graph.alternateEdgeStyle = 'vertical';
     graph.connectableEdges = true;
     graph.disconnectOnMove = false;
-    graph.edgeLabelsMovable = false;
+    graph.edgeLabelsMovable = true;
     graph.enterStopsCellEditing = true;
     graph.allowLoops = false;
     
