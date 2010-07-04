@@ -74,7 +74,11 @@ function main()
     {
         if (mxUtils.isNode(cell.value))
         {
-          	return orig(cell).getAttribute("name");
+			if(cell.value.nodeName=="Link" && orig(cell).getAttribute("name")=="Link"){
+          		return "";
+			}else{
+				return orig(cell).getAttribute("name");
+			}
         }
         return '';
     };

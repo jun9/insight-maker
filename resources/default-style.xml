@@ -48,11 +48,12 @@
 	</add>
 	<add as="entity" extend="defaultEdge">
 		<add as="strokeColor" value="#DD6666"/>
+		<add as="fontColor" value="#DD6666"/>
 		<add as="opacity" value="70"/>
 		<add as="edgeStyle" value="straight"/>
 		<add as="strokeWidth" value="2"/>
 		<add as="dashed" value="1"/>
-		<add as="noLabel" value="1"/>
+		<add as="noLabel" value="0"/>
 	</add>
 	<add as="vertical" extend="defaultEdge">
 		<add as="elbow" value="vertical"/>
