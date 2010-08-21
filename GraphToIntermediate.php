@@ -178,7 +178,7 @@
 			case "Link":
 				array_push($properties, "link");
 				array_push($properties, $cell->id);
-				array_push($properties, $cell->getAttribute("name"));
+				array_push($properties, "Link");
 				array_push($properties, cleanNote($cell->getAttribute("Note")));
 				array_push($properties, connectionValue(orig($cell->source)));
 				array_push($properties, connectionValue(orig($cell->target)));

@@ -86,7 +86,7 @@ function main()
     var cellLabelChanged = graph.cellLabelChanged;
     graph.labelChanged = function(cell, newValue, evt)
     {
-        if ((!isPrimitive(cell)) || validPrimitiveName(newValue)) {
+        if ((!isPrimitive(cell)) || cell.value.nodeName=="Link" || validPrimitiveName(newValue)) {
             var edit = new mxCellAttributeChange(cell, "name", newValue);
             graph.getModel().execute(edit);
             
