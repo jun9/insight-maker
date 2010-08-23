@@ -99,6 +99,7 @@
 				array_push($properties, $cell->getAttribute("TimeStep"));
 				array_push($properties, $cell->getAttribute("Units"));
 				array_push($properties, $cell->getAttribute("TimeStart"));
+				array_push($properties, $cell->getAttribute("SolutionAlgorithm"));
 				break;
 			case "Stock":
 				array_push($properties, "stock");

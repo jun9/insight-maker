@@ -183,13 +183,14 @@ function main()
 
     var setting = doc.createElement('Setting');
     setting.setAttribute('Note', '');
-    setting.setAttribute('Version', '3');
+    setting.setAttribute('Version', '4');
     setting.setAttribute('TimeLength', '100');
     setting.setAttribute('TimeStart', '0');
     setting.setAttribute('TimeStep', '1');
     setting.setAttribute('TimeUnits', 'Years');
     setting.setAttribute('Units', "");
     setting.setAttribute("HiddenUIGroups", ["Validation", "User Interface"])
+	setting.setAttribute("SolutionAlgorithm", "RK1")
 
 
     mainPanel = new MainPanel(graph);
@@ -429,6 +430,9 @@ function main()
         		converters[i].setAttribute("Data", s);
         	}
         	getSetting().setAttribute("Version",3);
+        }
+		if(getSetting().getAttribute("Version")<4){
+        	getSetting().setAttribute("SolutionAlgorithm","RK1");
         }
         setConnectability();
     }

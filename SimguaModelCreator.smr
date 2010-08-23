@@ -35,7 +35,11 @@ Module SimguaModelCreator
 			m.settings.timeStep=val(properties(6))
 			customUnits=split(properties(7),chr(10))
 			m.settings.timeStart=val(properties(8))
-			m.settings.order=1
+			if properties(9)="RK1" then
+				m.settings.order=1
+			else
+				m.settings.order=4
+			end if
 			exit
 			end select
 		next

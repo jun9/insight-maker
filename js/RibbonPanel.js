@@ -821,6 +821,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             ]
         },
         {
+			
         	hidden: (! is_editor) || is_embed,
             xtype: 'buttongroup',
             columns: 2,
@@ -840,7 +841,9 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 handler: function()
                 {
                     var setting = getSetting();
-
+					var solutionAlgorithms = [
+					        ['RK1', 'Euler (Faster)'],
+					        ['RK4', '4th Order Runge-Kutta (More Accurate)'] ];
                     if (!configWin) {
                         configWin = new Ext.Window({
                             applyTo: 'config-win',
@@ -848,7 +851,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                             modal: true,
                             width: 430,
                             title: "Simulation Time Settings",
-                            height: 350,
+                            height: 380,
                             resizable: false,
                             closeAction: 'hide',
                             plain: true,
@@ -930,13 +933,28 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                                         inputValue: "Years"
                                     }
                                     ]
-                                }
+                                },
+								new Ext.form.ComboBox({
+									fieldLabel: "Analysis Algorithm",
+								    typeAhead: true,
+									triggerAction: 'all',
+								    mode: 'local',
+									selectOnFocus:true,
+									forceSelection:true,
+								    store: solutionAlgorithms,
+								    id: 'sSolutionAlgo'
+								})
                                 ],
 
                                 buttons: [{
                                     text: 'Apply',
                                     handler: function() {
                                         graph.getModel().beginUpdate();
+
+										var edit = new mxCellAttributeChange(
+                                        setting, "SolutionAlgorithm",
+                                        Ext.getCmp('sSolutionAlgo').getValue());
+                                        graph.getModel().execute(edit);
 
                                         var edit = new mxCellAttributeChange(
                                         setting, "TimeLength",
@@ -979,6 +997,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     Ext.getCmp('tunits').setValue(setting.getAttribute("TimeUnits"));
                     Ext.getCmp('stimelength').setValue(setting.getAttribute("TimeLength"));
                     Ext.getCmp('stimestep').setValue(setting.getAttribute("TimeStep"));
+					Ext.getCmp("sSolutionAlgo").setValue(setting.getAttribute("SolutionAlgorithm"));
                     configWin.show();
                 },
                 scope: this
