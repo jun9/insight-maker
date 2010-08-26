@@ -5,6 +5,14 @@
 	$primSep = "<insight-PrimSep>";
 	$propSep = "<insight-PropSep>";
 	
+	function sanitizeName($name, $defaultName){
+		if (strlen($name) > 0 && (!preg_match("/[^A-Za-z0-9 ]/",$name)) && preg_match("/[A-Za-z]/", substr($name,0, 1))){
+			return $name;
+		}else{
+			return $defaultName;
+		}
+	}
+	
 	function childrenCells($cell) {
 	    $myCells = array();
 	    for($i=0; $i < $cell->getChildCount(); $i++){
@@ -179,7 +187,7 @@
 			case "Link":
 				array_push($properties, "link");
 				array_push($properties, $cell->id);
-				array_push($properties, "Link");
+				array_push($properties, sanitizeName($cell->getAttribute("name"), "Link"));
 				array_push($properties, cleanNote($cell->getAttribute("Note")));
 				array_push($properties, connectionValue(orig($cell->source)));
 				array_push($properties, connectionValue(orig($cell->target)));
@@ -206,7 +214,7 @@
 			case "Folder":
 				array_push($properties, "folder");
 				array_push($properties, $cell->id);
-				array_push($properties, $cell->getAttribute("name"));
+				array_push($properties, sanitizeName($cell->getAttribute("name"), "Folder"));
 				array_push($properties, cleanNote($cell->getAttribute("Note")));
 				$children = simguaPrimitives(childrenCells($cell));
 				$children = join(",",array_map("getID", $children));
