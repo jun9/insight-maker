@@ -192,7 +192,7 @@ ConfigPanel = function()
  {
 	var panel_width;
 	if(is_embed){
-		panel_width=180;
+		panel_width=195;
 	}else{
 		panel_width=300;
 	}
