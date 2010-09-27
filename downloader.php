@@ -1,12 +1,13 @@
 <?php 
+$typeString='Content-disposition: attachment; filename=';
+	if($_POST["title"]==""){
+		$typeString=$typeString."MyModel.smr";
+	}else{
+		$typeString=$typeString.$_POST["title"].".smr";
+	}
+header($typeString);
 	header('Content-type: application/vnd.yourlingua.simgua');
-	$typeString='Content-disposition: attachment; filename=';
-		if($_POST["title"]==""){
-			$typeString=$typeString."MyModel.smr";
-		}else{
-			$typeString=$typeString.$_POST["title"].".smr";
-		}
-	header($typeString);
+	
 	$modelData=rawurldecode($_POST["code"]);
 	$modelData=str_replace("\\'","'",str_replace("\\\"",'"',$modelData));
 	require("./GraphToIntermediate.php");

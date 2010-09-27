@@ -1068,6 +1068,37 @@ function main()
 		                'group': '  General',
 						'disabled': true
 		            });
+		            properties.push({
+		                   'name': 'zzzfiller',
+		                   'text': '.',
+		                   'value': "",
+		                   'group': '  General',
+		            		'disabled': true
+		               });
+        } else if (cell.value.nodeName == "Folder") {
+            iHs = "Folders group together similar items in a logical way. You can collapse and expand folders to hide or reveal model complexity.";
+        	//the following hack allows the folder description value to appear. It deals with the problem of overflow being hidden for the grid, the panel, and a couple of other things around the grid 
+        	properties.push({
+                    'name': 'zfiller',
+                    'text': '.',
+                    'value': "",
+                    'group': '  General',
+        			'disabled': true
+                });
+        		 properties.push({
+                        'name': 'zzfiller',
+                        'text': '.',
+                        'value': "",
+                        'group': '  General',
+        				'disabled': true
+                    });
+                    properties.push({
+                           'name': 'zzzfiller',
+                           'text': '.',
+                           'value': "",
+                           'group': '  General',
+                    		'disabled': true
+                       });
         } else if (cell.value.nodeName == "Flow") {
             iHs = "Flows represent the transfer of material from one stock to another. For example given the case of a lake, the flows for the lake might be: River Inflow, River Outflow, Precipitation, and Evaporation. Flows are given a flow rate and they operator over one unit of time; in effect: flow per one second or per one minute. <hr><br><h1>Flow Rate Examples:</h1><center><table class='undefined'><tr><td align=center>Using the Current Simulation Time</td></tr><tr><td align=center><i>minutes/3</i></td></tr><tr><td align=center>Referencing Other Primitives</td></tr><tr><td align=center><i>[Lake Volume]*0.05+[Rain]/4</i></td></tr></table></center>";
             properties.push({
