@@ -153,6 +153,7 @@ function main()
     stock.setAttribute('StockMode', 'Store');
     stock.setAttribute('Delay', '10');
     stock.setAttribute('Volume', '100');
+	stock.setAttribute('NonNegative', false);
     setValuedProperties(stock);
 
     var parameter = doc.createElement('Parameter');
@@ -183,7 +184,7 @@ function main()
 
     var setting = doc.createElement('Setting');
     setting.setAttribute('Note', '');
-    setting.setAttribute('Version', '4');
+    setting.setAttribute('Version', '5');
     setting.setAttribute('TimeLength', '100');
     setting.setAttribute('TimeStart', '0');
     setting.setAttribute('TimeStep', '1');
@@ -417,7 +418,7 @@ function main()
         dec.decode(doc.documentElement, graph.getModel());
         if(getSetting().getAttribute("Version")<3){
         	var converters = primitives("Converter");
-        	for(var i=0; i<converters.length; i++){
+        	for(var i=0; i < converters.length; i++){
         		var inps = converters[i].getAttribute("Inputs").split(",");
         		var outs = converters[i].getAttribute("Outputs").split(",");
         		var s="";
@@ -433,6 +434,15 @@ function main()
         }
 		if(getSetting().getAttribute("Version")<4){
         	getSetting().setAttribute("SolutionAlgorithm","RK1");
+			getSetting().setAttribute(4)
+        }
+
+		if(getSetting().getAttribute("Version")<5){
+        	var stocks = primitives("Stock");
+        	for(var i=0; i < stocks.length; i++){
+        		stock[i].setAttribute("NonNegative", false);
+        	}
+        	getSetting().setAttribute("Version",4);
         }
         setConnectability();
     }
@@ -1010,6 +1020,13 @@ function main()
                     allowBlur: false
                 }),
                 'renderer': equationRenderer
+            });
+
+			properties.push({
+                'name': 'NonNegative',
+                'text': 'Non-Negative',
+                'value': isTrue(cell.getAttribute("NonNegative")),
+                'group': ' Configuration'
             });
 
             properties.push({

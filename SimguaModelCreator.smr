@@ -61,7 +61,8 @@ Module SimguaModelCreator
 				end select
 				s.fixedDelay=val(properties(6))
 				s.volume=val(properties(7))
-				loadConstraints(s, properties,8)
+				s.nonNegative=(properties(8)="true")
+				loadConstraints(s, properties,9)
 				primitives.append s
 				case "flow"
 				f=m.root.createFlow(properties(2))

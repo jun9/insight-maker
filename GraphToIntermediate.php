@@ -118,6 +118,7 @@
 				array_push($properties, $cell->getAttribute("StockMode"));
 				array_push($properties, $cell->getAttribute("Delay"));
 				array_push($properties, $cell->getAttribute("Volume"));
+				array_push($properties, $cell->getAttribute("NonNegative"));
 				array_push($properties, $cell->getAttribute("Units"));
 				array_push($properties, $cell->getAttribute("MaxConstraintUsed"));
 				array_push($properties, $cell->getAttribute("MaxConstraint"));
