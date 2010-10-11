@@ -434,7 +434,7 @@ function main()
         }
 		if(getSetting().getAttribute("Version")<4){
         	getSetting().setAttribute("SolutionAlgorithm","RK1");
-			getSetting().setAttribute(4)
+			getSetting().setAttribute("Version", 4)
         }
 
 		if(getSetting().getAttribute("Version")<5){
