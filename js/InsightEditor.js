@@ -442,7 +442,7 @@ function main()
         	for(var i=0; i < stocks.length; i++){
         		stocks[i].setAttribute("NonNegative", false);
         	}
-        	getSetting().setAttribute("Version",4);
+        	getSetting().setAttribute("Version",5);
         }
         setConnectability();
     }
