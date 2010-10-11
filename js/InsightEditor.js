@@ -440,7 +440,7 @@ function main()
 		if(getSetting().getAttribute("Version")<5){
         	var stocks = primitives("Stock");
         	for(var i=0; i < stocks.length; i++){
-        		stock[i].setAttribute("NonNegative", false);
+        		stocks[i].setAttribute("NonNegative", false);
         	}
         	getSetting().setAttribute("Version",4);
         }
