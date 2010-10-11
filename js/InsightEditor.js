@@ -1240,6 +1240,15 @@ function main()
             });
         } else if (cellType == "Picture") {
             iHs = "Pictures provide useful information in a friendly to use manner.";
+            
+            properties.push({
+                    'name': 'zfiller',
+                    'text': '.',
+                    'value': "",
+                    'group': '  General',
+            		'disabled': true
+                });
+                
             properties.push({
                 'name': 'Image',
                 'text': 'Displayed Image',
@@ -1321,6 +1330,7 @@ function main()
     setTopLinks();
     
     if(! is_editor){
+    	graph.getView().setScale(0.25);
     	graph.fit();
     }
 };

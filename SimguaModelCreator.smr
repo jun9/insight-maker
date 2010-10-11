@@ -141,10 +141,10 @@ Module SimguaModelCreator
 				next
 			elseif Primitives(i) isa converter then
 				properties = split(primitiveInfo(i),PropertySeparator)
-				if str(val(properties(4)))=properties(4) then
-					converter(Primitives(i)).input=valued(primitives(indexes.indexof(properties(4))))
-				else
+				if properties(4)="Time" then
 					converter(Primitives(i)).input=timeUnits
+				else
+					converter(Primitives(i)).input=valued(primitives(indexes.indexof(properties(4))))
 				end if
 			elseif Primitives(i) isa folder then
 				properties = split(primitiveInfo(i),PropertySeparator)
