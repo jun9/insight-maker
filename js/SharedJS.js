@@ -60,7 +60,7 @@ function setTopLinks() {
             }
 			links = links+'</div> ';
         } else {
-           links = links + '<div style="float:left;padding:0.2em;"><a href="http://InsightMaker.com/node/' + drupal_node_ID + '/" target="_blank">Insight Properties</a></div>';
+           links = links + '<div style="float:left;padding:0.2em;"><a href="http://InsightMaker.com/node/' + drupal_node_ID + '/" target="_blank">Insight Properties</a> | <a href="http://InsightMaker.com/comment/reply/' + drupal_node_ID + '#comment-form" target="_blank">Discuss Insight</a></div>';
         }
         links = links + '<div style="float:right;padding:0.2em;"><nobr>';
         if(is_embed){
