@@ -50,12 +50,16 @@ function main()
     graph.edgeLabelsMovable = true;
     graph.enterStopsCellEditing = true;
     graph.allowLoops = false;
+
     
     mxEdgeHandler.prototype.addEnabled = true;
     mxEdgeHandler.prototype.removeEnabled = true;
 
     graph.isHtmlLabel = function(cell)
     {
+		if(mxClient.IS_GC){
+			return false;
+		}
         return cell!=null && cell.value!=null && (cell.value.nodeName != "Folder" && cell.value.nodeName != "Flow" && cell.value.nodeName != "Display" && cell.value.nodeName != "Picture");
     };
     graph.isWrapping = graph.isHtmlLabel;
