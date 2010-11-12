@@ -90,7 +90,7 @@ function createGrid(properties) {
                         graph.getModel().beginUpdate();
                         try
                         {
-                            if (isPrimitive(selectedPrimitive) && e.record.id == "name" && (!validPrimitiveName(String(e.value)))) {
+                            if (isPrimitive(selectedPrimitive) && e.record.id == "name" && (! (validPrimitiveName(String(e.value)) || selectedPrimitive.value.nodeName=="Link" || selectedPrimitive.value.nodeName=="Folder"))) {
                                 mxUtils.alert("Primitive names must only contain numbers, letters and spaces; and they must start with a letter.");
                             } else {
                                 var edit = new mxCellAttributeChange(
