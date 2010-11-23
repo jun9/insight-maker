@@ -93,6 +93,7 @@ Ext.MultiSelectWindow = function(args)
         id: 'myCode',
         name: 'myCode',
         value: code,
+		emptyText: "Enter your equation here...",
         listeners: {
             specialkey: function(field, e) {
                 // e.HOME, e.END, e.PAGE_UP, e.PAGE_DOWN,
@@ -234,6 +235,7 @@ Ext.MultiSelectWindow = function(args)
     obj.show = function()
     {
         obj.win.show();
+		codeEditor.focus(true, true);
     }
 }
 
@@ -269,6 +271,7 @@ function doGetCaretPosition (ctrl) {
 		CaretPos = ctrl.selectionStart;
 	return (CaretPos);
 }
+
 function setCaretPosition(ctrl, pos){
 	if(ctrl.setSelectionRange)
 	{
