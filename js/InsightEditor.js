@@ -364,6 +364,14 @@ function main()
 
     graph.getEdgeValidationError = function(edge, source, target)
     {
+		if(mxUtils.isNode(this.model.getValue(edge), "link")){
+			if (source != null){
+				source.setConnectable(true);
+			}
+			if (target != null){
+				target.setConnectable(true);
+			}
+		}
         if (mxUtils.isNode(this.model.getValue(edge), "flow") || (this.model.getValue(edge) == null && ribbonPanel.getTopToolbar().items.get('connect').get('flow').pressed)) {
             if (source !== null && source.isConnectable())
             {
@@ -397,7 +405,9 @@ function main()
                 }
             }
         }
-        return mxGraph.prototype.getEdgeValidationError.apply(this, arguments);
+        var x = mxGraph.prototype.getEdgeValidationError.apply(this, arguments);
+		setConnectability();
+		return x;
     };
     
     
