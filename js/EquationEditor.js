@@ -93,7 +93,6 @@ Ext.MultiSelectWindow = function(args)
         id: 'myCode',
         name: 'myCode',
         value: code,
-		emptyText: "Enter your equation here...",
         listeners: {
             specialkey: function(field, e) {
                 // e.HOME, e.END, e.PAGE_UP, e.PAGE_DOWN,
