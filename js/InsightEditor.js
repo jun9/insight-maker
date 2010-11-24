@@ -1213,7 +1213,9 @@ function main()
                 'renderer': primitiveRenderer
             });
 
-        } else if (cellType == "Converter") {
+        } else if (cellType == "Ghost") {
+           iHs = "This item is a 'Ghost' of another primitive. It mirrors the values and properties of its source primitive. You cannot edit the properties of the Ghost. You need to instead edit the properties of its source.";
+        }else if (cellType == "Converter") {
             iHs = "Converters store a table of input and output data. When the input source takes on one of the input values, the converter takes on the corresponding output value. If no specific input value exists for the current input source value, then the nearest input neighbors are avaeraged.";
             var n = neighborhood(cell);
             var dat = [["Time", "Time"]]
