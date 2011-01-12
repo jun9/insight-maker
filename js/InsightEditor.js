@@ -289,7 +289,7 @@ function main()
                     } else if (panel.get('converter').pressed) {
                         vertex = graph.insertVertex(parent, null, converter.cloneNode(true), pt.x - 50, pt.y - 25, 120, 50, "converter");
                     } else if (panel.get('picture').pressed) {
-                        vertex = graph.insertVertex(parent, null, picture.cloneNode(true), pt.x - 24, pt.y - 24, 48, 48, "picture");
+                        vertex = graph.insertVertex(parent, null, picture.cloneNode(true), pt.x - 24, pt.y - 24, 64, 64, "picture");
                         vertex.setConnectable(false);
                         setPicture(vertex);
                     }
@@ -1290,14 +1290,16 @@ function main()
                         fields: ['text'],
                         data: [
                         ['Positive Feedback Clockwise'], ['Positive Feedback Counterclockwise'],
-                        ['Negative Feedback Clockwise'], ['Negative Feedback Counterclockwise']
+                        ['Negative Feedback Clockwise'], ['Negative Feedback Counterclockwise'],
+                        ['Unknown Feedback Clockwise'], ['Unknown Feedback Counterclockwise'],
+                         ['Checkmark'], ['Prohibited'], ['Book'], ['Clock'], ['Computer'], ['Dice'], ['Gear'], ['Hammer'], ['Heart'], ['Warning'], ['Info'], ['Key'], ['Lock'], ['Loudspeaker'], ['Mail'], ['Network'], ['Notes'], ['Pushpin'], ['Paperclip'], ['People'], ['Person'],  ['Wallet']
                         ]
                     }),
                     valueField: 'text',
                     displayField: 'text',
                     mode: 'local',
                     selectOnFocus: true,
-                    tpl: '<tpl for="."><div class="x-combo-list-item"><img src="/builder/images/SD/{text}.png" width=32 height=32/> {text}</div></tpl>'
+                    tpl: '<tpl for="."><center><div class="x-combo-list-item" style=\"white-space:normal\";><img src="/builder/images/SD/{text}.png" width=48 height=48/></div></center></tpl>'
                 }))
             });
         }

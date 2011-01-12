@@ -307,7 +307,11 @@ function hasDisplay() {
 
 function setPicture(cell) {
     var styleString = cell.getStyle();
-    styleString = mxUtils.setStyle(styleString, "image", "/builder/images/SD/" + cell.getAttribute("Image") + ".png");
+    if(cell.getAttribute("Image").substring(0,4).toLowerCase()=="http"){
+    	styleString = mxUtils.setStyle(styleString, "image", cell.getAttribute("Image"));
+    }else{
+    	styleString = mxUtils.setStyle(styleString, "image", "/builder/images/SD/" + cell.getAttribute("Image") + ".png");
+    }
     cell.setStyle(styleString);
 }
 
