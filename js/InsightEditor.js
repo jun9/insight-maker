@@ -57,7 +57,9 @@ function main()
 
     graph.isHtmlLabel = function(cell)
     {
-        return cell!=null && cell.value!=null && (cell.value.nodeName != "Folder" && cell.value.nodeName != "Flow" && cell.value.nodeName != "Display" && cell.value.nodeName != "Picture");
+		var isHTML = cell != null && cell.value != null && (cell.value.nodeName != "Folder" && cell.value.nodeName != "Flow" && cell.value.nodeName != "Display" && cell.value.nodeName != "Picture");
+		
+        return isHTML;
     };
     graph.isWrapping = graph.isHtmlLabel;
     
@@ -123,6 +125,8 @@ function main()
     picture.setAttribute('name', '');
     picture.setAttribute('Note', '');
     picture.setAttribute('Image', 'Positive Feedback Clockwise');
+	picture.setAttribute('FlipHorizontal', false);
+	picture.setAttribute('FlipVertical', false);
 
     var doc = mxUtils.createXmlDocument();
     var display = doc.createElement('Display');
@@ -185,7 +189,7 @@ function main()
 
     var setting = doc.createElement('Setting');
     setting.setAttribute('Note', '');
-    setting.setAttribute('Version', '5');
+    setting.setAttribute('Version', '6');
     setting.setAttribute('TimeLength', '100');
     setting.setAttribute('TimeStart', '0');
     setting.setAttribute('TimeStep', '1');
@@ -455,6 +459,16 @@ function main()
         	}
         	getSetting().setAttribute("Version",5);
         }
+
+		if(getSetting().getAttribute("Version")<6){
+        	var pictures = primitives("Picture");
+        	for(var i=0; i < pictures.length; i++){
+        		pictures[i].setAttribute("FlipHorizontal", false);
+				pictures[i].setAttribute("FlipVertical", false);
+        	}
+        	getSetting().setAttribute("Version",6);
+        }
+
         setConnectability();
     }
     
@@ -1301,6 +1315,19 @@ function main()
                     selectOnFocus: true,
                     tpl: '<tpl for="."><center><div class="x-combo-list-item" style=\"white-space:normal\";><img src="/builder/images/SD/{text}.png" width=48 height=48/></div></center></tpl>'
                 }))
+            });
+
+			properties.push({
+                'name': 'FlipHorizontal',
+                'text': 'Flip Horizontal',
+                'value': isTrue(cell.getAttribute("FlipHorizontal")),
+                'group': ' Configuration'
+            });
+			properties.push({
+                'name': 'FlipVertical',
+                'text': 'Flip Vertical',
+                'value': isTrue(cell.getAttribute("FlipVertical")),
+                'group': ' Configuration'
             });
         }
         Ext.get('descriptionArea').update(iHs);

@@ -312,6 +312,16 @@ function setPicture(cell) {
     }else{
     	styleString = mxUtils.setStyle(styleString, "image", "/builder/images/SD/" + cell.getAttribute("Image") + ".png");
     }
+	if(isTrue(cell.getAttribute("FlipVertical"))){
+		styleString = mxUtils.setStyle(styleString, "imageFlipV",1)
+	}else{
+		styleString = mxUtils.setStyle(styleString, "imageFlipV",0)
+	}
+	if(isTrue(cell.getAttribute("FlipHorizontal"))){
+		styleString = mxUtils.setStyle(styleString, "imageFlipH",1)
+	}else{
+		styleString = mxUtils.setStyle(styleString, "imageFlipH",0)
+	}
     cell.setStyle(styleString);
 }
 
