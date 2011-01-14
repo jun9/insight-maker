@@ -294,7 +294,7 @@ function main()
                         vertex = graph.insertVertex(parent, null, converter.cloneNode(true), pt.x - 50, pt.y - 25, 120, 50, "converter");
                     } else if (panel.get('picture').pressed) {
                         vertex = graph.insertVertex(parent, null, picture.cloneNode(true), pt.x - 24, pt.y - 24, 64, 64, "picture");
-                        vertex.setConnectable(false);
+                        vertex.setConnectable(true);
                         setPicture(vertex);
                     }
                     panel.get('stock').toggle(false);
@@ -344,7 +344,7 @@ function main()
     graph.setSplitEnabled(false);
     graph.connectionHandler.connectImage = new mxImage('/builder/images/connector.gif', 16, 16);
     graph.setPanning(true);
-    graph.setTooltips(false);
+    graph.setTooltips(true);
     graph.connectionHandler.setCreateTarget(false);
 
     var rubberband = new mxRubberband(graph);
@@ -572,13 +572,21 @@ function main()
         return cell;
     };
 
+	graph.getTooltipForCell = function(cell)
+	{
+		if(cell.value.getAttribute("Note").length > 0){
+			return cell.value.getAttribute("Note");
+		}else{
+	  		return "";
+		}
+	}
 
     // Redirects tooltips to ExtJs tooltips. First a tooltip object
     // is created that will act as the tooltip for all cells.
     var tooltip = new Ext.ToolTip(
     {
-        target: graph.container,
-        html: ''
+        html: '',
+		hideDelay: 100
     });
 
     // Disables the built-in event handling
@@ -613,7 +621,9 @@ function main()
             }
 
             tooltip.showAt([x, y + mxConstants.TOOLTIP_VERTICAL_OFFSET]);
-        }
+        }else{
+			tooltip.hide();
+		}
     };
 
     graph.tooltipHandler.hide = function()

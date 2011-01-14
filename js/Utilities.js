@@ -163,7 +163,7 @@ function setConnectability() {
     if (myCells != null) {
         for (var i = 0; i < myCells.length; i++)
         {
-            if (orig(myCells[i]).value.nodeName == "Flow" || orig(myCells[i]).value.nodeName == "Parameter" || orig(myCells[i]).value.nodeName == "Converter") {
+            if (orig(myCells[i]).value.nodeName == "Flow" || orig(myCells[i]).value.nodeName == "Parameter" || orig(myCells[i]).value.nodeName == "Converter" || orig(myCells[i]).value.nodeName == "Picture") {
                 myCells[i].setConnectable(connectable);
             }
         }

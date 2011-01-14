@@ -74,7 +74,7 @@
 	$insightdec->decode($insightdoc->documentElement, $graph->model);
 	
 	function orig($cell){
-		if(is_null($cell)){
+		if(is_null($cell) || $cell->value->nodeName=="Picture"){
 			return null;
 		}
 		if($cell->value->nodeName == "Ghost"){
