@@ -37,20 +37,27 @@ Ext.ux.wam.PropertyColumnModel = function(store){
             {tag: 'option', value: 'False', html: 'False'}
         ]
     });
-    var bfield = new Ext.form.Field({
-        el:this.bselect,
-        bselect : this.bselect,
-        autoShow: true,
-        getValue : function(){
-            return this.bselect.value == 'True';
-        }
-    });
+    var booleanEditor = new Ext.form.ComboBox({
+	            triggerAction : 'all',
+	            mode : 'local',
+	            valueField : 'boolValue',
+	            displayField : 'name',
+	            editable:false,
+	            selectOnFocus: true,
+	            forceSelection: true,
+	            store : {
+	                xtype : 'arraystore',
+	                idIndex : 0,
+	                fields : ['boolValue','name'],
+	                data : [[false,'No'],[true,'Yes']]
+	                }
+	});
 
     this.editors = {
         'date' : new Ext.grid.GridEditor(new Ext.form.DateField({selectOnFocus:true})),
         'string' : new Ext.grid.GridEditor(new Ext.form.TextField({selectOnFocus:true})),
         'number' : new Ext.grid.GridEditor(new Ext.form.NumberField({selectOnFocus:true, style:'text-align:left;'}))
-        ,'boolean' : new Ext.grid.GridEditor(new Ext.form.Checkbox({}))
+        ,'boolean': new Ext.grid.GridEditor(booleanEditor)
     };
     this.renderCellDelegate = this.renderCell.createDelegate(this);
     this.renderPropDelegate = this.renderProp.createDelegate(this);

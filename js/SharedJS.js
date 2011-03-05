@@ -58,7 +58,7 @@ function setTopLinks() {
             } else {
                 links =  links + '<a href="http://InsightMaker.com/insight/' + drupal_node_ID + '/" target="_blank">Edit Insight Model</a>';
             }
-			links = links+'</div> ';
+			links = links+' | <a href="http://InsightMaker.com/comment/reply/' + drupal_node_ID + '#comment-form" target="_blank">Discuss Insight</a></div></div> ';
         } else {
            links = links + '<div style="float:left;padding:0.2em;"><a href="http://InsightMaker.com/node/' + drupal_node_ID + '/" target="_blank">Insight Properties</a> | <a href="http://InsightMaker.com/comment/reply/' + drupal_node_ID + '#comment-form" target="_blank">Discuss Insight</a></div>';
         }

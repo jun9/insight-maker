@@ -586,7 +586,8 @@ function main()
     var tooltip = new Ext.ToolTip(
     {
         html: '',
-		hideDelay: 100
+		hideDelay: 100,
+		dismissDelay: 7000
     });
 
     // Disables the built-in event handling
