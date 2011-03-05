@@ -1315,8 +1315,8 @@ function main()
                         data: [
                         ['Positive Feedback Clockwise'], ['Positive Feedback Counterclockwise'],
                         ['Negative Feedback Clockwise'], ['Negative Feedback Counterclockwise'],
-                        ['Unknown Feedback Clockwise'], ['Unknown Feedback Counterclockwise'],
-                         ['Checkmark'], ['Prohibited'], ['Book'], ['Clock'], ['Computer'], ['Dice'], ['Gear'], ['Hammer'], ['Heart'], ['Warning'], ['Info'], ['Key'], ['Lock'], ['Loudspeaker'], ['Mail'], ['Network'], ['Notes'], ['Pushpin'], ['Paperclip'], ['People'], ['Person'],  ['Wallet']
+                        ['Unknown Feedback Clockwise'], ['Unknown Feedback Counterclockwise'], ['Plus'],['Minus'],
+                         ['Checkmark'], ['Prohibited'], ['Idea'], ['Book'], ['Clock'], ['Computer'], ['Dice'], ['Gear'], ['Hammer'], ['Smiley'], ['Heart'], ['Question'], ['Warning'], ['Info'], ['Key'], ['Lock'], ['Loudspeaker'],['Footprints'], ['Mail'], ['Network'], ['Notes'], ['Pushpin'], ['Paperclip'], ['People'], ['Person'],  ['Wallet'], ['Money'], ['Flag'], ['Trash']
                         ]
                     }),
                     valueField: 'text',
