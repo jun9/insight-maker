@@ -12,6 +12,12 @@ terms of the Insight Maker Public License.
 Insight Maker and Give Team are trademarks.
 
 */
+var config_columns;
+if((! is_editor) || is_embed){
+	config_columns = 1;
+}else{
+	config_columns = 2;
+}
 var sizeCombo;
 var fontCombo;
 RibbonPanel = function(graph, history, mainPanel, configPanel)
@@ -819,12 +825,31 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 menu: zoomMenu  
             }
             ]
-        },
+        },	{
+	        	hidden: (is_editor || is_embed),
+	            id: 'control-no-edit',
+	            xtype: 'buttongroup',
+	            columns: 1,
+	            height: 95,
+	            title: 'Explore',
+	            items: [{
+	                iconAlign: 'top',
+	                scale: 'large',
+	                cls: 'button',
+	                rowspan: 3,
+	                text: 'Zoom',
+	                iconCls: 'zoom-large-icon',
+	                tooltip: 'Zoom Diagram',
+	                id: 'zoomlargebutgrouped',
+	                handler: function(menu) {},
+	                menu: zoomMenu 
+	            }]
+	        },
         {
 			
-        	hidden: (! is_editor) || is_embed,
+        	hidden: (is_embed),
             xtype: 'buttongroup',
-            columns: 2,
+            columns: config_columns,
             height: 95,
             title: 'Configure',
             id: "configgroup",
@@ -1003,6 +1028,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 scope: this
             },
             {
+				hidden: (! is_editor) || is_embed,
                 id: 'download',
                 text: 'Download',
                 iconCls: 'download-icon',
@@ -1027,6 +1053,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             },
             {
                 id: 'units_but',
+				hidden: (! is_editor) || is_embed,
                 text: 'Custom Units',
                 iconCls: 'units-icon',
                 tooltip: 'Define custom Insight units',
@@ -1222,6 +1249,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             {
                 id: 'embed_but',
                 text: 'Embed',
+				hidden: (! is_editor) || is_embed,
                 iconCls: 'embed-icon',
                 tooltip: 'Embed this Insight in another web page',
                 handler: function()
@@ -1262,25 +1290,6 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             id: 'zoomlargebut',
             handler: function(menu) {},
             menu: zoomMenu 
-        },{
-        	hidden: (is_editor || is_embed),
-            id: 'control-no-edit',
-            xtype: 'buttongroup',
-            columns: 1,
-            height: 95,
-            title: 'Explore',
-            items: [{
-                iconAlign: 'top',
-                scale: 'large',
-                cls: 'button',
-                rowspan: 3,
-                text: 'Zoom',
-                iconCls: 'zoom-large-icon',
-                tooltip: 'Zoom Diagram',
-                id: 'zoomlargebutgrouped',
-                handler: function(menu) {},
-                menu: zoomMenu 
-            }]
         },
         '-', {
         	hidden: ((! is_editor) || is_embed),

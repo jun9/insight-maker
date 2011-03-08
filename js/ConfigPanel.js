@@ -65,7 +65,7 @@ function createGrid(properties) {
 
         grid = new Ext.ux.wam.PropertyGrid({
             autoHeight: true,
-            width: 300,
+            width: panel_width,
             store: gstore,
             border: false,
             forceFit: true,
@@ -188,11 +188,13 @@ function handleGridEnables(gstore) {
     }
 }
 
+
+var panel_width;
+
 ConfigPanel = function()
  {
-	var panel_width;
 	if(is_embed){
-		panel_width=195;
+		panel_width=210;
 	}else{
 		panel_width=300;
 	}

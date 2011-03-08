@@ -1402,6 +1402,7 @@ function main()
     if(! is_editor){
     	graph.getView().setScale(0.25);
     	graph.fit();
+		graph.fit();
     }
 };
 
