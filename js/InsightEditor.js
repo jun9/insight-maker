@@ -186,10 +186,11 @@ function main()
     var link = doc.createElement('Link');
     link.setAttribute('name', 'Link');
     link.setAttribute('Note', '');
+	link.setAttribute('BiDirectional', false);
 
     var setting = doc.createElement('Setting');
     setting.setAttribute('Note', '');
-    setting.setAttribute('Version', '6');
+    setting.setAttribute('Version', '7');
     setting.setAttribute('TimeLength', '100');
     setting.setAttribute('TimeStart', '0');
     setting.setAttribute('TimeStep', '1');
@@ -467,6 +468,14 @@ function main()
 				pictures[i].setAttribute("FlipVertical", false);
         	}
         	getSetting().setAttribute("Version",6);
+        }
+
+		if(getSetting().getAttribute("Version")<7){
+        	var links = primitives("Link");
+        	for(var i=0; i < links.length; i++){
+        		links[i].setAttribute("BiDirectional", false);
+        	}
+        	getSetting().setAttribute("Version",7);
         }
 
         setConnectability();
@@ -1106,6 +1115,12 @@ function main()
             });
         } else if (cell.value.nodeName == "Link") {
             iHs = "Links connect the different parts of your model. If one primitive in your model refers to another in its equation, the two primitives must either be directly connected or connected through a link. Once connected with links, square-brackets may be used to reference values of other primitives. So if you have a stock call <i>Bank Balance</i>, you could refer to it in another primitive's equation with <i>[Bank Balance]</i>.";
+			 properties.push({
+	                'name': 'BiDirectional',
+	                'text': 'Bi-Directional',
+	                'value': isTrue(cell.getAttribute("BiDirectional")),
+	                'group': ' Configuration'
+	            });
 			//the following hack allows the link description value to appear. It deals with the problem of overflow being hidden for the grid, the panel, and a couple of other things around the grid 
 			properties.push({
 	                'name': 'zfiller',
@@ -1121,13 +1136,6 @@ function main()
 		                'group': '  General',
 						'disabled': true
 		            });
-		            properties.push({
-		                   'name': 'zzzfiller',
-		                   'text': '.',
-		                   'value': "",
-		                   'group': '  General',
-		            		'disabled': true
-		               });
         } else if (cell.value.nodeName == "Folder") {
             iHs = "Folders group together similar items in a logical way. You can collapse and expand folders to hide or reveal model complexity.";
         	//the following hack allows the folder description value to appear. It deals with the problem of overflow being hidden for the grid, the panel, and a couple of other things around the grid 

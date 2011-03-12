@@ -100,13 +100,19 @@ function createGrid(properties) {
                             }
 
                             if (selectedPrimitive.value.nodeName == "Flow") {
-
                                 if (isTrue(selectedPrimitive.getAttribute("OnlyPositive"))) {
                                     graph.setCellStyles(mxConstants.STYLE_STARTARROW, "");
                                 } else {
                                     graph.setCellStyles(mxConstants.STYLE_STARTARROW, mxConstants.ARROW_OPEN);
                                 }
                             }
+							 if (selectedPrimitive.value.nodeName == "Link") {
+	                                if (! isTrue(selectedPrimitive.getAttribute("BiDirectional"))) {
+	                                    graph.setCellStyles(mxConstants.STYLE_STARTARROW, "");
+	                                } else {
+	                                    graph.setCellStyles(mxConstants.STYLE_STARTARROW, mxConstants.ARROW_CLASSIC);
+	                                }
+	                            }
                             if (selectedPrimitive.value.nodeName == "Picture") {
                                 setPicture(selectedPrimitive);
                             }
