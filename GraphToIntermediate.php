@@ -57,7 +57,7 @@
 		}
 		
 	function connectionValue($cell){
-		if(is_null($cell)){
+		if(is_null($cell) || $cell->value->nodeName=="Folder"){
 			return "";
 		}else{
 			return $cell->id;

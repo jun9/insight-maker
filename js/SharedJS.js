@@ -48,7 +48,7 @@ function replace_html(el, html) {
 function setTopLinks() {
     var links = "";
     if (drupal_node_ID == -1) {
-        links = '<div style="float:right;padding:0.2em;"><nobr><a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</div>';
+        links = '<div style="float:right;padding:0.2em;"><nobr><a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</a></nobr></div>';
     } else {
         if (is_editor) {
 			links = '<div style="float:left;padding:0.2em;">';
@@ -77,3 +77,4 @@ function setTopLinks() {
     }
     replace_html(document.getElementById("toplinks-holder"), links);
 }
+
