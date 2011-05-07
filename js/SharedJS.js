@@ -44,11 +44,21 @@ function replace_html(el, html) {
     }
 };
 
+function toggle_toolbar(){
+	var toolbar = ribbonPanel.getTopToolbar();
+	if (! toolbar.isVisible()) {
+	                            toolbar.show();
+	                        } else {
+	                            toolbar.hide();
+	                        }
+	ribbonPanel.doLayout();
+	
+}
 
 function setTopLinks() {
     var links = "";
     if (drupal_node_ID == -1) {
-        links = '<div style="float:right;padding:0.2em;"><nobr><a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</a></nobr></div>';
+        links = '<div style="float:right;padding:0.2em;"><nobr><a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</a> | <a href="javascript:toggle_toolbar()">&uarr;</a></nobr></div>';
     } else {
         if (is_editor) {
 			links = '<div style="float:left;padding:0.2em;">';
@@ -73,7 +83,7 @@ function setTopLinks() {
         	links = links + '<a target="_blank" href="http://InsightMaker.com/insight/">Make a New Insight</a> | ';
         	links = links + '<a target="_blank" href="http://InsightMaker.com/node/' + drupal_node_ID + '/clone">Duplicate Insight</a> | ';
         }
-        links = links + '<a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</a></nobr></div>';
+        links = links + '<a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</a> | <a href="javascript:toggle_toolbar()">&uarr;</a></nobr></div>';
     }
     replace_html(document.getElementById("toplinks-holder"), links);
 }
