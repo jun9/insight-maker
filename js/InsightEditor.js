@@ -1050,6 +1050,10 @@ function main()
 						iHs=iHs+"<tr><td align=center colspan=2>"+slids[counter].getAttribute("name")+"</td></tr><tr><td><div id='slider"+slids[counter].id+"'><\/div></td><td><input type=text id='sliderVal"+slids[counter].id+"' size=5><\/td><\/tr>";
                 	}
                		iHs=iHs+"<\/table>";
+				}else{
+					if(is_embed){
+						configPanel.collapse(Ext.Component.DIRECTION_RIGHT,false)
+					}
                	}
                	
             }
@@ -1390,7 +1394,6 @@ function main()
 			}
 		}
     }
-
 
     if (drupal_node_ID == -1) {
         setSaveEnabled(true);

@@ -293,11 +293,13 @@ function setSaveEnabled(e) {
 }
 
 function updateWindowTitle() {
-    if (graph_title == "") {
-        document.title = "Untitled Insight | Insight Maker";
-    } else {
-        document.title = graph_title + " | Insight Maker";
-    }
+	if(! is_embed){
+    	if (graph_title == "") {
+        	document.title = "Untitled Insight | Insight Maker";
+    	} else {
+        	document.title = graph_title + " | Insight Maker";
+    	}
+	}
 }
 
 function hasDisplay() {
