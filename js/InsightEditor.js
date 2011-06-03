@@ -596,7 +596,7 @@ function main()
     {
         html: '',
 		hideDelay: 100,
-		dismissDelay: 7000
+		dismissDelay: 10000
     });
 
     // Disables the built-in event handling
