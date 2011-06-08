@@ -652,7 +652,13 @@ function main()
 
 	
     graph.container.focus();
+
+	if(! is_topBar){
+		toggle_toolbar();
+	}
+	
     var keyHandler = new mxKeyHandler(graph);
+
 
 
     keyHandler.bindKey(13,
@@ -1410,7 +1416,7 @@ function main()
     handelCursors();
     setTopLinks();
     
-    if(! is_editor){
+    if((! is_editor) && (is_zoom==1)){
     	graph.getView().setScale(0.25);
     	graph.fit();
 		graph.fit();

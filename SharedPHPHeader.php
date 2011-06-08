@@ -41,6 +41,16 @@ drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL); // DRUPAL_BOOTSTRAP_CONFIGURATION
 	if ($node==false && $nid!=-1) {
 		$is_deleted = true;
 	}
+	
+	$is_topBar = 1;
+	if(isset($_GET['topBar'])){
+		$is_topBar = $_GET["topBar"];
+	}
+	$is_zoom = 1;
+	if(isset($_GET["zoom"])){
+		$is_zoom = $_GET["zoom"];
+	}
+	
 	$is_editor = false;
 	$is_embed = $_GET["embed"];
 	if ((! $is_embed==1) && ($nid==-1 || node_access("update", $node))) {

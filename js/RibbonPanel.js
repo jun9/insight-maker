@@ -1266,7 +1266,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                    	
                    	Ext.MessageBox.show({
                    	    title: 'Embed',
-                   	    msg: 'To embed this Insight in another webpage (such as a blog or a private site), copy and paste the following code into the source HTML code of your webpage:<br><br><center><textarea rows=3 cols=70>&lt;IFRAME SRC="http://InsightMaker.com/insight/'+drupal_node_ID+'/embed" TITLE="Embedded Insight" width=600 height=420&gt;&lt;/IFRAME&gt;</textarea></center>',
+                   	    msg: 'To embed this Insight in another webpage (such as a blog or a private site), copy and paste the following code into the source HTML code of your webpage:<br><br><center><textarea rows=3 cols=70>&lt;IFRAME SRC="http://InsightMaker.com/insight/'+drupal_node_ID+'/embed?topBar=1&zoom=1" TITLE="Embedded Insight" width=600 height=420&gt;&lt;/IFRAME&gt;</textarea></center>',
                    	    buttons: Ext.MessageBox.OK,
                    	    animEl: 'mb9',
                    	    icon: Ext.MessageBox.INFO

@@ -63,6 +63,16 @@
 		}else{
 			echo "var is_embed = false;\n";
 		}
+		if($is_topBar){
+			echo "var is_topBar = true;\n";
+		}else{
+			echo "var is_topBar = false;\n";
+		}
+		if($is_zoom){
+			echo "var is_zoom = true;\n";
+		}else{
+			echo "var is_zoom = false;\n";
+		}
 		if($is_deleted){
 			echo "var is_deleted = true;\n";
 		}else{
