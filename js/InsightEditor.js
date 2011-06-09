@@ -656,6 +656,9 @@ function main()
 	if(! is_topBar){
 		toggle_toolbar();
 	}
+	if(! is_sideBar){
+		configPanel.collapse(Ext.Component.DIRECTION_RIGHT,false);
+	}
 	
     var keyHandler = new mxKeyHandler(graph);
 
@@ -1056,11 +1059,7 @@ function main()
 						iHs=iHs+"<tr><td align=center colspan=2>"+slids[counter].getAttribute("name")+"</td></tr><tr><td><div id='slider"+slids[counter].id+"'><\/div></td><td><input type=text id='sliderVal"+slids[counter].id+"' size=5><\/td><\/tr>";
                 	}
                		iHs=iHs+"<\/table>";
-				}else{
-					if(is_embed){
-						configPanel.collapse(Ext.Component.DIRECTION_RIGHT,false)
-					}
-               	}
+				}
                	
             }
 

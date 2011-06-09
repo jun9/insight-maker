@@ -68,6 +68,11 @@
 		}else{
 			echo "var is_topBar = false;\n";
 		}
+		if($is_sideBar){
+			echo "var is_sideBar = true;\n";
+		}else{
+			echo "var is_sideBar = false;\n";
+		}
 		if($is_zoom){
 			echo "var is_zoom = true;\n";
 		}else{

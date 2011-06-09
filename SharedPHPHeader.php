@@ -46,6 +46,10 @@ drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL); // DRUPAL_BOOTSTRAP_CONFIGURATION
 	if(isset($_GET['topBar'])){
 		$is_topBar = $_GET["topBar"];
 	}
+	$is_sideBar = 1;
+	if(isset($_GET['sideBar'])){
+		$is_sideBar = $_GET["sideBar"];
+	}
 	$is_zoom = 1;
 	if(isset($_GET["zoom"])){
 		$is_zoom = $_GET["zoom"];
