@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010 Give Team. All rights reserved.
+Copyright 2010-2011 Give Team. All rights reserved.
 
 Give Team is a non-profit organization dedicated to
 using the internet to encourage giving and greater
@@ -13,6 +13,11 @@ Insight Maker and Give Team are trademarks.
 
 */
 
+window.onerror = function (err, file, line) {
+	alert("Javascript Error\n\n"+err+"\n\n("+file+" "+line+")\n\nIf this error persists, please contact us for support.");
+	return true;
+}
+
 mxUtils.alert = function(message)
  {
     Ext.example.msg(message, '', '');
@@ -22,6 +27,7 @@ mxUtils.alert = function(message)
 GraphEditor = {};
 var mainPanel;
 var ribbonPanel;
+var configPanel
 var sizeChanging;
 var graph;
 var ghost;
@@ -38,7 +44,7 @@ function main()
 
 
     graph = new mxGraph();
-    
+
     var history = new mxUndoManager();
     var node = mxUtils.load('/builder/resources/default-style.xml').getDocumentElement();
     var dec = new mxCodec(node.ownerDocument);
@@ -51,37 +57,38 @@ function main()
     graph.enterStopsCellEditing = true;
     graph.allowLoops = false;
 
-    
+
     mxEdgeHandler.prototype.addEnabled = true;
     mxEdgeHandler.prototype.removeEnabled = true;
 
     graph.isHtmlLabel = function(cell)
     {
-		var isHTML = cell != null && cell.value != null && (cell.value.nodeName != "Folder" && cell.value.nodeName != "Flow" && cell.value.nodeName != "Display" && cell.value.nodeName != "Picture");
-		
+        var isHTML = cell != null && cell.value != null && (cell.value.nodeName != "Folder" && cell.value.nodeName != "Flow" && cell.value.nodeName != "Display" && cell.value.nodeName != "Picture");
+
         return isHTML;
     };
     graph.isWrapping = graph.isHtmlLabel;
-    
-    graph.isCellLocked = function(cell){
-    	return (! is_editor);
+
+    graph.isCellLocked = function(cell) {
+        return (!is_editor);
     }
-    graph.isCellSelectable = function(cell){
-    	return (cell.value.nodeName!="Setting");//(is_editor && (cell.value.nodeName!="Setting"));
+    graph.isCellSelectable = function(cell) {
+        return (cell.value.nodeName != "Setting");
+        //(is_editor && (cell.value.nodeName!="Setting"));
     }
-    graph.isCellEditable = function(cell){
-    	return (cell.value.nodeName!="Setting" && cell.value.nodeName!="Ghost");
+    graph.isCellEditable = function(cell) {
+        return (cell.value.nodeName != "Setting" && cell.value.nodeName != "Ghost");
     }
 
     graph.convertValueToString = function(cell)
     {
         if (mxUtils.isNode(cell.value))
         {
-			if(cell.value.nodeName=="Link" && orig(cell).getAttribute("name")=="Link"){
-          		return "";
-			}else{
-				return orig(cell).getAttribute("name");
-			}
+            if (cell.value.nodeName == "Link" && orig(cell).getAttribute("name") == "Link") {
+                return "";
+            } else {
+                return orig(cell).getAttribute("name");
+            }
         }
         return '';
     };
@@ -89,11 +96,10 @@ function main()
     var cellLabelChanged = graph.cellLabelChanged;
     graph.labelChanged = function(cell, newValue, evt)
     {
-        if ((!isPrimitive(cell)) || cell.value.nodeName=="Link" || cell.value.nodeName=="Folder" || validPrimitiveName(newValue)) {
+        if ((!isPrimitive(cell)) || cell.value.nodeName == "Link" || cell.value.nodeName == "Folder" || validPrimitiveName(newValue)) {
             var edit = new mxCellAttributeChange(cell, "name", newValue);
             graph.getModel().execute(edit);
-            
-            
+			selectionChanged(false);
             return cell;
         } else {
             mxUtils.alert("Primitive names must only contain numbers, letters and spaces; and they must start with a letter.");
@@ -117,7 +123,7 @@ function main()
     var folder = doc.createElement('Folder');
     folder.setAttribute('name', 'New Folder');
     folder.setAttribute('Note', '');
-    
+
     ghost = doc.createElement('Ghost');
     ghost.setAttribute('Source', '');
 
@@ -125,8 +131,8 @@ function main()
     picture.setAttribute('name', '');
     picture.setAttribute('Note', '');
     picture.setAttribute('Image', 'Positive Feedback Clockwise');
-	picture.setAttribute('FlipHorizontal', false);
-	picture.setAttribute('FlipVertical', false);
+    picture.setAttribute('FlipHorizontal', false);
+    picture.setAttribute('FlipVertical', false);
 
     var doc = mxUtils.createXmlDocument();
     var display = doc.createElement('Display');
@@ -139,16 +145,17 @@ function main()
     display.setAttribute('Primitives', '');
     display.setAttribute('AutoAddPrimitives', false);
     display.setAttribute('ScatterplotOrder', 'X Primitive, Y Primitive');
-    
-    function setValuedProperties(cell){
-	    cell.setAttribute('Units', "Unitless")
-	    cell.setAttribute('MaxConstraintUsed', false)
-	    cell.setAttribute('MinConstraintUsed', false)
-	    cell.setAttribute('MaxConstraint', '100');
-	    cell.setAttribute('MinConstraint', '0');
-	    cell.setAttribute('ShowSlider', false);
-	    cell.setAttribute('SliderMax', 100);
-	    cell.setAttribute('SliderMin', 0);
+	display.setAttribute('Image', 'Display');
+
+    function setValuedProperties(cell) {
+        cell.setAttribute('Units', "Unitless")
+        cell.setAttribute('MaxConstraintUsed', false)
+        cell.setAttribute('MinConstraintUsed', false)
+        cell.setAttribute('MaxConstraint', '100');
+        cell.setAttribute('MinConstraint', '0');
+        cell.setAttribute('ShowSlider', false);
+        cell.setAttribute('SliderMax', 100);
+        cell.setAttribute('SliderMin', 0);
     }
 
     var stock = doc.createElement('Stock');
@@ -158,15 +165,17 @@ function main()
     stock.setAttribute('StockMode', 'Store');
     stock.setAttribute('Delay', '10');
     stock.setAttribute('Volume', '100');
-	stock.setAttribute('NonNegative', false);
+    stock.setAttribute('NonNegative', false);
     setValuedProperties(stock);
+	stock.setAttribute('Image', 'None');
 
-    var parameter = doc.createElement('Parameter');
-    parameter.setAttribute('name', 'New Parameter');
-    parameter.setAttribute('Note', '');
-    parameter.setAttribute('Equation', '0');
-    setValuedProperties(parameter);
-
+    var variable = doc.createElement('Parameter');
+    variable.setAttribute('name', 'New Variable');
+    variable.setAttribute('Note', '');
+    variable.setAttribute('Equation', '0');
+    setValuedProperties(variable);
+	variable.setAttribute('Image', 'None');
+	
     var converter = doc.createElement('Converter');
     converter.setAttribute('name', 'New Converter');
     converter.setAttribute('Note', '');
@@ -174,6 +183,7 @@ function main()
     converter.setAttribute('Data', '0,0;1,1;2,4;3,9');
     converter.setAttribute('Interpolation', 'Linear');
     setValuedProperties(converter);
+	converter.setAttribute('Image', 'None');
 
     var flow = doc.createElement('Flow');
     flow.setAttribute('name', 'New Flow');
@@ -186,40 +196,50 @@ function main()
     var link = doc.createElement('Link');
     link.setAttribute('name', 'Link');
     link.setAttribute('Note', '');
-	link.setAttribute('BiDirectional', false);
+    link.setAttribute('BiDirectional', false);
 
     var setting = doc.createElement('Setting');
     setting.setAttribute('Note', '');
-    setting.setAttribute('Version', '7');
+    setting.setAttribute('Version', '8');
     setting.setAttribute('TimeLength', '100');
     setting.setAttribute('TimeStart', '0');
     setting.setAttribute('TimeStep', '1');
     setting.setAttribute('TimeUnits', 'Years');
     setting.setAttribute('Units', "");
-    setting.setAttribute("HiddenUIGroups", ["Validation", "User Interface"])
-	setting.setAttribute("SolutionAlgorithm", "RK1")
+    setting.setAttribute("HiddenUIGroups", ["Validation", "User Interface"]);
+    setting.setAttribute("SolutionAlgorithm", "RK1");
+    setting.setAttribute("BackgroundColor", "white");
 
+    mainPanel = Ext.create('Ext.Panel', {
+        region: 'center',
+        border: false
+    });
 
-    mainPanel = new MainPanel(graph);
-    var configPanel = new ConfigPanel(graph, history);
-    ribbonPanel = new RibbonPanel(graph, history, mainPanel, configPanel);
+    mainPanel.on('resize',
+    function()
+    {
+        graph.sizeDidChange();
+    });
+
+    configPanel = Ext.create('Ext.Panel', ConfigPanel(graph, history));
+    ribbonPanel = Ext.create('Ext.Panel', RibbonPanel(graph, history, mainPanel, configPanel));
 
     var viewport = new Ext.Viewport(
     {
         layout: 'border',
+        padding: '19 5 5 5',
         items: [ribbonPanel]
     });
 
 
-	var connectionBrokenHandler = function(sender,evt){
-		var item=evt.getProperty("edge");
-		if (item.value.nodeName=="Link"){
-			linkBroken(item);
-		}
-	};
-	graph.addListener(mxEvent.CELL_CONNECTED, connectionBrokenHandler);
-	
-	
+    var connectionChangeHandler = function(sender, evt) {
+        var item = evt.getProperty("edge");
+        if (item.value.nodeName == "Link") {
+            linkBroken(item);
+        }
+    };
+    graph.addListener(mxEvent.CELL_CONNECTED, connectionChangeHandler);
+
     mainPanel.body.dom.style.overflow = 'auto';
     if (mxClient.IS_MAC && mxClient.IS_SF)
     {
@@ -234,17 +254,18 @@ function main()
     graph.model.addListener(mxEvent.CHANGED,
     function(graph)
     {
-            setSaveEnabled(true);
+        setSaveEnabled(true);
     });
-    
-    graph.model.addListener(mxEvent.CHANGE, function(sender, evt)
+
+    graph.model.addListener(mxEvent.CHANGE,
+    function(sender, evt)
     {
-      var changes = evt.getProperty('changes');
-    
-      if ((changes.length < 10) && changes.animate)
-      {
-        mxEffects.animateChanges(graph, changes);
-      }
+        var changes = evt.getProperty('changes');
+
+        if ((changes.length < 10) && changes.animate)
+        {
+            mxEffects.animateChanges(graph, changes);
+        }
     });
 
     graph.addListener(mxEvent.CELLS_REMOVED,
@@ -253,13 +274,13 @@ function main()
         var cells = evt.getProperty('cells');
         for (var i = 0; i < cells.length; i++) {
             deletePrimitive(cells[i]);
-            if(cells[i].value.nodeName="Folder"){
-            	var children = childrenCells(cells[i]);
-            	if(children != null){
-            		for (var j = 0; j < children.length; j++) {
-            			deletePrimitive(children[j]);
-            		}
-            	}
+            if (cells[i].value.nodeName = "Folder") {
+                var children = childrenCells(cells[i]);
+                if (children != null) {
+                    for (var j = 0; j < children.length; j++) {
+                        deletePrimitive(children[j]);
+                    }
+                }
             }
         }
         selectionChanged(true);
@@ -272,40 +293,53 @@ function main()
         cell = evt.getProperty('cell');
         var realEvt = evt.getProperty('event');
         if (!evt.isConsumed()) {
-            var panel = ribbonPanel.getTopToolbar().items.get('valued');
-            if (cell == null && nodeInsertSelected()) {
+            var panel = ribbonPanelItems().getComponent('valued');
+
+            if ((cell == null || cell.value.nodeName=="Folder") && nodeInsertSelected()) {
                 var pt = graph.getPointForEvent(realEvt);
-                var parent = graph.getDefaultParent();
+                var parent;
+				var x0,y0;
+ 				if(cell != null && cell.value.nodeName=="Folder"){
+					parent=cell;
+					x0=cell.geometry.getPoint().x;
+					
+					y0=cell.geometry.getPoint().y;
+			}else{
+				parent  = graph.getDefaultParent();
+				x0=0;
+				y0=0;
+			}
 
                 var vertex;
                 graph.getModel().beginUpdate();
                 try
                 {
-                    if (panel.get('stock').pressed) {
-                        vertex = graph.insertVertex(parent, null, stock.cloneNode(true), pt.x - 50, pt.y - 25, 100, 40, 'stock');
-                    } else if (panel.get('parameter').pressed) {
-                        vertex = graph.insertVertex(parent, null, parameter.cloneNode(true), pt.x - 50, pt.y - 25, 120, 50, "parameter");
-                    } else if (panel.get('text').pressed) {
-                        vertex = graph.insertVertex(parent, null, textAreaThing.cloneNode(true), pt.x - 100, pt.y - 25, 200, 50, "textArea");
+                    if (panel.getComponent('stock').pressed) {
+                        vertex = graph.insertVertex(parent, null, stock.cloneNode(true), pt.x - 50-x0, pt.y - 25-y0, 100, 40, 'stock');
+                    } else if (panel.getComponent('variable').pressed) {
+                        vertex = graph.insertVertex(parent, null, variable.cloneNode(true), pt.x - 50-x0, pt.y - 25-y0, 120, 50, "parameter");
+                    } else if (panel.getComponent('text').pressed) {
+                        vertex = graph.insertVertex(parent, null, textAreaThing.cloneNode(true), pt.x - 100-x0, pt.y - 25-y0, 200, 50, "textArea");
                         vertex.setConnectable(false);
-                    } else if (panel.get('display').pressed) {
-                        vertex = graph.insertVertex(parent, null, display.cloneNode(true), pt.x - 32, pt.y - 32, 64, 64, "display");
+                    } else if (panel.getComponent('display').pressed) {
+                        vertex = graph.insertVertex(parent, null, display.cloneNode(true), pt.x - 32-x0, pt.y - 32-y0, 64, 64, "display");
                         vertex.setConnectable(false);
-                    } else if (panel.get('converter').pressed) {
-                        vertex = graph.insertVertex(parent, null, converter.cloneNode(true), pt.x - 50, pt.y - 25, 120, 50, "converter");
-                    } else if (panel.get('picture').pressed) {
-                        vertex = graph.insertVertex(parent, null, picture.cloneNode(true), pt.x - 24, pt.y - 24, 64, 64, "picture");
+                    } else if (panel.getComponent('converter').pressed) {
+                        vertex = graph.insertVertex(parent, null, converter.cloneNode(true), pt.x - 50-x0, pt.y - 25-y0, 120, 50, "converter");
+                    } else if (panel.getComponent('picture').pressed) {
+                        vertex = graph.insertVertex(parent, null, picture.cloneNode(true), pt.x - 24-x0, pt.y - 24-y0, 64, 64, "picture");
                         vertex.setConnectable(true);
                         setPicture(vertex);
                     }
-                    panel.get('stock').toggle(false);
-                    panel.get('parameter').toggle(false);
-                    panel.get('text').toggle(false);
-                    panel.get('display').toggle(false);
-                    panel.get('converter').toggle(false);
-                    panel.get('picture').toggle(false);
-                    
-                   
+                    /*
+                    panel.getComponent('stock').toggle(false);
+                    panel.getComponent('variable').toggle(false);
+                    panel.getComponent('text').toggle(false);
+                    panel.getComponent('display').toggle(false);
+                    panel.getComponent('converter').toggle(false);
+                    panel.getComponent('picture').toggle(false);
+                    */
+
 
                     if (isValued(vertex)) {
                         var displays = primitives("Display");
@@ -369,15 +403,15 @@ function main()
 
     graph.getEdgeValidationError = function(edge, source, target)
     {
-		if(mxUtils.isNode(this.model.getValue(edge), "link")){
-			if (source != null){
-				source.setConnectable(true);
-			}
-			if (target != null){
-				target.setConnectable(true);
-			}
-		}
-        if (mxUtils.isNode(this.model.getValue(edge), "flow") || (this.model.getValue(edge) == null && ribbonPanel.getTopToolbar().items.get('connect').get('flow').pressed)) {
+        if (mxUtils.isNode(this.model.getValue(edge), "link")) {
+            if (source != null) {
+                source.setConnectable(true);
+            }
+            if (target != null) {
+                target.setConnectable(true);
+            }
+        }
+        if (mxUtils.isNode(this.model.getValue(edge), "flow") || (this.model.getValue(edge) == null && ribbonPanelItems().getComponent('connect').getComponent('flow').pressed)) {
             if (source !== null && source.isConnectable())
             {
 
@@ -394,7 +428,7 @@ function main()
                 }
             }
         }
-        if (mxUtils.isNode(this.model.getValue(edge), "link") || (this.model.getValue(edge) == null && ribbonPanel.getTopToolbar().items.get('connect').get('link').pressed)) {
+        if (mxUtils.isNode(this.model.getValue(edge), "link") || (this.model.getValue(edge) == null && ribbonPanelItems().getComponent('connect').getComponent('link').pressed)) {
             if (source !== null)
             {
                 if (mxUtils.isNode(this.model.getValue(source), "link"))
@@ -411,20 +445,20 @@ function main()
             }
         }
         var x = mxGraph.prototype.getEdgeValidationError.apply(this, arguments);
-		setConnectability();
-		return x;
+        setConnectability();
+        return x;
     };
-    
-    
-    if(true && is_editor && drupal_node_ID != -1 ){
-    	var sharer = new mxSession(graph.getModel(), "/builder/hub.php?init&id="+drupal_node_ID, "/builder/hub.php?id="+drupal_node_ID, "/builder/hub.php?id="+drupal_node_ID);
-    	sharer.start();
-    	sharer.createUndoableEdit = function(changes)
-    	{
-    		var edit = mxSession.prototype.createUndoableEdit(changes);
-    		edit.changes.animate=true;
-    		return edit;
-    	}
+
+
+    if (true && is_editor && drupal_node_ID != -1) {
+        var sharer = new mxSession(graph.getModel(), "/builder/hub.php?init&id=" + drupal_node_ID, "/builder/hub.php?id=" + drupal_node_ID, "/builder/hub.php?id=" + drupal_node_ID);
+        sharer.start();
+        sharer.createUndoableEdit = function(changes)
+        {
+            var edit = mxSession.prototype.createUndoableEdit(changes);
+            edit.changes.animate = true;
+            return edit;
+        }
     }
 
     if (graph_source_data != null && graph_source_data.length > 0)
@@ -432,64 +466,82 @@ function main()
         var doc = mxUtils.parseXml(graph_source_data);
         var dec = new mxCodec(doc);
         dec.decode(doc.documentElement, graph.getModel());
-        if(getSetting().getAttribute("Version")<3){
-        	var converters = primitives("Converter");
-        	for(var i=0; i < converters.length; i++){
-        		var inps = converters[i].getAttribute("Inputs").split(",");
-        		var outs = converters[i].getAttribute("Outputs").split(",");
-        		var s="";
-        		for(var j=0; j<inps.length; j++){
-        			if(j>0){
-        				s=s+";";
-        			}
-        			s=s+inps[j]+","+outs[j];
-        		}
-        		converters[i].setAttribute("Data", s);
-        	}
-        	getSetting().setAttribute("Version",3);
+        if (getSetting().getAttribute("Version") < 3) {
+            var converters = primitives("Converter");
+            for (var i = 0; i < converters.length; i++) {
+                var inps = converters[i].getAttribute("Inputs").split(",");
+                var outs = converters[i].getAttribute("Outputs").split(",");
+                var s = "";
+                for (var j = 0; j < inps.length; j++) {
+                    if (j > 0) {
+                        s = s + ";";
+                    }
+                    s = s + inps[j] + "," + outs[j];
+                }
+                converters[i].setAttribute("Data", s);
+            }
+            getSetting().setAttribute("Version", 3);
         }
-		if(getSetting().getAttribute("Version")<4){
-        	getSetting().setAttribute("SolutionAlgorithm","RK1");
-			getSetting().setAttribute("Version", 4)
-        }
-
-		if(getSetting().getAttribute("Version")<5){
-        	var stocks = primitives("Stock");
-        	for(var i=0; i < stocks.length; i++){
-        		stocks[i].setAttribute("NonNegative", false);
-        	}
-        	getSetting().setAttribute("Version",5);
+        if (getSetting().getAttribute("Version") < 4) {
+            getSetting().setAttribute("SolutionAlgorithm", "RK1");
+            getSetting().setAttribute("Version", 4)
         }
 
-		if(getSetting().getAttribute("Version")<6){
-        	var pictures = primitives("Picture");
-        	for(var i=0; i < pictures.length; i++){
-        		pictures[i].setAttribute("FlipHorizontal", false);
-				pictures[i].setAttribute("FlipVertical", false);
-        	}
-        	getSetting().setAttribute("Version",6);
+        if (getSetting().getAttribute("Version") < 5) {
+            var stocks = primitives("Stock");
+            for (var i = 0; i < stocks.length; i++) {
+                stocks[i].setAttribute("NonNegative", false);
+            }
+            getSetting().setAttribute("Version", 5);
         }
 
-		if(getSetting().getAttribute("Version")<7){
-        	var links = primitives("Link");
-        	for(var i=0; i < links.length; i++){
-        		links[i].setAttribute("BiDirectional", false);
-        	}
-        	getSetting().setAttribute("Version",7);
+        if (getSetting().getAttribute("Version") < 6) {
+            var pictures = primitives("Picture");
+            for (var i = 0; i < pictures.length; i++) {
+                pictures[i].setAttribute("FlipHorizontal", false);
+                pictures[i].setAttribute("FlipVertical", false);
+            }
+            getSetting().setAttribute("Version", 6);
+        }
+
+        if (getSetting().getAttribute("Version") < 7) {
+            var links = primitives("Link");
+            for (var i = 0; i < links.length; i++) {
+                links[i].setAttribute("BiDirectional", false);
+            }
+            getSetting().setAttribute("Version", 7);
+        }
+
+		if (getSetting().getAttribute("Version") < 8) {
+            var items = primitives("Stock").concat(primitives("Parameter"), primitives("Converter"));
+            for (var i = 0; i < items.length; i++) {
+                items[i].setAttribute("Image", "None");
+            }
+			items = primitives("Display");
+            for (var i = 0; i < items.length; i++) {
+                items[i].setAttribute("Image", "Display");
+            }
+            getSetting().setAttribute("Version", 8);
+        }
+
+		if (getSetting().getAttribute("Version") < 9) {
+            getSetting().setAttribute("BackgroundColor", "white");
+            getSetting().setAttribute("Version", 9);
         }
 
         setConnectability();
     }
-    
-    if(is_editor){
-    	var mgr = new mxAutoSaveManager(graph);
-    	mgr.autoSaveThreshold=0;
-    	mgr.save = function()
-    	{
-      	if (graph_title != "") {
-         	 sendGraphtoServer(graph);
-      	}
-    	};
+	loadBackgroundColor();
+
+    if (is_editor) {
+        var mgr = new mxAutoSaveManager(graph);
+        mgr.autoSaveThreshold = 0;
+        mgr.save = function()
+        {
+            if (graph_title != "") {
+                sendGraphtoServer(graph);
+            }
+        };
     }
 
     var listener = function(sender, evt)
@@ -501,31 +553,31 @@ function main()
     graph.getView().addListener(mxEvent.UNDO, listener);
 
 
-    var toolbarItems = ribbonPanel.getTopToolbar().items;
+    var toolbarItems = ribbonPanelItems();
     var selectionListener = function()
     {
         var selected = !graph.isSelectionEmpty();
 
-        toolbarItems.get('valued').get('folder').setDisabled(graph.getSelectionCount() <= 1);
-        toolbarItems.get('valued').get('ghostBut').setDisabled(graph.getSelectionCount() != 1 || (! isValued(graph.getSelectionCell())) || graph.getSelectionCell().value.nodeName=="Flow" || graph.getSelectionCell().value.nodeName=="Ghost");
-        toolbarItems.get('actions').get('paste').setDisabled(!selected);
-        toolbarItems.get('actions').get('cut').setDisabled(!selected);
-        toolbarItems.get('actions').get('copy').setDisabled(!selected);
-        toolbarItems.get('actions').get('delete').setDisabled(!selected);
-        toolbarItems.get('style').get('fillcolor').setDisabled(!selected);
-        toolbarItems.get('style').get('fontcolor').setDisabled(!selected);
-        toolbarItems.get('style').get('linecolor').setDisabled(!selected);
-        toolbarItems.get('style').get('bold').setDisabled(!selected);
-        toolbarItems.get('style').get('italic').setDisabled(!selected);
-        toolbarItems.get('style').get('underline').setDisabled(!selected);
- 		fontCombo.setDisabled(!selected);
- 		sizeCombo.setDisabled(!selected);
-        toolbarItems.get('style').get('align').setDisabled(!selected);
-        toolbarItems.get('style').get('movefront').setDisabled(!selected);
-        toolbarItems.get('style').get('moveback').setDisabled(!selected);
-        toolbarItems.get('connect').get('reverse').setDisabled(!(selected && (cellsContainNodename(graph.getSelectionCells(), "Link") || cellsContainNodename(graph.getSelectionCells(), "Flow"))));
+        toolbarItems.getComponent('valued').getComponent('folder').setDisabled(graph.getSelectionCount() <= 0);
+        toolbarItems.getComponent('valued').getComponent('ghostBut').setDisabled(graph.getSelectionCount() != 1 || (!isValued(graph.getSelectionCell())) || graph.getSelectionCell().value.nodeName == "Flow" || graph.getSelectionCell().value.nodeName == "Ghost");
+        toolbarItems.getComponent('actions').getComponent('paste').setDisabled(!selected);
+        toolbarItems.getComponent('actions').getComponent('cut').setDisabled(!selected);
+        toolbarItems.getComponent('actions').getComponent('copy').setDisabled(!selected);
+        toolbarItems.getComponent('actions').getComponent('delete').setDisabled(!selected);
+        toolbarItems.getComponent('style').getComponent('fillcolor').setDisabled(false);
+        toolbarItems.getComponent('style').getComponent('fontcolor').setDisabled(!selected);
+        toolbarItems.getComponent('style').getComponent('linecolor').setDisabled(!selected);
+        toolbarItems.getComponent('style').getComponent('bold').setDisabled(!selected);
+        toolbarItems.getComponent('style').getComponent('italic').setDisabled(!selected);
+        toolbarItems.getComponent('style').getComponent('underline').setDisabled(!selected);
+        fontCombo.setDisabled(!selected);
+        sizeCombo.setDisabled(!selected);
+        toolbarItems.getComponent('style').getComponent('align').setDisabled(!selected);
+        toolbarItems.getComponent('style').getComponent('movefront').setDisabled(!selected);
+        toolbarItems.getComponent('style').getComponent('moveback').setDisabled(!selected);
+        toolbarItems.getComponent('connect').getComponent('reverse').setDisabled(!(selected && (cellsContainNodename(graph.getSelectionCells(), "Link") || cellsContainNodename(graph.getSelectionCells(), "Flow"))));
 
-		setStyles();
+        setStyles();
     };
 
     graph.getSelectionModel().addListener(mxEvent.CHANGED, selectionListener);
@@ -533,8 +585,8 @@ function main()
     // Updates the states of the undo/redo buttons in the toolbar
     var historyListener = function()
     {
-        toolbarItems.get('actions').get('undo').setDisabled(!history.canUndo());
-        toolbarItems.get('actions').get('redo').setDisabled(!history.canRedo());
+        toolbarItems.getComponent('actions').getComponent('undo').setDisabled(!history.canUndo());
+        toolbarItems.getComponent('actions').getComponent('redo').setDisabled(!history.canRedo());
     };
 
     history.addListener(mxEvent.ADD, historyListener);
@@ -563,7 +615,7 @@ function main()
         var parent;
         var value;
         var conn;
-        if (ribbonPanel.getTopToolbar().items.get('connect').get('link').pressed) {
+        if (ribbonPanelItems().getComponent('connect').getComponent('link').pressed) {
             style = 'entity';
             parent = link.cloneNode(true);
             conn = false;
@@ -577,68 +629,59 @@ function main()
         cell.geometry.setTerminalPoint(new mxPoint(100, 0), false);
         cell.edge = true;
         cell.connectable = conn;
-        
+
         return cell;
     };
 
-	graph.getTooltipForCell = function(cell)
-	{
-		if(cell.value.getAttribute("Note").length > 0){
-			return cell.value.getAttribute("Note");
-		}else{
-	  		return "";
-		}
-	}
+    graph.getTooltipForCell = function(cell)
+    {
+        if (cell != null && cell.value.getAttribute("Note") != null && cell.value.getAttribute("Note").length > 0) {
+            return cell.value.getAttribute("Note");
+        } else {
+            return "";
+        }
+    }
 
     // Redirects tooltips to ExtJs tooltips. First a tooltip object
     // is created that will act as the tooltip for all cells.
     var tooltip = new Ext.ToolTip(
     {
         html: '',
-		hideDelay: 100,
-		dismissDelay: 10000
+        hideDelay: 0,
+        dismissDelay: 0,
+		showDelay: 0
     });
-
-    // Disables the built-in event handling
-    tooltip.disabled = true;
 
     // Installs the tooltip by overriding the hooks in mxGraph to
     // show and hide the tooltip.
     graph.tooltipHandler.show = function(tip, x, y)
     {
-        if (tip != null &&
-        tip.length > 0)
+        if (tip != null && tip.length > 0)
         {
-            // Changes the DOM of the tooltip in-place if
-            // it has already been rendered
-            if (tooltip.body != null)
-            {
-                // TODO: Use mxUtils.isNode(tip) and handle as markup,
-                // problem is dom contains some other markup so the
-                // innerHTML is not a good place to put the markup
-                // and this method can also not be applied in
-                // pre-rendered state (see below)
-                //tooltip.body.dom.innerHTML = tip.replace(/\n/g, '<br>');
-                tooltip.body.dom.firstChild.nodeValue = tip;
-            }
-
-            // Changes the html config value if the tooltip
-            // has not yet been rendered, in which case it
-            // has no DOM nodes associated
-            else
-            {
-                tooltip.html = tip;
-            }
-
+            tooltip.update(tip);
             tooltip.showAt([x, y + mxConstants.TOOLTIP_VERTICAL_OFFSET]);
-        }else{
-			tooltip.hide();
-		}
+        } else {
+            tooltip.hide();
+        }
     };
 
     graph.tooltipHandler.hide = function()
     {
         tooltip.hide();
+    };
+
+	graph.tooltipHandler.hideTooltip = function()
+    {
+        tooltip.hide();
+    };
+
+	// Enables guides
+	mxGraphHandler.prototype.guidesEnabled = true;
+
+    // Alt disables guides
+    mxGuide.prototype.isEnabledForEvent = function(evt)
+    {
+    	return !mxEvent.isAltDown(evt);
     };
 
     var undoHandler = function(sender, evt)
@@ -650,19 +693,17 @@ function main()
     history.addListener(mxEvent.UNDO, undoHandler);
     history.addListener(mxEvent.REDO, undoHandler);
 
-	
+
     graph.container.focus();
 
-	if(! is_topBar){
-		toggle_toolbar();
-	}
-	if(! is_sideBar){
-		configPanel.collapse(Ext.Component.DIRECTION_RIGHT,false);
-	}
-	
+    if (!is_topBar) {
+        toggle_toolbar();
+    }
+    if (!is_sideBar) {
+        configPanel.collapse(Ext.Component.DIRECTION_RIGHT, false);
+    }
+
     var keyHandler = new mxKeyHandler(graph);
-
-
 
     keyHandler.bindKey(13,
     function()
@@ -834,15 +875,48 @@ function main()
         return res;
     };
 
+	var labelRenderer = function(eq) {
+        var res = eq;
+
+        res = res.replace(/(%.)/g, "<font color='DeepSkyBlue'>$1</font>");
+
+        return res;
+    };
+
+	function pictureEditor(){
+		var picNames = ["None",
+        'Positive Feedback Clockwise', 'Positive Feedback Counterclockwise',
+        'Negative Feedback Clockwise', 'Negative Feedback Counterclockwise',
+        'Unknown Feedback Clockwise', 'Unknown Feedback Counterclockwise', 'Plus', 'Minus',
+        'Checkmark', 'Prohibited', 'Idea', 'Book', 'Clock', 'Computer', 'Dice', 'Gear', 'Hammer', 'Smiley', 'Heart', 'Question', 'Warning', 'Info', 'Key', 'Lock', 'Loudspeaker', 'Footprints', 'Mail', 'Network', 'Notes', 'Pushpin', 'Paperclip', 'People', 'Person', 'Wallet', 'Money', 'Flag', 'Trash', "Display"
+        ];
+
+		return new Ext.form.ComboBox({
+            triggerAction: "all",
+            store: new Ext.data.Store({
+                fields: [{name:'text', type:'string'}],
+                data: Ext.Array.map(picNames, function(x){return {text:x}})
+            }),
+            queryMode: 'local',
+			forceSelection:false,
+            selectOnFocus: true,
+			listConfig: {
+			        getInnerTpl: function() {
+			            return '<center><div class="x-combo-list-item" style=\"white-space:normal\";><img src="/builder/images/SD/{text}.png" width=48 height=48/></div></center>';
+			        }
+			    }
+        });
+	}
+
     var allPrimitives = [];
 
     selectionChanged(false);
 
     function selectionChanged(forceClear) {
         if (! (typeof grid == "undefined")) {
-            grid.stopEditing();
-            Ext.get('descriptionArea').setVisible(false);
-            grid.destroy();
+            grid.plugins[0].completeEdit();
+            //access the cell editing plugin, then terminate
+            configPanel.removeAll()
         }
 
         allPrimitives = neighborhood(cell).map(function(x) {
@@ -862,7 +936,7 @@ function main()
         }
 
         if (cell != null && graph.getSelectionCells().length == 1 && (!(cellType == "Text" || cellType == "Ghost"))) {
-            Ext.getCmp('configPanel').setTitle(cellType);
+            configPanel.setTitle(cellType == "Parameter" ? "Variable": cellType);
 
 
             properties = [
@@ -871,9 +945,9 @@ function main()
                 'text': 'Note',
                 'value': cell.getAttribute("Note"),
                 'group': '  General',
-                'editor': new Ext.grid.GridEditor(new Ext.form.TextArea({
+                'editor': new Ext.form.TextArea({
                     grow: true
-                }))
+                })
             },
             {
                 'name': 'name',
@@ -884,127 +958,46 @@ function main()
             ];
 
 
-
-            var tree = new Ext.tree.TreePanel({
-                animate: false,
-                border: false,
-                width: this.treeWidth || 220,
-                height: this.treeHeight || 300,
-                autoScroll: true,
-                useArrows: true,
-                selModel: new Ext.tree.ActivationModel(),
-                loader: new Ext.tree.TreeLoader({})
-            });
-
-            // set the root node
-            var root = new Ext.tree.TreeNode({
-                text: 'Units',
-                draggable: false,
-                id: 'Units',
-                leaf: false,
-                iconCls: 'icon-folder',
-                expanded: true,
-                isFolder: true
-            });
-
-
-            var unitsTxt = "Distance, Area and Volume\r Metric\r  Millimeters\r  Centimeters\r  Meters\r  Kilometers\r  -\r  Square Millimeters\r  Square Centimeters\r  Square Meters\r  Hectares\r  Square Kilometers\r  -\r  Cubic Millimeters\r  Cubic Centimeters\r  Liters\r  Cubic Meters\r English\r  Inches\r  Feet\r  Yards\r  Miles\r  -\r  Square Inches\r  Square Feet\r  Square Yards\r  Acres\r  Square Miles\r  -\r  Fluid Ounces\r  Quarts\r  Gallons\r  Acre Feet\rVelocity, Acceleration and Flow\r Metric\r  Meters per Second\r  Meters per Second Squared\r  Kilometers per Hour\r  Kilometers per Hour Squared\r  -\r  Liters per Second\r  Cubic Meters per Second\r  -\r  Kilograms per Second\r English\r  Feet per Second\r  Feet per Second Squared\r  Miles per Hour\r  Miles per Hour Squared\r  -\r  Gallons per Second\r  Gallons per Minute\r  -\r  Pounds per Second\rMass, Force and Pressure\r Metric\r  Milligrams\r  Grams\r  Kilograms\r  Tonnes\r  -\r  Newtons\r  -\r  Pascals\r  Kilopascals\r  Bars\r  Atmospheres\r English\r  Ounces\r  Pounds\r  Tons\r  -\r  Pounds Force\r  -\r  Pounds per Square Inch\rTemperature and Energy\r Metric\r  Degrees Celsius\r  Degrees Kelvin\r  -\r  Joules\r  Kilojoules\r  -\r  Watts\r  Kilowatts\r  Megawatts\r  Gigawatts\r  -\r  Amperes\r  -\r  Millivolts\r  Volts\r  Kilovolts\r  -\r  Coulombs\r  -\r  Farads\r English\r  Degrees Fahrenheit\r  -\r  Calories\r  Kilocalories\r  British Thermal Units\rTime\r Milliseconds\r Seconds\r Minutes\r Hours\r Days\r Weeks\r Months\r Quarters\r Years\rMoney\r Dollars\r Flow of Dollars\r  Dollars per Second\r  Dollars per Hour\r  Dollars per Day\r  Dollars per Week\r  Dollars per Month\r  Dollars per Quarter\r  Dollars per Year\r -\r Euros\r Flow of Euros\r  Euros per Second\r  Euros per Hour\r  Euros per Day\r  Euros per Week\r  Euros per Month\r  Euros per Quarter\r  Euros per Year\rBusiness and Commerce\r People\r Customers\r Employees\r Workers\r -\r Factories\r Buildings\r -\r Units\r Widgets\r Parts\rEcology and Nature\r Individuals\r Animals\r Plants\r Trees\r Biomass\rChemistry\r Atoms\r Molecules\r -\r Moles";
-
-
-
-            var roots = [root];
-            var lastNode = root;
-
-            lastNode = new Ext.tree.TreeNode({
-                text: "Unitless",
-                draggable: false,
-                id: "Unitless",
-                leaf: true,
-                expanded: true
-            });
-            roots[roots.length - 1].appendChild(lastNode);
-            lastNode = new Ext.tree.TreeNode({
-                text: "Custom Units",
-                draggable: false,
-                id: "Custom",
-                leaf: false,
-                expanded: true
-            });
-            roots[roots.length - 1].appendChild(lastNode);
-            var cU = customUnits();
-            for (var i = 0; i < cU.length; i++) {
-                lastNode.appendChild(new Ext.tree.TreeNode({
-                    text: cU[i][0],
-                    draggable: false,
-                    id: cU[i][0],
-                    leaf: true,
-                    expanded: true
-                }));
-            }
-
-            var indentation = 0;
-            var unitLines = unitsTxt.split(/[\n\r]/);
-            for (var i = 0; i < unitLines.length; i++) {
-                var res = unitLines[i].match(/^ *(.*?)$/);
-                if (res[1] != "-") {
-                    var currIndentation = unitLines[i].length - res[1].length;
-                    if (currIndentation > indentation) {
-                        roots.push(lastNode);
-                        lastNode.leaf = false;
-                    } else if (currIndentation < indentation) {
-                        for (var j = 0; j < indentation - currIndentation; j++) {
-                            roots.pop();
-                        }
-                    }
-
-                    indentation = currIndentation;
-
-                    lastNode = new Ext.tree.TreeNode({
-                        text: res[1],
-                        draggable: false,
-                        id: res[1],
-                        leaf: true,
-                        expanded: true
+			if(cell.getAttribute("Image",-99) != -99){
+				properties.push({
+	                'name': 'Image',
+	                'text': 'Displayed Image',
+	                'value': cell.getAttribute("Image"),
+	                'group': '  User Interface',
+	                'editor': pictureEditor()
+	            });
+			}
+			
+            if (isValued(cell)) {
+                if (cell.value.nodeName != "Converter") {
+                    properties.push({
+                        'name': 'ShowSlider',
+                        'text': 'Show Value Slider',
+                        'value': isTrue(cell.getAttribute("ShowSlider")),
+                        'group': 'User Interface'
                     });
 
-                    roots[roots.length - 1].appendChild(lastNode);
+                    properties.push({
+                        'name': 'SliderMax',
+                        'text': 'Slider Max',
+                        'value': parseFloat(cell.getAttribute("SliderMax")),
+                        'group': 'User Interface'
+                    });
+
+                    properties.push({
+                        'name': 'SliderMin',
+                        'text': 'Slider Min',
+                        'value': parseFloat(cell.getAttribute("SliderMin")),
+                        'group': 'User Interface'
+                    });
                 }
-            }
 
-            tree.setRootNode(root);
-
-            if (isValued(cell)) {
-            	if(cell.value.nodeName != "Converter"){
-	            	properties.push({
-	            	    'name': 'ShowSlider',
-	            	    'text': 'Show Value Slider',
-	            	    'value': isTrue(cell.getAttribute("ShowSlider")),
-	            	    'group': 'User Interface'
-	            	});
-	            	
-	            	properties.push({
-	            	    'name': 'SliderMax',
-	            	    'text': 'Slider Max',
-	            	    'value': parseFloat(cell.getAttribute("SliderMax")),
-	            	    'group': 'User Interface'
-	            	});
-	            	
-	            	properties.push({
-	            	    'name': 'SliderMin',
-	            	    'text': 'Slider Min',
-	            	    'value': parseFloat(cell.getAttribute("SliderMin")),
-	            	    'group': 'User Interface'
-	            	});
-            	}
-            	
                 properties.push({
                     'name': 'Units',
                     'text': 'Units',
                     'value': cell.getAttribute("Units"),
                     'group': 'Validation',
-                    'editor': new Ext.grid.GridEditor(new Ext.ux.TreeSelector({
-                        'tree': tree
-                    }))
+                    'editor': new Ext.form.customFields['units']({})
                 });
 
                 properties.push({
@@ -1039,44 +1032,42 @@ function main()
             }
 
         } else {
-            Ext.getCmp('configPanel').setTitle("");
+            configPanel.setTitle("");
         }
         selectedPrimitive = cell;
 
         var iHs;
-        var slidersShown=false;
+        var slidersShown = false;
         if (cell == null || cellType == "Text" || graph.getSelectionCells().length > 1) {
-        	//no primitive has been selected. Stick in empty text and sliders.
+            //no primitive has been selected. Stick in empty text and sliders.
             if (drupal_node_ID == -1) {
                 iHs = "<br><br><center><a href='/builder/resources/QuickStart.pdf' target='_blank'><img src='/builder/images/Help.jpg' /></a><br/><br/><br/>Or take a look at the <a href='http://InsightMaker.com/help' target='_blank'>Detailed Insight Maker Manual</a><br/><br/>There is also a <a href=' http://www.systemswiki.org/index.php?title=Thoughts_on_Interaction' target='_blank'>free, on-line education course</a> which teaches you how to think in a systems manner using Insight Maker.</center>";
             } else {
                 iHs = "<big>" + graph_description + "</big>";
-                var slids=sliderPrimitives();
-                if(slids.length>0){
-                	slidersShown=true;
-              		iHs =iHs+"<table width=100%>";
-               		for (var counter = 0; counter < slids.length; counter++) {
-						iHs=iHs+"<tr><td align=center colspan=2>"+slids[counter].getAttribute("name")+"</td></tr><tr><td><div id='slider"+slids[counter].id+"'><\/div></td><td><input type=text id='sliderVal"+slids[counter].id+"' size=5><\/td><\/tr>";
-                	}
-               		iHs=iHs+"<\/table>";
-				}
-               	
+                var slids = sliderPrimitives();
+                if (slids.length > 0) {
+                    slidersShown = true;
+                    iHs = iHs + "<table width=100%>";
+                    for (var counter = 0; counter < slids.length; counter++) {
+                        iHs = iHs + "<tr><td align=center colspan=2>" + slids[counter].getAttribute("name") + "</td></tr><tr><td><div id='slider" + slids[counter].id + "'><\/div></td><td><input type=text id='sliderVal" + slids[counter].id + "' size=5><\/td><\/tr>";
+                    }
+                    iHs = iHs + "<\/table>";
+                }
+
             }
 
         } else if (cellType == "Stock") {
-            iHs = 'A stock stores a material or a resource. Lakes and Bank Accounts are both examples of stocks. One stores water while the other stores money. <hr/><br/><h1>Initial Value Examples:</h1><center><table class="undefined"><tr><td align=center>Static Value</td></tr><tr><td align=center><i>10</i></td></tr><tr><td>Mathematical Equation</td></tr><tr><td align=center><i>cos(2.78)+7*2</i></td></tr><tr><td align=center>Referencing Other Primitives</td></tr><tr><td align=center><i>5+[My Parameter]</i></td></tr></table></center>';
+            iHs = 'A stock stores a material or a resource. Lakes and Bank Accounts are both examples of stocks. One stores water while the other stores money. <hr/><br/><h1>Initial Value Examples:</h1><center><table class="undefined"><tr><td align=center>Static Value</td></tr><tr><td align=center><i>10</i></td></tr><tr><td>Mathematical Equation</td></tr><tr><td align=center><i>cos(2.78)+7*2</i></td></tr><tr><td align=center>Referencing Other Primitives</td></tr><tr><td align=center><i>5+[My Variable]</i></td></tr></table></center>';
             properties.push({
                 'name': 'InitialValue',
                 'text': 'Initial Value =',
                 'value': cell.getAttribute("InitialValue"),
                 'group': ' Configuration',
-                'editor': new Ext.grid.GridEditor(new Ext.form.customFields['code']({}), {
-                    allowBlur: false
-                }),
+                'editor': new Ext.form.customFields['code']({}),
                 'renderer': equationRenderer
             });
 
-			properties.push({
+            properties.push({
                 'name': 'NonNegative',
                 'text': 'Non-Negative',
                 'value': isTrue(cell.getAttribute("NonNegative")),
@@ -1088,11 +1079,11 @@ function main()
                 'text': 'Stock Type',
                 'value': cell.getAttribute("StockMode"),
                 'group': 'Serialization',
-                'editor': new Ext.grid.GridEditor(new Ext.form.ComboBox({
+                'editor': new Ext.form.ComboBox({
                     triggerAction: "all",
                     store: ['Store', 'Tank', 'Conveyor'],
                     selectOnFocus: true
-                }))
+                })
             });
             properties.push({
                 'name': 'Delay',
@@ -1111,64 +1102,62 @@ function main()
 
 
         } else if (cellType == "Parameter") {
-            iHs = "A parameter is a dynamically updated variable in your model that synthesizes available data or provides a constant value for uses in your equations. The birth rate of a population or the maximum volume of water in a lake are both possible uses of parameters.<hr/><br/><h1>Value Examples:</h1><center><table class='undefined'><tr><td align=center>Static Value</td></tr><tr><td align=center><i>7.2</i></td></tr><tr><td>Using Current Simulation Time</td></tr><tr><td align=center><i>seconds^2+6</i></td></tr><tr><td align=center>Referencing Other Primitives</td></tr><tr><td align=center><i>[Lake Volume]*2</i></td></tr></table></center>";
+            iHs = "A variable is a dynamically updated variable in your model that synthesizes available data or provides a constant value for uses in your equations. The birth rate of a population or the maximum volume of water in a lake are both possible uses of variables.<hr/><br/><h1>Value Examples:</h1><center><table class='undefined'><tr><td align=center>Static Value</td></tr><tr><td align=center><i>7.2</i></td></tr><tr><td>Using Current Simulation Time</td></tr><tr><td align=center><i>seconds^2+6</i></td></tr><tr><td align=center>Referencing Other Primitives</td></tr><tr><td align=center><i>[Lake Volume]*2</i></td></tr></table></center>";
             properties.push({
                 'name': 'Equation',
                 'text': 'Value/Equation =',
                 'value': cell.getAttribute("Equation"),
                 'group': ' Configuration',
-                'editor': new Ext.grid.GridEditor(new Ext.form.customFields['code']({}), {
-                    allowBlur: false
-                }),
+                'editor': new Ext.form.customFields['code']({}),
                 'renderer': equationRenderer
             });
         } else if (cell.value.nodeName == "Link") {
             iHs = "Links connect the different parts of your model. If one primitive in your model refers to another in its equation, the two primitives must either be directly connected or connected through a link. Once connected with links, square-brackets may be used to reference values of other primitives. So if you have a stock call <i>Bank Balance</i>, you could refer to it in another primitive's equation with <i>[Bank Balance]</i>.";
-			 properties.push({
-	                'name': 'BiDirectional',
-	                'text': 'Bi-Directional',
-	                'value': isTrue(cell.getAttribute("BiDirectional")),
-	                'group': ' Configuration'
-	            });
-			//the following hack allows the link description value to appear. It deals with the problem of overflow being hidden for the grid, the panel, and a couple of other things around the grid 
-			properties.push({
-	                'name': 'zfiller',
-	                'text': '.',
-	                'value': "",
-	                'group': '  General',
-					'disabled': true
-	            });
-				 properties.push({
-		                'name': 'zzfiller',
-		                'text': '.',
-		                'value': "",
-		                'group': '  General',
-						'disabled': true
-		            });
+            properties.push({
+                'name': 'BiDirectional',
+                'text': 'Bi-Directional',
+                'value': isTrue(cell.getAttribute("BiDirectional")),
+                'group': ' Configuration'
+            });
+            //the following hack allows the link description value to appear. It deals with the problem of overflow being hidden for the grid, the panel, and a couple of other things around the grid
+            properties.push({
+                'name': 'zfiller',
+                'text': '.',
+                'value': "",
+                'group': '  General',
+                'disabled': true
+            });
+            properties.push({
+                'name': 'zzfiller',
+                'text': '.',
+                'value': "",
+                'group': '  General',
+                'disabled': true
+            });
         } else if (cell.value.nodeName == "Folder") {
             iHs = "Folders group together similar items in a logical way. You can collapse and expand folders to hide or reveal model complexity.";
-        	//the following hack allows the folder description value to appear. It deals with the problem of overflow being hidden for the grid, the panel, and a couple of other things around the grid 
-        	properties.push({
-                    'name': 'zfiller',
-                    'text': '.',
-                    'value': "",
-                    'group': '  General',
-        			'disabled': true
-                });
-        		 properties.push({
-                        'name': 'zzfiller',
-                        'text': '.',
-                        'value': "",
-                        'group': '  General',
-        				'disabled': true
-                    });
-                    properties.push({
-                           'name': 'zzzfiller',
-                           'text': '.',
-                           'value': "",
-                           'group': '  General',
-                    		'disabled': true
-                       });
+            //the following hack allows the folder description value to appear. It deals with the problem of overflow being hidden for the grid, the panel, and a couple of other things around the grid
+            properties.push({
+                'name': 'zfiller',
+                'text': '.',
+                'value': "",
+                'group': '  General',
+                'disabled': true
+            });
+            properties.push({
+                'name': 'zzfiller',
+                'text': '.',
+                'value': "",
+                'group': '  General',
+                'disabled': true
+            });
+            properties.push({
+                'name': 'zzzfiller',
+                'text': '.',
+                'value': "",
+                'group': '  General',
+                'disabled': true
+            });
         } else if (cell.value.nodeName == "Flow") {
             iHs = "Flows represent the transfer of material from one stock to another. For example given the case of a lake, the flows for the lake might be: River Inflow, River Outflow, Precipitation, and Evaporation. Flows are given a flow rate and they operator over one unit of time; in effect: flow per one second or per one minute. <hr><br><h1>Flow Rate Examples:</h1><center><table class='undefined'><tr><td align=center>Using the Current Simulation Time</td></tr><tr><td align=center><i>minutes/3</i></td></tr><tr><td align=center>Referencing Other Primitives</td></tr><tr><td align=center><i>[Lake Volume]*0.05+[Rain]/4</i></td></tr></table></center>";
             properties.push({
@@ -1176,9 +1165,7 @@ function main()
                 'text': 'Flow Rate =',
                 'value': cell.getAttribute("FlowRate"),
                 'group': ' Configuration',
-                'editor': new Ext.grid.GridEditor(new Ext.form.customFields['code']({}), {
-                    allowBlur: false
-                }),
+                'editor': new Ext.form.customFields['code']({}),
                 'renderer': equationRenderer
             });
             properties.push({
@@ -1188,17 +1175,17 @@ function main()
                 'group': ' Configuration'
             });
         } else if (cellType == "Display") {
-            iHs = "Displays configure the display of the the results of the simulation. You can have graphical charts or interactive tables as your displays. You can have an unlimited number of displays in your Insight. By default, displays show nothing; add nodes to the display's 'Display Items' field to make them visible in displays.";
+            iHs = "Displays configure the display of the the results of the simulation. You can have graphical charts or interactive tables as your displays. You can have an unlimited number of displays in your Insight. By default, displays show nothing; add nodes to the display's 'Displayed Items' field to make them visible in displays.";
             properties.push({
                 'name': 'Type',
                 'text': 'Display Type',
                 'value': cell.getAttribute("Type"),
                 'group': ' Configuration',
-                'editor': new Ext.grid.GridEditor(new Ext.form.ComboBox({
+                'editor': new Ext.form.ComboBox({
                     triggerAction: "all",
                     store: ['Time Series', 'Scatterplot', 'Tabular', 'Steady State'],
                     selectOnFocus: true
-                }))
+                })
             });
 
             properties.push({
@@ -1212,52 +1199,47 @@ function main()
                 'text': 'Scatterplot Order',
                 'value': cell.getAttribute("ScatterplotOrder"),
                 'group': 'Charts',
-                'editor': new Ext.grid.GridEditor(new Ext.form.ComboBox({
+                'editor': new Ext.form.ComboBox({
                     triggerAction: "all",
                     store: ['X Primitive, Y Primitive', 'Y Primitive, X Primitive'],
                     selectOnFocus: true
-                }))
+                })
             });
             properties.push({
                 'name': 'xAxis',
                 'text': 'x-Axis Label',
                 'value': cell.getAttribute("xAxis"),
-                'group': 'Charts'
+                'group': 'Charts',renderer:labelRenderer
             });
             properties.push({
                 'name': 'yAxis',
                 'text': 'y-Axis Label',
                 'value': cell.getAttribute("yAxis"),
-                'group': 'Charts'
-            });
-            properties.push({
-                'name': 'ThreeDimensional',
-                'text': '3D',
-                'value': isTrue(cell.getAttribute("ThreeDimensional")),
-                'group': 'Charts'
+                'group': 'Charts',renderer:labelRenderer
             });
             properties.push({
                 'name': 'Primitives',
                 'text': 'Displayed Items',
                 'value': cell.getAttribute("Primitives"),
                 'group': ' Configuration',
-                'editor': new Ext.grid.GridEditor(new Ext.ux.form.LovCombo({
+                'editor': new Ext.form.ComboBox({
                     store: allPrimitives,
-                    mode: 'local',
-                    beforeBlur: Ext.emptyFn
-                    ,
+                    queryMode: 'local',
                     triggerAction: 'all'
-                    ,
+                    ,editable:false,
                     hideOnSelect: false
                     ,
-                    id: 'lovcombo'
-                })),
+                    multiSelect: true,
+                    forceSelection: true,
+                    typeAhead: true,
+					listConfig: {emptyText:"No primitives exist in your model"}
+                }),
                 'renderer': primitiveRenderer
             });
 
         } else if (cellType == "Ghost") {
-           iHs = "This item is a 'Ghost' of another primitive. It mirrors the values and properties of its source primitive. You cannot edit the properties of the Ghost. You need to instead edit the properties of its source.";
-        }else if (cellType == "Converter") {
+            iHs = "This item is a 'Ghost' of another primitive. It mirrors the values and properties of its source primitive. You cannot edit the properties of the Ghost. You need to instead edit the properties of its source.";
+        } else if (cellType == "Converter") {
             iHs = "Converters store a table of input and output data. When the input source takes on one of the input values, the converter takes on the corresponding output value. If no specific input value exists for the current input source value, then the nearest input neighbors are avaeraged.";
             var n = neighborhood(cell);
             var dat = [["Time", "Time"]]
@@ -1279,14 +1261,14 @@ function main()
                 'text': 'Input Source',
                 'value': cell.getAttribute("Source"),
                 'group': ' Configuration',
-                'editor': new Ext.grid.GridEditor(new Ext.form.ComboBox({
+                'editor': new Ext.form.ComboBox({
                     triggerAction: "all",
-                    mode: 'local',
+                    queryMode: 'local',
                     store: converterStore,
                     selectOnFocus: true,
-                    valueField: 'myId',
+                    valueField: 'myId',editable:false,
                     displayField: 'displayText'
-                })),
+                }),
                 'renderer': primitiveRenderer
             });
             properties.push({
@@ -1294,110 +1276,84 @@ function main()
                 'text': 'Data',
                 'value': cell.getAttribute("Data"),
                 'group': 'Input/Output Table',
-                'editor': new Ext.grid.GridEditor(new Ext.form.customFields['converter']({interpolation: cell.getAttribute("Interpolation")}), {
-                    allowBlur: false,
-                    selectOnFocus: true
-                 })
+                'editor': new Ext.form.customFields['converter']({
+                })
             });
             properties.push({
                 'name': 'Interpolation',
                 'text': 'Interpolation',
                 'value': cell.getAttribute("Interpolation"),
                 'group': ' Configuration',
-                'editor': new Ext.grid.GridEditor(new Ext.form.ComboBox({
+                'editor': new Ext.form.ComboBox({
                     triggerAction: "all",
-                    store: ['None', 'Linear'],
+                    store: ['None', 'Linear'],editable:false,
                     selectOnFocus: true
-                }))
+                })
             });
         } else if (cellType == "Picture") {
             iHs = "Pictures provide useful information in a friendly to use manner.";
-            
-            properties.push({
-                    'name': 'zfiller',
-                    'text': '.',
-                    'value': "",
-                    'group': '  General',
-            		'disabled': true
-                });
-                
-            properties.push({
-                'name': 'Image',
-                'text': 'Displayed Image',
-                'value': cell.getAttribute("Image"),
-                'group': ' Configuration',
-                'editor': new Ext.grid.GridEditor(new Ext.form.ComboBox({
-                    triggerAction: "all",
-                    store: new Ext.data.SimpleStore({
-                        fields: ['text'],
-                        data: [
-                        ['Positive Feedback Clockwise'], ['Positive Feedback Counterclockwise'],
-                        ['Negative Feedback Clockwise'], ['Negative Feedback Counterclockwise'],
-                        ['Unknown Feedback Clockwise'], ['Unknown Feedback Counterclockwise'], ['Plus'],['Minus'],
-                         ['Checkmark'], ['Prohibited'], ['Idea'], ['Book'], ['Clock'], ['Computer'], ['Dice'], ['Gear'], ['Hammer'], ['Smiley'], ['Heart'], ['Question'], ['Warning'], ['Info'], ['Key'], ['Lock'], ['Loudspeaker'],['Footprints'], ['Mail'], ['Network'], ['Notes'], ['Pushpin'], ['Paperclip'], ['People'], ['Person'],  ['Wallet'], ['Money'], ['Flag'], ['Trash']
-                        ]
-                    }),
-                    valueField: 'text',
-                    displayField: 'text',
-                    mode: 'local',
-                    selectOnFocus: true,
-                    tpl: '<tpl for="."><center><div class="x-combo-list-item" style=\"white-space:normal\";><img src="/builder/images/SD/{text}.png" width=48 height=48/></div></center></tpl>'
-                }))
-            });
 
-			properties.push({
+            properties.push({
                 'name': 'FlipHorizontal',
                 'text': 'Flip Horizontal',
                 'value': isTrue(cell.getAttribute("FlipHorizontal")),
                 'group': ' Configuration'
             });
-			properties.push({
+            properties.push({
                 'name': 'FlipVertical',
                 'text': 'Flip Vertical',
                 'value': isTrue(cell.getAttribute("FlipVertical")),
                 'group': ' Configuration'
             });
         }
-        Ext.get('descriptionArea').update(iHs);
-        createGrid(properties);
-        Ext.get('descriptionArea').setVisible(true);
-		
-		if(slidersShown==true){
-			var slids=sliderPrimitives();
-			sliders= [];
-			
-			if(slids.length>0){
-				var slider_width;
-				if(is_embed){
-					slider_width=110;
-				}else{
-					slider_width=215;
-				}
-				
-				for(var i=0; i<slids.length; i++){
-					var perc = Math.floor(-(Math.log(slids[i].getAttribute("SliderMax"))/Math.log(10)-4));
-					sliders.push(new Ext.Slider({ renderTo: 'slider'+slids[i].id, width: slider_width,  minValue: parseFloat(slids[i].getAttribute("SliderMin")), sliderCell: slids[i], value: parseFloat(getValue(slids[i])), maxValue: parseFloat(slids[i].getAttribute("SliderMax")), decimalPrecision: perc, listeners: {
-						        change: function(slider,newValue)
-						        {
-						        	var other = "sliderVal"+slider.sliderCell.id;
-						            Ext.get(other).dom.value=parseFloat(newValue);
-						            setValue(slider.sliderCell, parseFloat(newValue));
-						        }
-						}}));
-						
-						
-						Ext.apply(sliders[sliders.length-1], { normalizeValue : function(v){return this.doSnap(Ext.round(v, this.decimalPrecision)).constrain(this.minValue, this.maxValue); }});
-						Ext.get("sliderVal"+sliders[i].sliderCell.id).dom.value=parseFloat(getValue(slids[i]));
-						
-			}
-					 for ( counter = 0; counter < slids.length; counter++) {
-					 	var f;
-					 	eval("f = function(e){var v=parseFloat(Ext.get('sliderVal"+slids[counter].id+"').getValue(), 10); if(! isNaN(v)){sliders["+counter+"].setValue(v);}}");
-						Ext.get('sliderVal'+slids[counter].id).on('keyup',f);
-				}
-			
-			}
-		}
+		configPanel.removeAll();
+        createGrid(properties, iHs);
+
+        if (slidersShown == true) {
+            var slids = sliderPrimitives();
+            sliders = [];
+
+            if (slids.length > 0) {
+                var slider_width;
+                if (is_embed) {
+                    slider_width = 110;
+                } else {
+                    slider_width = 215;
+                }
+
+                for (var i = 0; i < slids.length; i++) {
+                    var perc = Math.floor( - (Math.log(slids[i].getAttribute("SliderMax")) / Math.log(10) - 4));
+                    sliders.push(new Ext.Slider({
+                        renderTo: 'slider' + slids[i].id,
+                        width: slider_width,
+                        minValue: parseFloat(slids[i].getAttribute("SliderMin")),
+                        sliderCell: slids[i],
+                        value: parseFloat(getValue(slids[i])),
+                        maxValue: parseFloat(slids[i].getAttribute("SliderMax")),
+                        decimalPrecision: perc,
+                        listeners: {
+                            change: function(slider, newValue)
+                            {
+                                var other = "sliderVal" + slider.sliderCell.id;
+                                Ext.get(other).dom.value = parseFloat(newValue);
+                                setValue(slider.sliderCell, parseFloat(newValue));
+                            }
+                        }
+                    }));
+
+
+               
+                    Ext.get("sliderVal" + sliders[i].sliderCell.id).dom.value = parseFloat(getValue(slids[i]));
+
+                }
+                for (counter = 0; counter < slids.length; counter++) {
+                    var f;
+                    eval("f = function(e){var v=parseFloat(Ext.get('sliderVal" + slids[counter].id + "').getValue(), 10); if(! isNaN(v)){sliders[" + counter + "].setValue(v);}}");
+                    Ext.get('sliderVal' + slids[counter].id).on('keyup', f);
+                }
+
+            }
+        }
     }
 
     if (drupal_node_ID == -1) {
@@ -1409,16 +1365,16 @@ function main()
     updateWindowTitle();
 
     if (!saved_enabled) {
-        ribbonPanel.getTopToolbar().items.get('savegroup').setVisible(false);
+        ribbonPanelItems().getComponent('savegroup').setVisible(false);
     }
 
     handelCursors();
     setTopLinks();
-    
-    if((! is_editor) && (is_zoom==1)){
-    	graph.getView().setScale(0.25);
-    	graph.fit();
-		graph.fit();
+
+    if ((!is_editor) && (is_zoom == 1)) {
+        graph.getView().setScale(0.25);
+        graph.fit();
+        graph.fit();
     }
 };
 
@@ -1426,7 +1382,7 @@ function main()
 var surpressCloseWarning = false;
 function confirmClose() {
     if (!surpressCloseWarning) {
-        if ((!saved_enabled) || ribbonPanel.getTopToolbar().items.get('savegroup').get('savebut').disabled) {
+        if ((!saved_enabled) || ribbonPanelItems().getComponent('savegroup').getComponent('savebut').disabled) {
 
             }
         else {
@@ -1437,49 +1393,35 @@ function confirmClose() {
     }
 }
 
-Ext.override(Ext.grid.GroupingView, {
-    interceptMouse : Ext.emptyFn
-});
-
 
 Ext.example = function() {
     var msgCt;
 
     function createBox(t, s) {
-        return ['<div class="msg">',
-        '<div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>',
-        '<div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc"><h3>', t, '</h3>', s, '</div></div></div>',
-        '<div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>',
-        '</div>'].join('');
+         return '<div class="msg"><h3>' + t + '</h3><p>' + s + '</p></div>';
     }
     return {
-        msg: function(title, format) {
-            if (!msgCt) {
-                msgCt = Ext.DomHelper.append(document.body, {
-                    id: 'msg-div'
-                },
-                true);
+        msg : function(title, format){
+            if(!msgCt){
+                msgCt = Ext.core.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
             }
-            msgCt.alignTo(document, 't-t');
-            var s = String.format.apply(String, Array.prototype.slice.call(arguments, 1));
-            var m = Ext.DomHelper.append(msgCt, {
-                html: createBox(title, s)
-            },
-            true);
-            m.slideIn('t').pause(1).ghost("t", {
-                remove: true
-            });
+            var s = Ext.String.format.apply(String, Array.prototype.slice.call(arguments, 1));
+            var m = Ext.core.DomHelper.append(msgCt, createBox(title, s), true);
+            m.hide();
+            m.slideIn('t').ghost("t", { delay: 4500, remove: true});
         }
     };
 } ();
 
 
 Ext.round = function(n, d) {
-			var result = Number(n);
-			if (typeof d == 'number') {
-				d = Math.pow(10, d);
-				result = Math.round(n * d) / d;
-			}
-			return result;
-		};
+    var result = Number(n);
+    if (typeof d == 'number') {
+        d = Math.pow(10, d);
+        result = Math.round(n * d) / d;
+    }
+    return result;
+};
+
+
 

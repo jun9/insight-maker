@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010 Give Team. All rights reserved.
+Copyright 2010-2011 Give Team. All rights reserved.
 
 Give Team is a non-profit organization dedicated to
 using the internet to encourage giving and greater
@@ -12,6 +12,8 @@ terms of the Insight Maker Public License.
 Insight Maker and Give Team are trademarks.
 
 */
+
+var analysisCount = 0;
 
 if (!Array.prototype.indexOf)
  {
@@ -87,10 +89,10 @@ Array.prototype.clean = function(deleteValue) {
     return this;
 };
 
-function getGraphXml(graph){
-	var enc = new mxCodec(mxUtils.createXmlDocument());
-	var node = enc.encode(graph.getModel());
-	return mxUtils.getPrettyXml(node);
+function getGraphXml(graph) {
+    var enc = new mxCodec(mxUtils.createXmlDocument());
+    var node = enc.encode(graph.getModel());
+    return mxUtils.getPrettyXml(node);
 }
 
 function sendGraphtoServer(graph) {
@@ -107,9 +109,9 @@ function sendGraphtoServer(graph) {
 
         success: function(result, request) {
             drupal_node_ID = result.responseText;
-       
+
             setSaveEnabled(false);
-            
+
             updateWindowTitle();
             setTopLinks();
         },
@@ -124,6 +126,16 @@ function sendGraphtoServer(graph) {
             });
         }
     });
+}
+
+function getCellbyID(id){
+	var items = primitives();
+	for(i=0; i<items.length; i++){
+		if(id==items[i].id){
+			return items[i];
+		}
+	}
+	return null;
 }
 
 function validPrimitiveName(name) {
@@ -144,14 +156,14 @@ function cellsContainNodename(myCells, name) {
 }
 
 function nodeInsertSelected() {
-    var panel = ribbonPanel.getTopToolbar().items.get('valued');
-    return (panel.get('stock').pressed || panel.get('parameter').pressed || panel.get('text').pressed || panel.get('display').pressed || panel.get('converter').pressed || panel.get('picture').pressed)
+    var panel = ribbonPanelItems().getComponent('valued');
+    return (panel.getComponent('stock').pressed || panel.getComponent('variable').pressed || panel.getComponent('text').pressed || panel.getComponent('display').pressed || panel.getComponent('converter').pressed || panel.getComponent('picture').pressed)
 }
 
 function connectionType() {
-    if (ribbonPanel.getTopToolbar().items.get('connect').get('link').pressed) {
+    if (ribbonPanelItems().getComponent('connect').getComponent('link').pressed) {
         return "Link";
-    } else if (ribbonPanel.getTopToolbar().items.get('connect').get('flow').pressed) {
+    } else if (ribbonPanelItems().getComponent('connect').getComponent('flow').pressed) {
         return "Flow";
     }
     return "None";
@@ -205,7 +217,7 @@ function childrenCells(root) {
         myCells = myCells.concat(additions);
         for (var i = myCells.length - 1; i >= 0; i--) {
             if (myCells[i] == null || myCells[i].value == null) {
-                myCells.remove(i);
+                myCells.splice(i, 1);
             }
         }
         return myCells;
@@ -273,33 +285,33 @@ function doubleArray(arr) {
 }
 
 function isValued(cell) {
-	if(cell == null || (typeof(orig(cell)) == "undefined")){
-		return false;
-	}
+    if (cell == null || (typeof(orig(cell)) == "undefined")) {
+        return false;
+    }
     return (orig(cell).value.nodeName == "Converter" || orig(cell).value.nodeName == "Flow" || orig(cell).value.nodeName == "Stock" || orig(cell).value.nodeName == "Parameter");
 }
 
 function setSaveEnabled(e) {
-	if(is_editor){
-    var b = ribbonPanel.getTopToolbar().items.get('savegroup').get('savebut');
-    if (e) {
-        b.setDisabled(false);
-        b.setText('Save Insight');
-    } else {
-        b.setDisabled(true);
-        b.setText('Insight Saved');
-    }
+    if (is_editor) {
+        var b = ribbonPanelItems().getComponent('savegroup').getComponent('savebut');
+        if (e) {
+            b.setDisabled(false);
+            b.setText('Save Insight');
+        } else {
+            b.setDisabled(true);
+            b.setText('Insight Saved');
+        }
     }
 }
 
 function updateWindowTitle() {
-	if(! is_embed){
-    	if (graph_title == "") {
-        	document.title = "Untitled Insight | Insight Maker";
-    	} else {
-        	document.title = graph_title + " | Insight Maker";
-    	}
-	}
+    if (!is_embed) {
+        if (graph_title == "") {
+            document.title = "Untitled Insight | Insight Maker";
+        } else {
+            document.title = graph_title + " | Insight Maker";
+        }
+    }
 }
 
 function hasDisplay() {
@@ -309,21 +321,32 @@ function hasDisplay() {
 
 function setPicture(cell) {
     var styleString = cell.getStyle();
-    if(cell.getAttribute("Image").substring(0,4).toLowerCase()=="http"){
-    	styleString = mxUtils.setStyle(styleString, "image", cell.getAttribute("Image"));
-    }else{
-    	styleString = mxUtils.setStyle(styleString, "image", "/builder/images/SD/" + cell.getAttribute("Image") + ".png");
+    if (cell.getAttribute("Image") == "None") {
+        styleString = mxUtils.setStyle(styleString, "image", "None");
+        if (cell.value.nodeName == "Display" || cell.value.nodeName == "Stock") {
+            styleString = mxUtils.setStyle(styleString, "shape", "rectangle");
+        } else {
+            styleString = mxUtils.setStyle(styleString, "shape", "ellipse");
+        }
+    } else {
+	//alert(cell.getAttribute("Image"));
+        if (cell.getAttribute("Image").substring(0, 4).toLowerCase() == "http") {
+            styleString = mxUtils.setStyle(styleString, "image", cell.getAttribute("Image"));
+        } else {
+            styleString = mxUtils.setStyle(styleString, "image", "/builder/images/SD/" + cell.getAttribute("Image") + ".png");
+        }
+        if (isTrue(cell.getAttribute("FlipVertical"))) {
+            styleString = mxUtils.setStyle(styleString, "imageFlipV", 1);
+        } else {
+            styleString = mxUtils.setStyle(styleString, "imageFlipV", 0);
+        }
+        if (isTrue(cell.getAttribute("FlipHorizontal"))) {
+            styleString = mxUtils.setStyle(styleString, "imageFlipH", 1);
+        } else {
+            styleString = mxUtils.setStyle(styleString, "imageFlipH", 0);
+        }
+        styleString = mxUtils.setStyle(styleString, "shape", "image");
     }
-	if(isTrue(cell.getAttribute("FlipVertical"))){
-		styleString = mxUtils.setStyle(styleString, "imageFlipV",1)
-	}else{
-		styleString = mxUtils.setStyle(styleString, "imageFlipV",0)
-	}
-	if(isTrue(cell.getAttribute("FlipHorizontal"))){
-		styleString = mxUtils.setStyle(styleString, "imageFlipH",1)
-	}else{
-		styleString = mxUtils.setStyle(styleString, "imageFlipH",0)
-	}
     cell.setStyle(styleString);
 }
 
@@ -343,17 +366,17 @@ function deletePrimitive(cell) {
         } else if (myCells[i].value.nodeName == "Converter") {
             if (myCells[i].getAttribute("Source") == cell.id) {
                 myCells[i].setAttribute("Source", "Time");
-            }else if(cell.value.nodeName="Link"){
-            	testConverterSource(myCells[i]);
+            } else if (cell.value.nodeName = "Link") {
+                testConverterSource(myCells[i]);
             }
-        } else if (myCells[i].value.nodeName == "Ghost"){
-        	if (myCells[i].value.getAttribute("Source") == cell.id){
-        		var k = myCells[i];
-        		
-        		deletePrimitive(k);
-        		graph.removeCells([k],false);
-        		
-        	}
+        } else if (myCells[i].value.nodeName == "Ghost") {
+            if (myCells[i].value.getAttribute("Source") == cell.id) {
+                var k = myCells[i];
+
+                deletePrimitive(k);
+                graph.removeCells([k], false);
+
+            }
         }
     }
 }
@@ -362,30 +385,39 @@ function linkBroken(edge) {
     var myCells = primitives();
     for (var i = 0; i < myCells.length; i++)
     {
-    	if (myCells[i].value.nodeName == "Converter") {
+        if (myCells[i].value.nodeName == "Converter") {
             testConverterSource(myCells[i]);
         }
     }
-}
-
-function testConverterSource(target){
-	var neigh=neighborhood(target);
-	var found=false;
-	for(var j=0;j<neigh.length;j++){
-		if(target.getAttribute("Source")==neigh[j].id){
-			found=true;
+	if((edge.getTerminal(false) != null) && edge.getTerminal(false).value.nodeName=="Converter"){
+		//alert("hi");
+		if(typeof(edge.getTerminal(true)) != "undefined"){
+			if( isValued(edge.getTerminal(true)) ){
+				edge.getTerminal(false).setAttribute("Source", edge.getTerminal(true).id);
+			}
 		}
 	}
-	if(! found){
-		target.setAttribute("Source", "Time");
-	}
+
+}
+
+function testConverterSource(target) {
+    var neigh = neighborhood(target);
+    var found = false;
+    for (var j = 0; j < neigh.length; j++) {
+        if (target.getAttribute("Source") == neigh[j].id) {
+            found = true;
+        }
+    }
+    if (!found) {
+        target.setAttribute("Source", "Time");
+    }
 }
 
 function downloadModel() {
     var data = getGraphXml(graph);
     surpressCloseWarning = true;
-    document.getElementById('downloader').title.value=encodeURIComponent(graph_title);
-    document.getElementById('downloader').code.value=encodeURIComponent(data);
+    document.getElementById('downloader').title.value = encodeURIComponent(graph_title);
+    document.getElementById('downloader').code.value = encodeURIComponent(data);
     document.getElementById('downloader').submit()
     //alert(encodeURIComponent(data));
     //location.href = "/builder/downloader.php?code=" + encodeURIComponent(data) + "&title=" + encodeURIComponent(graph_title);
@@ -405,7 +437,7 @@ function getSetting() {
 }
 
 function parseResult(res) {
-	//alert(res);
+    //alert(res);
     Ext.MessageBox.hide();
     if (!/[^\s]/.test(res)) {
         Ext.MessageBox.show({
@@ -416,6 +448,8 @@ function parseResult(res) {
             icon: Ext.MessageBox.ERROR
         });
     } else if (/^SUCCESS/.test(res)) {
+
+        var displays = primitives("Display");
         res = res.substring(7);
         if (/^ERROR/.test(res)) {
             res = res.substring(5);
@@ -438,37 +472,54 @@ function parseResult(res) {
                 });
             }
             var tableCount = 0;
+
             for (var i = 0; i < names.length; i++)
             {
+                tableCount++;
+                var data = items[2 + tableCount];
+                var rows = data.split("\n");
+                var header = rows[0].split(",");
 
-                if (names[i] == "picture") {
-                    tabs.push({
-                        title: names[i + 1],
-                        html: "<center><img src='/builder/results/" + items[0] + "/" + (i + 2) + ".png'/><\/center>"
+                var storeData = [];
+                for (k = 1; k < rows.length; k++) {
+                    if (Ext.String.trim(rows[k]) != "") {
+                        var rowitems = rows[k].split(",");
+                        storeData.push({});
+                        for (j = 0; j < header.length; j++) {
+                            storeData[k - 1][header[j]] = rowitems[j];
+                        }
+                    }
+                }
+
+                var storeFields;
+                if (names[i] == "Steady State") {
+                    storeFields = Ext.Array.map(header,
+                    function(x) {
+                        return {
+                            type: "string",
+                            name: x
+                        };
                     });
                 } else {
-                    tableCount++;
-                    var data = items[2 + tableCount];
-
-                    var rows = data.split("\n");
-                    var header = rows[0].split(",");
-                    //alert(header.toSource())
-                    //alert(rows.toSource());
-                    var store = new Ext.data.Store({
-                        proxy: new Ext.data.MemoryProxy(),
-                        reader: new Ext.ux.CsvReader({
-                            id: 0
-                        },
-                        header)
+                    storeFields = Ext.Array.map(header,
+                    function(x) {
+                        return {
+                            type: "float",
+                            name: x
+                        };
                     });
-                    store.loadData(rows.slice(1, rows.length).join("\n"));
-
+                }
+                var store = new Ext.data.Store({
+                    fields: storeFields,
+                    data: storeData
+                });
+                if (names[i] == "Tabular" || names[i] == "Steady State") {
                     var cols = [];
                     for (var j = 0; j < header.length; j++) {
                         cols.push({
                             header: header[j],
                             sortable: true,
-                            width: 150,
+                            flex: 1,
                             dataIndex: header[j]
                         });
                     }
@@ -476,25 +527,137 @@ function parseResult(res) {
                         store: store,
                         columns: cols,
                         stripeRows: true,
-
+                        border: false,
+                        frame: false,
                         header: false
 
                     });
+
                     tabs.push({
                         title: names[i + 1],
                         items: [grid],
                         layout: "fit"
                     });
+                } else if (names[i] == "Time Series") {
+                    var h2 = header;
+                    var displayItems = h2.splice(1, h2.length - 1);
+
+                    var chart = Ext.create("Ext.chart.Chart", {
+                        xtype: 'chart',
+                        animate: false,
+                        shadow: false,
+                        store: store,
+                        legend: {
+                            position: 'top'
+                        },
+                        axes: [{
+                            type: 'Numeric',
+                            position: 'bottom',
+                            fields: h2[0],
+                            title: quickLabel(displays[tableCount - 1].getAttribute("xAxis"), displays[tableCount - 1].getAttribute("name"), displayItems.join(", ")),
+                            grid: true
+                        },
+                        {
+                            type: 'Numeric',
+                            position: 'left',
+                            fields: displayItems,
+                            grid: true,
+                            title: quickLabel(displays[tableCount - 1].getAttribute("yAxis"), displays[tableCount - 1].getAttribute("name"), displayItems.join(", "))
+
+                        }],
+                        series: Ext.Array.map(displayItems,
+                        function(x) {
+                            return {
+                                type: 'line',
+                                axis: "left",
+                                xField: h2[0],
+                                yField: x,
+                                showMarkers: false,
+                                highlight: true,
+                                highlight: {
+                                    size: 7,
+                                    radius: 7
+                                },
+                                smooth: false,
+                                style: {
+                                    'stroke-width': 3
+                                },
+                                tips: {
+                                    trackMouse: true,
+                                    width: 120,
+                                    renderer: function(storeItem, item) {
+                                        this.setTitle("<center>(" + item.value[0] + ", " + item.value[1] + ")</center>");
+                                    }
+                                }
+                            };
+                        })
+                    });
+                    tabs.push({
+                        title: names[i + 1],
+                        items: [chart],
+                        layout: "fit"
+                    });
+                } else if (names[i] == "Scatterplot") {
+                    var h2 = header;
+                    var displayItems = h2.splice(1, h2.length - 1);
+
+                    var chart = Ext.create("Ext.chart.Chart", {
+                        xtype: 'chart',
+                        animate: false,
+                        shadow: false,
+                        store: store,
+                        axes: [{
+                            type: 'Numeric',
+                            position: 'bottom',
+                            fields: displayItems[0],
+                            grid: true,
+                            title: quickLabel(displays[tableCount - 1].getAttribute("xAxis"), displays[tableCount - 1].getAttribute("name"), displayItems[0])
+                        },
+                        {
+                            type: 'Numeric',
+                            position: 'left',
+                            fields: displayItems[1],
+                            grid: true,
+                            title: quickLabel(displays[tableCount - 1].getAttribute("yAxis"), displays[tableCount - 1].getAttribute("name"), displayItems[1])
+                        }],
+                        series: [{
+                            type: 'scatter',
+                            axis: "left",
+                            xField: displayItems[0],
+                            yField: displayItems[1],
+                            highlight: true,
+                            highlight: {
+                                size: 7,
+                                radius: 7
+                            },
+                            smooth: false,
+                            tips: {
+                                trackMouse: true,
+                                width: 120,
+                                renderer: function(storeItem, item) {
+                                    this.setTitle("<center>(" + item.value[0] + ", " + item.value[1] + ")</center>");
+                                }
+                            }
+                        }
+                        ]
+                    });
+                    tabs.push({
+                        title: names[i + 1],
+                        items: [chart],
+                        layout: "fit"
+                    });
                 }
+
                 i++;
             }
 
 
             var charts = new Ext.TabPanel({
-                region: 'center',
                 margins: '3 3 3 0',
                 activeTab: 0,
                 deferredRender: false,
+                frame: false,
+                border: false,
                 enableTabScroll: true,
                 defaults: {
                     autoScroll: true
@@ -502,27 +665,28 @@ function parseResult(res) {
                 items: tabs
             });
 
+            analysisCount++;
             var win = new Ext.Window({
-                title: 'Simulation Results',
+                title: 'Simulation Results ' + analysisCount,
                 closable: true,
                 width: 540,
                 height: 425,
-                resizable: false,
-                plain: true,
-                layout: 'border',
+                resizable: true,
+                maximizable: true,
+                layout: 'fit',
                 items: [charts]
             });
 
-            win.show(this);
+            win.show();
         }
     } else if (/^ACCESS DENIED/.test(res)) {
-   	 Ext.MessageBox.show({
-	        title: 'Create an Insight Maker Account',
-	        msg: 'You must create an Insight Maker account before you can run Insights. This is quick and free. Just go to:<br><br><a target="_BLANK" href="http://InsightMaker.com/user/register">http://InsightMaker.com/user/register</a><br><br>If you already have an account, you can log in here:<br><br><a target="_BLANK" href="http://InsightMaker.com/user">http://InsightMaker.com/user</a>',
-	        buttons: Ext.MessageBox.OK,
-	        animEl: 'mb9',
-	        icon: Ext.MessageBox.ERROR
-	    });
+        Ext.MessageBox.show({
+            title: 'Create an Insight Maker Account',
+            msg: 'You must create an Insight Maker account before you can run Insights. This is quick and free. Just go to:<br><br><a target="_BLANK" href="http://InsightMaker.com/user/register">http://InsightMaker.com/user/register</a><br><br>If you already have an account, you can log in here:<br><br><a target="_BLANK" href="http://InsightMaker.com/user">http://InsightMaker.com/user</a>',
+            buttons: Ext.MessageBox.OK,
+            animEl: 'mb9',
+            icon: Ext.MessageBox.ERROR
+        });
     } else {
         Ext.MessageBox.show({
             title: 'Server Error',
@@ -533,90 +697,6 @@ function parseResult(res) {
         });
     }
 }
-
-Ext.ux.CsvReader = Ext.extend(Ext.data.DataReader, {
-    newline: "\n",
-    seperator: ',',
-
-    readRecords: function(o) {
-        this.csvData = o;
-        var s = this.meta;
-        var sid = s ? (s.idIndex || s.id) : null;
-        var recordType = this.recordType,
-        fields = recordType.prototype.fields;
-        var records = [];
-
-        var data = o.split(this.newline);
-
-        Ext.each(data,
-        function(row) {
-            var values = {};
-            row = row.split(this.seperator);
-            var id = ((sid || sid === 0) && !Ext.isEmpty(row[sid]) ? row[sid] : null);
-            Ext.each(row,
-            function(item, idx) {
-                var f = fields.items[idx];
-                if ((typeof(f) != "undefined")) {
-                    //hack; why does f turn out undefined sometimes???
-                    var k = f.mapping !== undefined && f.mapping !== null ? f.mapping: idx;
-                    var v = row[k] !== undefined ? row[k] : f.defaultValue;
-                    v = f.convert(v, idx);
-                    values[f.name] = v;
-                }
-            });
-            records.push(new recordType(values, id));
-        },
-        this);
-
-        return {
-            records: records,
-            totalRecords: records.length
-        };
-    }
-});
-
-Ext.ux.TabReader = Ext.extend(Ext.data.DataReader, {
-    newline: "\n",
-    seperator: "\t",
-
-    readRecords: function(o) {
-        this.csvData = o;
-        var s = this.meta;
-        var sid = s ? (s.idIndex || s.id) : null;
-        var recordType = this.recordType,
-        fields = recordType.prototype.fields;
-        var records = [];
-
-        var data = o.split(this.newline);
-
-        Ext.each(data,
-        function(row) {
-            var values = {};
-            row = row.split(this.seperator);
-
-            var id = ((sid || sid === 0) && !Ext.isEmpty(row[sid]) ? row[sid] : null);
-            Ext.each(row,
-            function(item, idx) {
-
-                var f = fields.items[idx];
-                if ((typeof(f) != "undefined")) {
-                    //hack; why does f turn out undefined sometimes???
-                    var k = f.mapping !== undefined && f.mapping !== null ? f.mapping: idx;
-                    var v = row[k] !== undefined ? row[k] : f.defaultValue;
-                    v = f.convert(v, idx);
-                    values[f.name] = v;
-                }
-            });
-            records.push(new recordType(values, id));
-        },
-        this);
-
-        return {
-            records: records,
-            totalRecords: records.length
-        };
-    }
-});
 
 function getText(obj) {
     if (document.all) {
@@ -646,46 +726,10 @@ function updateProperties() {
         model_title = graph_title;
     }
 
-	var form =new Ext.FormPanel({
-	                labelWidth: 110,
-	                frame: true,
-	                id: 'propertyForm',
-	
-	                bodyStyle: 'padding:5px 5px 0',
-	                width: 450,
-	                defaults: {
-	                    width: 230
-	                },
-	                defaultType: 'textfield',
-	
-	                items: [new Ext.form.TextField({
-	                    fieldLabel: 'Insight Title',
-	                    name: 'sinsightTitle',
-	                    id: 'sinsightTitle',
-	                    allowBlank: false,
-	                    selectOnFocus: true,
-	                    value: model_title
-	                }), new Ext.form.TextField({
-	                    fieldLabel: 'Tags',
-	                    name: 'sinsightTags',
-	                    id: 'sinsightTags',
-	                    allowBlank: true,
-	                    emptyText: "Environment, Business, Engineering",
-	                    value: graph_tags
-	                }), new Ext.form.TextArea({
-	                    fieldLabel: 'Insight Description',
-	                    name: 'sinsightDescription',
-	                    id: 'sinsightDescription',
-	                    allowBlank: true,
-	                    emptyText: "Enter a brief description of the Insight.",
-	                    value: graph_description
-	                })
-	                ]});
-	                
     if (!propertiesWin) {
         propertiesWin = new Ext.Window({
             applyTo: 'property-win',
-            layout: 'fit',
+            layout: {type:'vbox', align:"stretch"},
             modal: true,
             width: 400,
             title: "Save Insight",
@@ -693,35 +737,58 @@ function updateProperties() {
             closable: false,
             resizable: false,
             closeAction: 'hide',
-            plain: true,
-            items: [form],
+	        defaults: {
+	            width: 230, labelWidth:110
+	        },
+            items: [new Ext.form.TextField({
+	            fieldLabel: 'Insight Title',
+	            name: 'sinsightTitle',
+	            id: 'sinsightTitle',
+	            allowBlank: false,
+	            selectOnFocus: true,
+	            value: model_title, margin:2
+	        }), new Ext.form.TextField({
+	            fieldLabel: 'Tags',
+	            name: 'sinsightTags',
+	            id: 'sinsightTags',
+	            allowBlank: true,
+	            emptyText: "Environment, Business, Engineering",
+	            value: graph_tags, margin:2
+	        }), new Ext.form.TextArea({
+	            fieldLabel: 'Insight Description',
+	            name: 'sinsightDescription',
+	            id: 'sinsightDescription',
+	            allowBlank: true,
+	            emptyText: "Enter a brief description of the Insight.",
+	            value: graph_description, margin:2
+	        })],
 
-                buttons: [{
-                    text: 'Save',
-                    handler: function() {
-                        propertiesWin.hide();
-                        graph_title = Ext.getCmp('sinsightTitle').getValue();
-                        graph_description = Ext.getCmp('sinsightDescription').getValue();
-                        graph_tags = Ext.getCmp('sinsightTags').getValue();
-                        setSaveEnabled(true);
-                        sendGraphtoServer(graph);
-                    }
-                },
-                {
-                    text: 'Cancel',
-                    handler: function() {
-                        propertiesWin.hide();
-                    }
-                }]
+            buttons: [{
+                text: 'Save',
+                handler: function() {
+                    propertiesWin.hide();
+                    graph_title = Ext.getCmp('sinsightTitle').getValue();
+                    graph_description = Ext.getCmp('sinsightDescription').getValue();
+                    graph_tags = Ext.getCmp('sinsightTags').getValue();
+                    setSaveEnabled(true);
+                    sendGraphtoServer(graph);
+                }
+            },
+            {
+                text: 'Cancel',
+                handler: function() {
+                    propertiesWin.hide();
+                }
+            }]
 
-            
+
         });
     } else {
-    	if(graph_title!=""){
-       	 Ext.getCmp('sinsightTitle').setValue(graph_title);
-       	 Ext.getCmp('sinsightTags').setValue(graph_tags);
-       	 Ext.getCmp('sinsightDescription').setValue(graph_description);
-       	}
+        if (graph_title != "") {
+            Ext.getCmp('sinsightTitle').setValue(graph_title);
+            Ext.getCmp('sinsightTags').setValue(graph_tags);
+            Ext.getCmp('sinsightDescription').setValue(graph_description);
+        }
     }
     propertiesWin.show();
 }
@@ -745,82 +812,110 @@ function customUnits() {
 function sliderPrimitives() {
     var myCells = primitives();
     var slids = [];
-    for(var i=0; i<myCells.length; i++){
-    	if(isTrue(myCells[i].getAttribute("ShowSlider"))){
-    		slids.push(myCells[i]);
-    	}
+    for (var i = 0; i < myCells.length; i++) {
+        if (isTrue(myCells[i].getAttribute("ShowSlider"))) {
+            slids.push(myCells[i]);
+        }
     }
     return slids;
 }
 
-function getValue(cell){
-	var n=cell.value.nodeName;
-	if(n=="Stock"){
-		return cell.getAttribute("InitialValue");
-	}else if(n=="Flow"){
-		return cell.getAttribute("FlowRate");
-	}else if(n=="Parameter"){
-		return cell.getAttribute("Equation");
-	}
+function getValue(cell) {
+    var n = cell.value.nodeName;
+    if (n == "Stock") {
+        return cell.getAttribute("InitialValue");
+    } else if (n == "Flow") {
+        return cell.getAttribute("FlowRate");
+    } else if (n == "Parameter") {
+        return cell.getAttribute("Equation");
+    }
 }
 
-function setValue(cell, val){
-	if (getValue(cell)!=val){
-		graph.getModel().beginUpdate();
-		var n=cell.value.nodeName;
-		var edit;
-		if(n=="Stock"){
-			 edit = new mxCellAttributeChange(cell, "InitialValue",String(val));
-		}else if(n=="Flow"){
-			 edit = new mxCellAttributeChange(cell, "FlowRate",String(val));
-		}else if(n=="Parameter"){
-			 edit = new mxCellAttributeChange(cell, "Equation",String(val));
-		}
-		graph.getModel().execute(edit);
-		graph.getModel().endUpdate();
-	}
+function setValue(cell, val) {
+    if (getValue(cell) != val) {
+        graph.getModel().beginUpdate();
+        var n = cell.value.nodeName;
+        var edit;
+        if (n == "Stock") {
+            edit = new mxCellAttributeChange(cell, "InitialValue", String(val));
+        } else if (n == "Flow") {
+            edit = new mxCellAttributeChange(cell, "FlowRate", String(val));
+        } else if (n == "Parameter") {
+            edit = new mxCellAttributeChange(cell, "Equation", String(val));
+        }
+        graph.getModel().execute(edit);
+        graph.getModel().endUpdate();
+    }
 }
 
-function orig(cell){
-	if(cell==null){
-		return null;
-	}
-	if(cell.value.nodeName=="Ghost"){
-		return graph.getModel().getCell(cell.value.getAttribute("Source"));
-	}else{
-		return cell;
-	}
+function orig(cell) {
+    if (cell == null) {
+        return null;
+    }
+    if (cell.value.nodeName == "Ghost") {
+        return graph.getModel().getCell(cell.value.getAttribute("Source"));
+    } else {
+        return cell;
+    }
 }
 
-function currentStyleIs(val){
-	var tmp=graph.getCellStyle(graph.getSelectionCell())[mxConstants.STYLE_FONTSTYLE];
-	for(var i=3;i>=1;i--){
-		
-		tmp=tmp-val*(Math.pow(2,i));
-		if(tmp<0){
-			tmp=tmp+val*Math.pow(2,i);
-		}
-	}
-	return (tmp>=val);
+function currentStyleIs(val) {
+    var tmp = graph.getCellStyle(graph.getSelectionCell())[mxConstants.STYLE_FONTSTYLE];
+    for (var i = 3; i >= 1; i--) {
+
+        tmp = tmp - val * (Math.pow(2, i));
+        if (tmp < 0) {
+            tmp = tmp + val * Math.pow(2, i);
+        }
+    }
+    return (tmp >= val);
 }
 
-function setStyles(){
-	var selected = !graph.isSelectionEmpty();
-	
-	if (selected){
-		ribbonPanel.getTopToolbar().items.get('style').get('bold').toggle(currentStyleIs(mxConstants.FONT_BOLD));
-		ribbonPanel.getTopToolbar().items.get('style').get('italic').toggle(currentStyleIs(mxConstants.FONT_ITALIC));
-		ribbonPanel.getTopToolbar().items.get('style').get('underline').toggle(currentStyleIs(mxConstants.FONT_UNDERLINE));
-		var style=graph.getCellStyle(graph.getSelectionCell());
-		sizeCombo.setValue(style[mxConstants.STYLE_FONTSIZE]);
-		fontCombo.setValue(style[mxConstants.STYLE_FONTFAMILY]);
-	}else{
-		
-		ribbonPanel.getTopToolbar().items.get('style').get('bold').toggle(false);
-		ribbonPanel.getTopToolbar().items.get('style').get('italic').toggle(false);
-		ribbonPanel.getTopToolbar().items.get('style').get('underline').toggle(false);
-		sizeCombo.setValue("");
-		fontCombo.setValue("");
-	}
-	
+function setStyles() {
+    var selected = !graph.isSelectionEmpty();
+
+    if (selected) {
+        ribbonPanelItems().getComponent('style').getComponent('bold').toggle(currentStyleIs(mxConstants.FONT_BOLD));
+        ribbonPanelItems().getComponent('style').getComponent('italic').toggle(currentStyleIs(mxConstants.FONT_ITALIC));
+        ribbonPanelItems().getComponent('style').getComponent('underline').toggle(currentStyleIs(mxConstants.FONT_UNDERLINE));
+        var style = graph.getCellStyle(graph.getSelectionCell());
+        sizeCombo.setValue(style[mxConstants.STYLE_FONTSIZE]);
+        fontCombo.setValue(style[mxConstants.STYLE_FONTFAMILY]);
+    } else {
+        ribbonPanelItems().getComponent('style').getComponent('bold').toggle(false);
+        ribbonPanelItems().getComponent('style').getComponent('italic').toggle(false);
+        ribbonPanelItems().getComponent('style').getComponent('underline').toggle(false);
+        sizeCombo.setValue("");
+        fontCombo.setValue("");
+    }
+
+}
+
+function quickLabel(label, title, objects) {
+    var setting = getSetting();
+
+    return processLabel(label, title, objects, setting.getAttribute("TimeUnits"), setting.getAttribute("TimeStep"), setting.getAttribute("SolutionAlgorithm"));
+}
+
+function processLabel(label, title, objects, units, timeStep, algorithm) {
+    var ph = "<PERCENTSIGNPLACEHOLDER>";
+    label = replaceAll(label, "%%", ph);
+
+    label = replaceAll(label, "%u", units);
+    label = replaceAll(label, "%t", title);
+    label = replaceAll(label, "%o", objects);
+    label = replaceAll(label, "%ts", timeStep);
+    label = replaceAll(label, "%a", algorithm);
+
+    label = replaceAll(label, ph, "%");
+
+    return label;
+}
+
+function replaceAll(txt, replace, with_this) {
+    return txt.replace(new RegExp(replace, 'g'), with_this);
+}
+
+function loadBackgroundColor(){
+	mainPanel.body.dom.style["background-color"]=getSetting().getAttribute("BackgroundColor");
 }

@@ -14,7 +14,9 @@ require("SharedHeader.php")
 		?>;
 	</script>
 	<script type="text/javascript" src="/builder/js/DesignerEditor.js"></script> 
-	<script type="text/javascript">var editLocation="view";</script> 	
+	<script type="text/javascript">
+		var editLocation="view";
+	</script> 	
 
 </body>
 </html>

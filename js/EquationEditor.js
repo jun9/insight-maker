@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010 Give Team. All rights reserved.
+Copyright 2010-2011 Give Team. All rights reserved.
 
 Give Team is a non-profit organization dedicated to
 using the internet to encourage giving and greater
@@ -12,21 +12,28 @@ terms of the Insight Maker Public License.
 Insight Maker and Give Team are trademarks.
 
 */
+var codeEditor;
 
 Ext.form.customFields = {
     'code': Ext.extend(Ext.form.TriggerField, {
-        enableKeyEvents: true,
+        enableKeyEvents: false,
         selectOnFocus: true
     }),
-        'converter': Ext.extend(Ext.form.TriggerField, {
-            enableKeyEvents: true,
-            selectOnFocus: true
-        })
+    'converter': Ext.extend(Ext.form.TriggerField, {
+        enableKeyEvents: false,
+        selectOnFocus: true
+    }),
+    'units': Ext.extend(Ext.form.TriggerField, {
+        enableKeyEvents: false,
+        selectOnFocus: true
+    })
 };
 
 Ext.form.customFields['code'] = Ext.extend(Ext.form.customFields['code'], {
     onTriggerClick: function()
     {
+	
+			this.suspendEvents(false);
         this.editorWindow = new Ext.MultiSelectWindow({
             parent: this,
             code: this.getValue()
@@ -61,35 +68,28 @@ Ext.MultiSelectWindow = function(args)
 
     code = obj.args.code.replace(/\\n/g, "\n");
 
-    var refstore = new Ext.data.ArrayStore({
-        autoDestroy: true,
-        storeId: 'myStore',
-        idIndex: 0,
-        fields: ['item']
-    });
-
     var neighbors = neighborhood(selectedPrimitive).map(function(item) {
-        return ['<big>' + item.getAttribute("name") + '</big>']
+        return {name:item.getAttribute("name"), item: '<big>' + item.getAttribute("name") + '</big>'}
     });
-    refstore.loadData(neighbors);
 
-    var neighList = new Ext.ListView({
+	var refstore = new Ext.data.Store({
+        autoDestroy: true,
+        idIndex: 0,
+        fields: [{type:"string", name:'name'},{type:"string", name:'item'}],
+		data:neighbors
+    });
+	
+    var neighList = new Ext.grid.Panel({
         store: refstore,
-        multiSelect: false,
-        mode: 'local',
-        deferEmptyText: false,
-        emptyText: '<div style="padding: 0.4em">No connected nodes. You may use links to connect different nodes together so they can reference each other in their equations.</div>',
-        border: true,
-        reserveScrollOffset: true,
         columns: [{
             header: 'References',
-            width: 1,
+            flex:1,
             dataIndex: 'item',
             sortable: false
         }]
     });
 
-    var codeEditor = new Ext.form.TextArea({
+    codeEditor = new Ext.form.TextArea({
         id: 'myCode',
         name: 'myCode',
         value: code,
@@ -184,7 +184,7 @@ Ext.MultiSelectWindow = function(args)
         split: false,
         layout: 'fit',
         height: 85,
-        collapsible: false,
+        collapsible: false,border:false,
         margins: '3 0 3 3',
         cmargins: '3 3 3 3',
         items: tabs
@@ -194,7 +194,7 @@ Ext.MultiSelectWindow = function(args)
     obj.win = new Ext.Window({
         title: 'Equation Editor',
         layout: 'border',
-        closeAction: 'close',
+        closeAction: 'destroy',
         border: false,
         modal: true,
         items: [syntax, refList, help],
@@ -203,32 +203,37 @@ Ext.MultiSelectWindow = function(args)
         resizable: false,
         shadow: true,
         buttonAlign: 'right',
-
-        buttons: [{
-            text: 'OK',
-            handler: function()
-            {
-                var newCode = codeEditor.getValue();
-                newCode = newCode.replace(/\n|\r/g, "\\n");
-                obj.args.parent.setValue(newCode);
-				obj.args.parent.fireEvent('change', newCode);
-                grid.stopEditing();
-                obj.args.parent.setEditable(!/\\n/.test(newCode));
-                obj.win.close();
-            }
-        },
-        {
+        buttons: [
+        {scale: "large",
+        iconCls: "cancel-icon",
             text: 'Cancel',
             handler: function()
             {
                 obj.win.close();
+				obj.args.parent.resumeEvents();
             }
-        }]
+        },	{	iconCls: "apply-icon",
+            scale: "large",
+	            text: 'Apply',
+	            handler: function()
+	            {
+	                var newCode = codeEditor.getValue();
+	                newCode = newCode.replace(/\n|\r/g, "\\n");
+
+	                obj.args.parent.setValue(newCode);
+	                obj.win.close();
+	
+					obj.args.parent.resumeEvents();
+	                grid.plugins[0].completeEdit();
+	                obj.args.parent.setEditable(!/\\n/.test(newCode));
+	            }
+	        }]
     });
 
-    neighList.on('click',
-    function(view, index, node, e) {
-        insertAtCursor("[" + getText(node) + "]");
+    neighList.on('beforeselect',
+    function(view, node, items, options) {
+        insertAtCursor("[" + node.data.name + "]");
+		return false;
     });
 
     obj.show = function()
@@ -240,7 +245,7 @@ Ext.MultiSelectWindow = function(args)
 
 
 function insertAtCursor(myValue) {
-    var myField = document.getElementById('myCode');
+    var myField = codeEditor.getEl();
 	var startPosition = doGetCaretPosition(myField);
 	
     if (document.selection) {
@@ -252,7 +257,7 @@ function insertAtCursor(myValue) {
         var endPos = myField.selectionEnd;
         myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length);
     } else {
-        myField.value += myValue;
+        codeEditor.setValue(codeEditor.getValue()+myValue);
     }
 	setCaretPosition(myField, startPosition+myValue.length );
 }

@@ -22,10 +22,12 @@ div.mxRubberband {
 	border: 1px solid #3000af;
 }
 #toplinks-holder {
-  padding-left: 0.4em;
-  padding-right: 0.4em;
-  z-index:  20002;
+  left: 0.4em;
+  right: 0.4em;
+  z-index:  1;
   font-size: 11px;
+	position:absolute;
+	top:0px;
 }
 
 #toplinks-holder a{
@@ -83,79 +85,17 @@ html, body {
 	height: 100%;
 }
 
-.ext-el-mask {
-    background:#dadadb;
+.apply-icon {
+    background-image:url(../images/apply.png) !important;
 }
-.x-grid3-td-title b {
-    font-family:tahoma, verdana;
-    display:block;
-    color:#333;
-}
-.x-grid3-td-title b i {
-    font-weight:normal;
-    font-style: normal;
-    color:#000;
-}
-.x-grid3-td-title .topic {
-    padding-left:20px;
-}
-.x-grid3-td-title .x-grid3-cell-inner {
-    white-space:normal;
-}
-.x-grid3-td-title a {
-    color: #385F95;
-    text-decoration:none;
-}
-.x-grid3-td-title a:hover {
-    text-decoration:underline;
-}
-.x-grid3-row-body p {
-    margin:5px 20px 10px 25px !important;
-    color:#555;
-}
-.post-date {
-    font-weight:bold;
-    color:#333;
-}
-.author {
-    color:#333;
-}
-.x-tree {
-    background:#fff !important;
-}
-.x-border-layout-ct {
-    background:transparent;
-}
-body.x-border-layout-ct {
-    background:#c3d5ed url(images/bg.gif) repeat-x left top !important;
-}
-.x-layout-split {
-    background-color:transparent !important;
-}
-.x-tree-node div.feeds-node{
-    background:#eee url(images/cmp-bg.gif) repeat-x;
-    margin-top:1px;
-    border-top:1px solid #ddd;
-    border-bottom:1px solid #ccc;
-    padding-top:2px;
-    padding-bottom:1px;
-}
-.feeds-node .x-tree-node-icon {
-    display:none;
-}
-.forum-ct a span {
-    font-weight:bold;
-    color:#222;
-}
-.feed {
-    border:1px solid #fff;
-    margin:3px;
-}
-.feed .x-tree-ec-icon {
-    display:none;
+.cancel-icon {
+    background-image:url(../images/cancel.png) !important;
 }
 .page-icon {
     background-image:url(../images/page.png) !important;
+}
+.warning-icon {
+    background-image:url(../images/warning.png) !important;
 }
 .macro-icon {
     background-image:url(../images/macro.png) !important;
@@ -366,176 +306,33 @@ body.x-border-layout-ct {
 .property-icon {
     background-image:url(../images/property.png) !important;
 }
-.x-tree-selected {
-    border:1px dotted #a3bae9;
-    background:#DFE8F6;
-}
-.x-tree-node .x-tree-selected a span{
-	background:transparent;
-	color:#15428b;
-    font-weight:bold;
-}
-
-#topic-grid .x-panel-tbar .x-toolbar {
-   /* border-top:0 none; */
-}
 
 
-#main-tabs .x-tab-panel-body {
-    background:transparent;
-    border:0 none;
-}
 
-/* Preview classes */
-
-.preview .x-panel-body {
-    background:#fff;
-    color:#222;
-    font:normal 12px tahoma,verdana,arial,sans-serif;
+.msg .x-box-mc {
+    font-size:14px;
 }
-
-.preview .x-panel-body p {
-    line-height:18px;
-    margin:8px 0;
-}
-
-.preview .x-panel-body ul {
-    margin-left:18px;
-}
-
-.preview .x-panel-body ul li {
-    display:list-item;
-    list-style-image:none !important;
-    list-style-position:outside !important;
-    list-style-type:disc !important;
-    margin-left:18px;
-}
-
-.preview .x-panel-body pre, #preview .x-panel-body code {
-    background:#f1f1f1;
-    display:block;
-}
-
-.preview .x-panel-body h4.post-author {
-    font-weight:normal;
-    color:#555;
-    font-size:11px;
-}
-.preview .x-panel-body span.post-date {
-    font-weight:normal;
-    color:#555;
-    float:right;
-    font-size:11px;
-}
-.preview .x-panel-body div.post-data {
-    background:#f1f2f4;
-    padding:5px;
-    border-bottom:1px solid #dadadb;
-}
-.preview .x-panel-body div.post-body {
-    padding:10px;
-}
-/*.single-preview .x-toolbar, #right-preview .preview .x-toolbar {
-    border-top:0 none;
-}*/
-.reading-menu .x-menu-item-checked {
-   border:1px dotted #a3bae9 !important;
-    background:#DFE8F6;
-	padding:0;
-}
-.x-tab-panel-header {
-    border-bottom-width:0 !important;
-}
-#suggested {
-    border-top:0 none;
-}
-#suggested a {
-    text-decoration:none;
-    font-size:11px;
-    color:#15428B;
-    display:block;
-    padding:3px;
-    float:right;
-    margin-right:4px;
-}
-#suggested a:hover {
-    text-decoration:underline;
-    color:#15428B;
-}
-.x-combo-list-item {
-    zoom:1;
-}
-.x-combo-list-item strong {
-    color:#777;
-    font-size:11px;
-    font-style: normal;
-    float:left;
-}
-.x-combo-list-item em {
-    color:#222;
-    font-size:12px;
-    font-style: normal;
-    float:left;
-    width:325px;
-}
-.x-node-ctx {
-    background:#eee !important;
-    border:1px solid #ccc !important;
-}
-
-/*Roe Editor*/
-.ext-ie .x-row-editor .x-form-text {
-    margin:0 !important; 
-}
-.x-row-editor-header {
-    height:2px;
-    overflow:hidden;
-    background: transparent url(../images/row-editor-bg.gif) repeat-x 0 0;
-}
-.x-row-editor-footer {
-    height:2px;
-    overflow:hidden;
-    background: transparent url(../images/row-editor-bg.gif) repeat-x 0 -2px;
-}
-.ext-ie .x-row-editor-footer {
-    margin-top:-1px;
-}
-
-.x-row-editor-body {
-    overflow:hidden;
-    zoom:1;
-    background: #ebf2fb;
-    padding-top:2px;
-}
-.x-row-editor .x-btns {
+#msg-div {
     position:absolute;
-    top:28px;
-    left:20px;
-    padding-left:5px;
-    background: transparent url(../images/row-editor-btns.gif) no-repeat 0 0;
+    left:20%;
+    top:10px;
+    width:600px;
+    z-index:200000;
 }
-.x-row-editor .x-btns .x-plain-bwrap {
-    padding-right:5px;
-    background: transparent url(../images/row-editor-btns.gif) no-repeat right -31px;
+#msg-div .msg {
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    background: #F6F6F6;
+    border: 2px solid #ccc;
+    margin-top: 2px;
+    padding: 10px 15px;
+    color: #555;
 }
-.x-row-editor .x-btns .x-plain-body {
-    background: transparent url(../images/row-editor-btns.gif) repeat-x 0 -62px;
-    height:31px;
+#msg-div .msg h3 {
+    margin: 0 0 8px;
+    font-weight: bold;
+    font-size: 15px;
 }
-.x-row-editor .x-btns .x-table-layout-cell {
-    padding:3px;
-}
-
-/* Fixes for IE6/7 trigger fields */
-.ext-ie6 .x-row-editor .x-form-field-wrap .x-form-trigger, .ext-ie7 .x-row-editor .x-form-field-wrap .x-form-trigger {
-  top: 1px;
-}
-
-.ext-ie6 .x-row-editor .x-form-field-trigger-wrap, .ext-ie7 .x-row-editor .x-form-field-trigger-wrap {
-  margin-top: -1px;
-}
-
-.errorTip .x-tip-body ul{
-    list-style-type:disc;
-    margin-left:15px;
+#msg-div .msg p {
+    margin: 0;
 }

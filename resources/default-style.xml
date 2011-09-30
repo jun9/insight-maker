@@ -15,7 +15,7 @@
 		<add as="strokeWidth" value="4"/>
 	</add>
 	<add as="stock" extend="defaultVertex">
-		<add as="fillColor" value="#C3D9FF"/>
+		<add as="fillColor" value="#85BFFF"/>
 	</add>
 	<add as="textArea" extend="defaultVertex">
 		<add as="strokeColor" value="#FFFFFF"/>
@@ -27,12 +27,12 @@
 	<add as="parameter" extend="defaultVertex">
 		<add as="shape" value="ellipse"/>
 		<add as="perimeter" value="ellipsePerimeter"/>
-		<add as="fillColor" value="#FFD9C3"/>
+		<add as="fillColor" value="#FFC184"/>
 	</add>
 	<add as="converter" extend="defaultVertex">
 		<add as="shape" value="ellipse"/>
 		<add as="perimeter" value="ellipsePerimeter"/>
-		<add as="fillColor" value="#D9FFC3"/>
+		<add as="fillColor" value="#C3FFBE"/>
 	</add>
 	<add as="display" extend="defaultVertex">
 		<add as="shape" value="image"/>

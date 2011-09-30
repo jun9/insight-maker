@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010 Give Team. All rights reserved.
+Copyright 2010-2011 Give Team. All rights reserved.
 
 Give Team is a non-profit organization dedicated to
 using the internet to encourage giving and greater
@@ -44,15 +44,19 @@ function replace_html(el, html) {
     }
 };
 
-function toggle_toolbar(){
-	var toolbar = ribbonPanel.getTopToolbar();
-	if (! toolbar.isVisible()) {
-	                            toolbar.show();
-	                        } else {
-	                            toolbar.hide();
-	                        }
-	ribbonPanel.doLayout();
-	
+function toggle_toolbar() {
+    var toolbar = ribbonPanel.getDockedItems()[0];
+    if (!toolbar.isVisible()) {
+        toolbar.show();
+		Ext.get("toolbarToggle").update("&uarr;");
+		ribbonPanel.doComponentLayout();
+    } else {
+        toolbar.hide();
+		Ext.get("toolbarToggle").update("&darr;");
+		ribbonPanel.doComponentLayout();
+    }
+    ribbonPanel.doLayout();
+
 }
 
 function setTopLinks() {
@@ -61,29 +65,29 @@ function setTopLinks() {
         links = '<div style="float:right;padding:0.2em;"><nobr><a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</a> | <a href="javascript:toggle_toolbar()">&uarr;</a></nobr></div>';
     } else {
         if (is_editor) {
-			links = '<div style="float:left;padding:0.2em;">';
+            links = '<div style="float:left;padding:0.2em;">';
             links = links + '<a href="http://InsightMaker.com/node/' + drupal_node_ID + '/edit" target="_blank">Edit Insight Properties</a> | ';
-			if (editLocation == 'graph') {
-                links =  links + '<a href="http://InsightMaker.com/insight/' + drupal_node_ID + '/view" target="_blank">Edit Insight User Interface</a>';
+            if (editLocation == 'graph') {
+                links = links + '<a href="http://InsightMaker.com/insight/' + drupal_node_ID + '/view" target="_blank">Edit Insight User Interface</a>';
             } else {
-                links =  links + '<a href="http://InsightMaker.com/insight/' + drupal_node_ID + '/" target="_blank">Edit Insight Model</a>';
+                links = links + '<a href="http://InsightMaker.com/insight/' + drupal_node_ID + '/" target="_blank">Edit Insight Model</a>';
             }
-			links = links+' | <a href="http://InsightMaker.com/comment/reply/' + drupal_node_ID + '#comment-form" target="_blank">Discuss Insight</a></div></div> ';
+            links = links + ' | <a href="http://InsightMaker.com/comment/reply/' + drupal_node_ID + '#comment-form" target="_blank">Discuss Insight</a></div></div> ';
         } else {
-           links = links + '<div style="float:left;padding:0.2em;">';
-			if(! is_embed){
-				links = links + '<a href="http://InsightMaker.com/node/' + drupal_node_ID + '/" target="_blank">Insight Properties</a> | ';
-			}
-			links = links + '<a href="http://InsightMaker.com/comment/reply/' + drupal_node_ID + '#comment-form" target="_blank">Discuss Insight</a></div>';
+            links = links + '<div style="float:left;padding:0.2em;">';
+            if (!is_embed) {
+                links = links + '<a href="http://InsightMaker.com/node/' + drupal_node_ID + '/" target="_blank">Insight Properties</a> | ';
+            }
+            links = links + '<a href="http://InsightMaker.com/comment/reply/' + drupal_node_ID + '#comment-form" target="_blank">Discuss Insight</a></div>';
         }
         links = links + '<div style="float:right;padding:0.2em;"><nobr>';
-        if(is_embed){
-        	links = links + '<a target="_blank" href="http://InsightMaker.com/insight/' + drupal_node_ID + '">Full Screen Insight</a> | ';
-        }else{
-        	links = links + '<a target="_blank" href="http://InsightMaker.com/insight/">Make a New Insight</a> | ';
-        	links = links + '<a target="_blank" href="http://InsightMaker.com/node/' + drupal_node_ID + '/clone">Duplicate Insight</a> | ';
+        if (is_embed) {
+            links = links + '<a target="_blank" href="http://InsightMaker.com/insight/' + drupal_node_ID + '">Full Screen Insight</a> | ';
+        } else {
+            links = links + '<a target="_blank" href="http://InsightMaker.com/insight/">Make a New Insight</a> | ';
+            links = links + '<a target="_blank" href="http://InsightMaker.com/node/' + drupal_node_ID + '/clone">Duplicate Insight</a> | ';
         }
-        links = links + '<a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</a> | <a href="javascript:toggle_toolbar()">&uarr;</a></nobr></div>';
+        links = links + '<a href="http://InsightMaker.com/help" target="_blank">Help</a> | <a href="http://InsightMaker.com/directory" target="_blank">Find More Insights</a> | <a href="javascript:toggle_toolbar()" id="toolbarToggle">&uarr;</a></nobr></div>';
     }
     replace_html(document.getElementById("toplinks-holder"), links);
 }

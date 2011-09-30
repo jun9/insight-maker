@@ -28,12 +28,8 @@ else
 	dim displayNames() as string
 	dim tables() as string
 	for i=0 to primitives.ubound
-		if primitives(i) isa display and (display(primitives(i)).type="scatterplot" or display(primitives(i)).type="time series") then
-			displayNames.append "picture"
-			displayNames.append primitives(i).name
-			r.SaveDisplayPicture(display(primitives(i)), 500, 350, resFolder.child(str(displayNames.ubound+1)+".png"))
-		elseif primitives(i) isa display then
-			displayNames.append "table"
+		if primitives(i) isa display then
+			displayNames.append display(primitives(i)).type
 			displayNames.append primitives(i).name
 			tables.append r.DisplayCSV(display(primitives(i)))
 		end if

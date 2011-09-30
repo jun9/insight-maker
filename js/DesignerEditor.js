@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010 Give Team. All rights reserved.
+Copyright 2010-2011 Give Team. All rights reserved.
 
 Give Team is a non-profit organization dedicated to
 using the internet to encourage giving and greater
@@ -13,23 +13,27 @@ Insight Maker and Give Team are trademarks.
 
 */
 
+function ribbonPanelItems() {
+    var z = ribbonPanel.getDockedItems()[0];
+    return z;
+}
+
 function main() {
     setTopLinks();
     setSaveEnabled(false);
 }
 
 function confirmClose(override) {
-    if (!ribbonPanel.getTopToolbar().items.get('save').get('savebut').disabled) {
+    if (!ribbonPanelItems().getComponent('save').getComponent('savebut').disabled) {
         return "You have made unsaved changes to this interface. If you close now, they will be lost.";
     }
 }
 
-var refstore = new Ext.data.ArrayStore({
-    autoDestroy: true,
+var refstore = new Ext.data.Store({
     storeId: 'myStore',
     idIndex: 1,
-    fields: ['type', 'name', 'data', 'frame'],
-    data: storeData
+    fields: [{name:'type',type:"string"}, {name:'name',type:"string"}, {name:'data',type:"string"}, {name:'frame',type:"string"}],
+    data: []
 });
 
 function ReplaceAll(Source,stringToFind,stringToReplace){
@@ -46,25 +50,21 @@ refstore.each(function(r) {
     r.data["data"]=ReplaceAll(r.data["data"],"scriptscript","script");
 });
 
-var list = new Ext.ListView({
+var list = new Ext.grid.Panel({
+	xtype:"grid",
     store: refstore,
-    multiSelect: false,
-    singleSelect: true,
-    mode: 'local',
-    deferEmptyText: false,
-    emptyText: '<div style="padding: 0.4em">No user interface elements. Start by adding a new page...</div>',
-    border: true,
+    border: false,
     reserveScrollOffset: true,
     columns: [{
-        header: '',
-        width: 0.13,
+        text: '',
+        flex: 1,xtype:'templatecolumn',
         dataIndex: 'type',
         sortable: false,
         tpl: "<img src='/builder/images/{type}.png'>"
     },
     {
-        header: 'Name',
-        width: 0.7,
+        text: 'Name',
+        flex: 4,
         dataIndex: 'name',
         sortable: false
     }],
@@ -85,26 +85,23 @@ var list = new Ext.ListView({
     }
 });
 
-var myRecordDef = refstore.recordType;
 var listPanel = new Ext.Panel({
     region: 'west',
     split: false,
     layout: 'fit',
     width: 200,
     collapsible: false,
-    margins: '3 0 3 3',
-    cmargins: '3 3 3 3',
     bbar: [
     {
         iconCls: 'page-icon',
         text: 'Add Page',
         handler: function() {
-            refstore.add(new myRecordDef({
+            refstore.add({
                 'type': 'page',
                 'name': 'NewPage',
                 'data': '',
                 'frame': "Default"
-            }));
+            });
             setSaveEnabled(true);
         }
     },
@@ -112,12 +109,12 @@ var listPanel = new Ext.Panel({
         iconCls: 'macro-icon',
         text: 'Add Macro',
         handler: function() {
-            refstore.add(new myRecordDef({
+            refstore.add({
                 'type': 'macro',
                 'name': 'NewMacro',
                 'data': '',
                 'frame': "None"
-            }));
+            });
             setSaveEnabled(true);
         }
     },
@@ -138,7 +135,6 @@ var listPanel = new Ext.Panel({
 var nameField = new Ext.form.TextField({
     id: 'nameField',
     name: 'nameField',
-    region: 'north',
     selectOnFocus: true,
     enableKeyEvents: true,
     fieldLabel: "Name",
@@ -148,8 +144,8 @@ var nameField = new Ext.form.TextField({
         'keyup': function(field, e) {
             if (field.getValue() != "") {
                 var item = uiItem();
-                item.data["name"] = field.getValue();
-                list.refreshNode(list.getSelectedIndexes()[0]);
+                list.getSelectionModel().getSelection()[0].set("name", field.getValue());
+list.getSelectionModel().getSelection()[0].commit();
                 setSaveEnabled(true);
             }
         }
@@ -159,8 +155,8 @@ var nameField = new Ext.form.TextField({
 var codeArea = new Ext.form.TextArea({
     id: 'myCode',
     name: 'myCode',
-    region: 'center',
     value: "",
+    fieldLabel: "Code",
     enableKeyEvents: true,
     listeners: {
         'keyup': function(field, e) {
@@ -175,54 +171,38 @@ var codeArea = new Ext.form.TextArea({
 var frameBox = new Ext.form.ComboBox({
     id: 'fCombo',
     name: 'fCombo',
-    region: 'south',
-    mode: 'local',
+    queryMode: 'local',
     typeAhead: true,
     forceSelection: true,
     triggerAction: 'all',
-    fieldLabel: "Frame",
-    store: new Ext.data.ArrayStore({
-        id: 0,
-        fields: [
-        'myId',
-        'displayText'
-        ],
-        data: [["None", "No Frame"], ["Default", "Default Web Frame"]]
-    }),
+    fieldLabel: "Frame",editable:true,
+    store:  [["None", "No Frame"], ["Default", "Default Web Frame"]],
     listeners: {
         'select': function(field, e) {
             uiItem().data["frame"] = field.getValue();
             setSaveEnabled(true);
         }
-    },
-    valueField: 'myId',
-    displayField: 'displayText'
+    }
 });
 
 var editPanel = new Ext.Panel({
     region: 'center',
     split: false,
-    layout: 'vbox',
-    layoutConfig: {
-        align: 'stretch',
-        pack: 'start',
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
     },
     collapsible: false,
-    margins: '3 0 3 3',
-    cmargins: '3 3 3 3',
     items: [nameField, codeArea, frameBox]
 });
+
 
 var ribbonPanel = new Ext.Panel({
     id: 'ribbonPanel',
     region: 'north',
-    layout: 'fit',
-    split: true,
-    items: this.graphPanel,
     split: false,
-    width: 230,
     collapsible: false,
-    border: true,
+    border: false,
     tbar: [ {
             id: 'editGroup',
             xtype: 'buttongroup',
@@ -232,7 +212,6 @@ var ribbonPanel = new Ext.Panel({
             items: [{
                 iconAlign: 'top',
                 scale: 'large',
-                cls: 'x-btn-as-arrow',
                 rowspan: 3,
                 text: 'Test Item',
                 iconCls: 'test-icon',
@@ -254,7 +233,6 @@ var ribbonPanel = new Ext.Panel({
         items: [{
             iconAlign: 'top',
             scale: 'large',
-            cls: 'x-btn-as-arrow',
             rowspan: 3,
             text: 'Save Interface',
             iconCls: 'save-icon',
@@ -293,20 +271,10 @@ var ribbonPanel = new Ext.Panel({
 var viewport = new Ext.Viewport(
 {
     layout: 'border',
+    padding: '19 5 5 5',
     items:
-    [{
-        xtype: 'panel',
-        margins: '24 5 5 5',
-        region: 'center',
-        layout: 'border',
-        split: true,
-        border: false,
-        items:
-        [
-        listPanel, editPanel, ribbonPanel
-        ]
-    }
-    ]
+    [
+        listPanel, editPanel, ribbonPanel]
 });
 
 setEnabled()
@@ -326,8 +294,8 @@ setEnabled()
 }
 
 function uiItem() {
-    if (list.getSelectionCount() > 0) {
-        items = list.getSelectedRecords();
+    if (list.getSelectionModel().getCount() > 0) {
+        items = list.getSelectionModel().getSelection();
         return (items[0]);
     } else {
         return null;
@@ -335,7 +303,7 @@ function uiItem() {
 }
 
 function setSaveEnabled(e) {
-    var b = ribbonPanel.getTopToolbar().items.get('save').get('savebut');
+    var b = ribbonPanelItems().getComponent('save').getComponent('savebut');
     if (e) {
         b.setDisabled(false);
         b.setText('Save Interface');
@@ -353,3 +321,5 @@ function flattenUI() {
 
     return Ext.util.JSON.encode(saveData);
 }
+
+ribbonPanel.doComponentLayout();

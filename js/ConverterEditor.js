@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010 Give Team. All rights reserved.
+Copyright 2010-2011 Give Team. All rights reserved.
 
 Give Team is a non-profit organization dedicated to
 using the internet to encourage giving and greater
@@ -14,12 +14,15 @@ Insight Maker and Give Team are trademarks.
 */
 
 Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter'], {
+	
+	
     onTriggerClick: function()
     {
+		this.suspendEvents(false);
         this.editorWindow = new Ext.ConverterWindow({
             parent: this,
             oldKeys: this.getValue(),
-			interpolation: this.interpolation
+			interpolation: graph.getSelectionCell().getAttribute("Interpolation")
         });
         this.editorWindow.show();
     },
@@ -31,7 +34,6 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
         },
         'beforerender': function()
         {
-
             if (this.regex != undefined) {
                 this.validator = function(value)
                 {
@@ -79,8 +81,7 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
 			}
 
 			if(discreteStore==null){
-		    	discreteStore = new Ext.data.GroupingStore({
-		        	reader: new Ext.data.JsonReader({fields: DataEntry}),
+		    	discreteStore = new Ext.data.Store({fields: dataFields,
 		        	data: data
 		    	});
 			}else{
@@ -89,13 +90,6 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
 			}
 		}
 
-    var DataEntry = Ext.data.Record.create([{
-        name: 'xVal',
-        type: 'float'
-    },{
-        name: 'yVal',
-        type: 'float'
-    }]);
 
     var data = [];
 	var items = obj.args.oldKeys.split(";");
@@ -107,16 +101,22 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
         });
 	}
 
-    var store = new Ext.data.GroupingStore({
-        reader: new Ext.data.JsonReader({fields: DataEntry}),
+	var dataFields = [{
+	        name: 'xVal',
+	        type: 'float'
+	    },{
+	        name: 'yVal',
+	        type: 'float'
+	    }];
+    var store = new Ext.data.Store({fields: dataFields,
         data: data,
-        sortInfo: {field: 'xVal', direction: 'ASC'}
+        sorters: ['xVal']
     });
 
-    var editor = new Ext.ux.grid.RowEditor({
-        saveText: 'Update'
-    });
-
+     var editor = new Ext.grid.plugin.RowEditing({
+            saveText: 'Apply'
+        });
+	
     var gridPan = new Ext.grid.GridPanel({
         store: store,
         width: 600,
@@ -129,25 +129,24 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
             iconCls: 'units-add-icon',
             text: 'Add Point',
             handler: function(){
-                var e = new DataEntry({
+                var e = {
                     xVal: 0,
                     yVal: 0
-                });
-                editor.stopEditing();
-                var index = store.findInsertIndex(e);
+                };
+                editor.completeEdit();
+				var index=0;
 				store.insert(index, e);
                 gridPan.getView().refresh();
-                gridPan.getSelectionModel().selectRow(index);
-                editor.startEditing(index);
+                gridPan.getSelectionModel().selectRange(index,index);
+                editor.startEdit(index, index);
             }
-        },{
-            ref: '../removeBtn',
+        },{id:"converterRemoveBut",
             iconCls: 'units-remove-icon',
             text: 'Remove Point',
             disabled: true,
             handler: function(){
-                editor.stopEditing();
-                var s = gridPan.getSelectionModel().getSelections();
+                editor.completeEdit();
+                var s = gridPan.getSelectionModel().getSelection();
                 for(var i = 0, r; r = s[i]; i++){
                     store.remove(r);
                 }
@@ -160,8 +159,9 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
             id: 'xVal',
             header: 'Input Value',
             dataIndex: 'xVal',
-            width: 220,
+            flex:1,
             sortable: false,
+			menuDisabled: true,
             editor: {
                 xtype: 'numberfield',
                 allowBlank: false,
@@ -170,8 +170,9 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
         },{
             header: 'Output Value',
             dataIndex: 'yVal',
-            width: 220,
+            flex:1,
             sortable: false,
+			menuDisabled: true,
             editor: {
                 xtype: 'numberfield',
                 allowBlank: false,
@@ -189,6 +190,13 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
 		chartStore=discreteStore;
 	}
 	
+	var sourceName="";
+	
+	if(graph.getSelectionCell().getAttribute("Source")=="Time"){
+		sourceName="Time";
+	}else{
+		sourceName = getCellbyID(graph.getSelectionCell().getAttribute("Source")).getAttribute("name");
+	}
 
     var chart = new Ext.Panel({
         width:600,
@@ -201,49 +209,50 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
         maxHeight: 500,
 
         items: {
-            xtype: 'linechart',
+            xtype: 'chart',
             store: chartStore,
-            url:'/builder/js/resources/charts.swf',
-            xField: 'xVal',
-            yAxis: new Ext.chart.NumericAxis({
-                displayName: 'Outputs'
-            }),
-			xAxis: new Ext.chart.NumericAxis({
-                displayName: 'Inputs'
-            }),
+			 animate: true,
+		        shadow: false,
+				axes: [{
+		            type: 'Numeric',
+		            position: 'left',
+		            fields: ["yVal"],
+		            title: "Output",
+		            grid: true
+		        },
+		        {
+		            type: 'Numeric',
+		            position: 'bottom',
+		            fields: ["xVal"],
+		            title: "Input ("+sourceName+")",
+		            grid: true
+		        }],
 
-            chartStyle: {
-                padding: 10,
-                font: {
-                    name: 'Tahoma',
-                    color: 0x444444,
-                    size: 11
-                },
-                xAxis: {
-                    color: 0x69aBc8,
-                    majorTicks: {color: 0x69aBc8, length: 4},
-                    minorTicks: {color: 0x69aBc8, length: 2},
-                    majorGridLines: {size: 1, color: 0xeeeeee}
-                },
-                yAxis: {
-                    color: 0x69aBc8,
-                    majorTicks: {color: 0x69aBc8, length: 4},
-                    minorTicks: {color: 0x69aBc8, length: 2},
-                    majorGridLines: {size: 1, color: 0xdfe8f6}
-                }
-            },
-            series: [{
-                displayName: '',
-                yField: 'yVal'
-            }]
+            	 series: [{
+			            type: 'line',
+			            axis: 'left',
+			            showMarkers: true,
+			            highlight: false,
+			            smooth: false,
+			            style: {
+			                'stroke-width': 2
+			            },
+			            xField: 'xVal',
+			            yField: ["yVal"],
+			            tips: {
+			                trackMouse: true,
+			                width: 100,renderer: function(storeItem, item) {
+			                    this.setTitle("<center>("+item.value[0]+", "+item.value[1]+")</center>");
+			                }
+			            }
+			        }]
         }
     });
-
 
     obj.win = new Ext.Window({
         title: 'Converter Data Specification',
         layout: 'border',
-        closeAction: 'close',
+        closeAction: 'destroy',
         border: false,
         modal: true,
         resizable: false,
@@ -255,23 +264,26 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
         width:508,
         height: 500,
         items: [chart, gridPan],
-		buttons: [{
-		            text: 'OK',
-		            handler: function()
-		            {
-		                obj.args.parent.setValue(getKeys());
-		                grid.stopEditing();
-		                obj.args.parent.setEditable(false);
-		                obj.win.close();
-		            }
-		        },
-		        {
+		buttons: [
+		        {scale: "large",
+                    iconCls: "cancel-icon",
 		            text: 'Cancel',
 		            handler: function()
 		            {
 		                obj.win.close();
+						obj.args.parent.resumeEvents();
 		            }
-		        }]
+		        },	{	scale: "large",
+                    iconCls: "apply-icon",
+					            text: 'Apply',
+					            handler: function()
+					            {
+					                obj.args.parent.setValue(getKeys());
+					                obj.win.close();
+									obj.args.parent.resumeEvents();
+					                grid.plugins[0].completeEdit();
+					            }
+					        }]
 
     });
 	
@@ -286,7 +298,7 @@ Ext.form.customFields['converter'] = Ext.extend(Ext.form.customFields['converter
 	}
 	
     gridPan.getSelectionModel().on('selectionchange', function(sm){
-        gridPan.removeBtn.setDisabled(sm.getCount() < 1);
+        Ext.getCmp("converterRemoveBut").setDisabled(sm.getCount() < 1);
     });
 
 	
