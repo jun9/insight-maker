@@ -167,6 +167,9 @@ html, body {
 .connect-icon {
     background-image:url(../images/connect.gif) !important;
 }
+.scratchpad-icon {
+    background-image:url(../images/scratchpad.png) !important;
+}
 .bold-icon {
     background-image:url(../images/bold.gif) !important;
 }

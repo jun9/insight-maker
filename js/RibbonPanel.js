@@ -13,6 +13,8 @@ Insight Maker and Give Team are trademarks.
 
 */
 
+var scratchPadStatus ="";
+
 function ribbonPanelItems() {
     var z = ribbonPanel.getDockedItems()[0];
     return z;
@@ -80,48 +82,49 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
         graph.setConnectable(connectionType() != "None");
     }
 
-	var executeLayout = function(layout, animate, ignoreChildCount)
-	{
-		var cell = graph.getSelectionCell();
-		
-		if (cell == null ||
-			(!ignoreChildCount &&
-			graph.getModel().getChildCount(cell) == 0))
-		{
-			cell = graph.getDefaultParent();
-		}
+    var executeLayout = function(layout, animate, ignoreChildCount)
+    {
+        var cell = graph.getSelectionCell();
 
-		graph.getModel().beginUpdate();
-		try
-		{
-			layout.execute(cell);
-		}
-		catch (e)
-		{
-			throw e;
-		}
-		finally
-		{
-			// Animates the changes in the graph model except
-			// for Camino, where animation is too slow
-			if (animate && navigator.userAgent.indexOf('Camino') < 0)
-			{
-				// New API for animating graph layout results asynchronously
-				var morph = new mxMorphing(graph);
-				morph.addListener(mxEvent.DONE, function()
-				{
-					graph.getModel().endUpdate();
-				});
-				
-				morph.startAnimation();
-			}
-			else
-			{
-				graph.getModel().endUpdate();
-			}
-		}
-        
-	};
+        if (cell == null ||
+        (!ignoreChildCount &&
+        graph.getModel().getChildCount(cell) == 0))
+        {
+            cell = graph.getDefaultParent();
+        }
+
+        graph.getModel().beginUpdate();
+        try
+        {
+            layout.execute(cell);
+        }
+        catch(e)
+        {
+            throw e;
+        }
+        finally
+        {
+            // Animates the changes in the graph model except
+            // for Camino, where animation is too slow
+            if (animate && navigator.userAgent.indexOf('Camino') < 0)
+            {
+                // New API for animating graph layout results asynchronously
+                var morph = new mxMorphing(graph);
+                morph.addListener(mxEvent.DONE,
+                function()
+                {
+                    graph.getModel().endUpdate();
+                });
+
+                morph.startAnimation();
+            }
+            else
+            {
+                graph.getModel().endUpdate();
+            }
+        }
+
+    };
     var runHandler = function()
     {
         if (!hasDisplay()) {
@@ -177,17 +180,17 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
         {
             if (typeof(color) == "string")
             {
-				
+
                 graph.getModel().beginUpdate();
                 graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, '#' + color);
-				graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#' + color);
-				if(graph.isSelectionEmpty()){
-					
-					getSetting().setAttribute("BackgroundColor", '#' + color);
-					loadBackgroundColor();
-				}
-				
-				graph.getModel().endUpdate();
+                graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#' + color);
+
+                if (graph.isSelectionEmpty()) {
+                    getSetting().setAttribute("BackgroundColor", '#' + color);
+                    loadBackgroundColor();
+                }
+
+                graph.getModel().endUpdate();
             }
         }
     });
@@ -196,18 +199,18 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
         text: 'Transparent',
         handler: function()
         {
-			
+
             graph.getModel().beginUpdate();
             graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
-	            graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, mxConstants.NONE);
-				if(graph.isSelectionEmpty()){
-					
-					getSetting().setAttribute("BackgroundColor", 'white');
-					loadBackgroundColor();
-					
-				}
-				
-				graph.getModel().endUpdate();
+            graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, mxConstants.NONE);
+            if (graph.isSelectionEmpty()) {
+
+                getSetting().setAttribute("BackgroundColor", 'white');
+                loadBackgroundColor();
+
+            }
+
+            graph.getModel().endUpdate();
         }
     });
     var fontColorMenu = new Ext.menu.ColorPicker(
@@ -281,20 +284,22 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
     {
         store: fonts,
         displayField: 'label',
-		valueField: 'font',
+        valueField: 'font',
         queryMode: 'local',
         width: 120,
         colspan: 3,
         triggerAction: 'all',
         emptyText: 'Select a font...',
         selectOnFocus: true,
-        listeners: {select:function(p,entry)
-        {
-            if (entry != null)
+        listeners: {
+            select: function(p, entry)
             {
-                graph.setCellStyles(mxConstants.STYLE_FONTFAMILY, p.getValue());
+                if (entry != null)
+                {
+                    graph.setCellStyles(mxConstants.STYLE_FONTFAMILY, p.getValue());
+                }
             }
-        }}
+        }
     });
 
     // Handles typing a font name and pressing enter
@@ -380,19 +385,21 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
         colspan: 2,
         store: sizes,
         displayField: 'label',
-		valueField: 'size',
+        valueField: 'size',
         queryMode: 'local',
         width: 50,
         triggerAction: 'all',
         emptyText: '12pt',
         selectOnFocus: true,
-        listeners:{select: function(p, entry)
-        {
-            if (entry != null)
+        listeners: {
+            select: function(p, entry)
             {
-                graph.setCellStyles(mxConstants.STYLE_FONTSIZE, p.getValue());
+                if (entry != null)
+                {
+                    graph.setCellStyles(mxConstants.STYLE_FONTSIZE, p.getValue());
+                }
             }
-        }}
+        }
     });
 
     // Handles typing a font size and pressing enter
@@ -509,46 +516,50 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             {
                 graph.fit();
             }
-        },'-',
-	        {
-	            text:'Vertical Hierarchical Layout',
-	            scope:this,
-	            handler: function(item)
-	            {
-        			var layout = new mxHierarchicalLayout(graph);
-	        		executeLayout(layout, true);
-	            }
-	        },
-	        {
-	            text:'Horizontal Hierarchical Layout',
-	            scope:this,
-	            handler: function(item)
-	            {
-	        		var layout = new mxHierarchicalLayout(graph,
-        				mxConstants.DIRECTION_WEST);
-	        		executeLayout(layout, true);
-	            }
-	        },
-	        '-',
-	        {
-	            text:'Organic Layout',
-	            scope:this,
-	            handler: function(item)
-	            {
-	                var layout = new mxFastOrganicLayout(graph);
-	                layout.forceConstant = 80;
-	        		executeLayout(layout, true);
-	            }
-	        },
-	        {
-	            text:'Circle Layout',
-	            scope:this,
-	            handler: function(item)
-	            {
-	        		executeLayout(new mxCircleLayout(graph), true);
-	            }
-	        }]
+        }]
     };
+	if( (! is_embed) && is_editor){
+		zoomMenu.items.push(
+        '-',
+        {
+            text: 'Vertical Hierarchical Layout',
+            scope: this,
+            handler: function(item)
+            {
+                var layout = new mxHierarchicalLayout(graph);
+                executeLayout(layout, true);
+            }
+        },
+        {
+            text: 'Horizontal Hierarchical Layout',
+            scope: this,
+            handler: function(item)
+            {
+                var layout = new mxHierarchicalLayout(graph,
+                mxConstants.DIRECTION_WEST);
+                executeLayout(layout, true);
+            }
+        },
+        '-',
+        {
+            text: 'Organic Layout',
+            scope: this,
+            handler: function(item)
+            {
+                var layout = new mxFastOrganicLayout(graph);
+                layout.forceConstant = 80;
+                executeLayout(layout, true);
+            }
+        },
+        {
+            text: 'Circle Layout',
+            scope: this,
+            handler: function(item)
+            {
+                executeLayout(new mxCircleLayout(graph), true);
+            }
+        });
+	}
 
 
     var configWin;
@@ -587,7 +598,6 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     enableToggle: true,
                     toggleHandler: handlePrimToggle,
                     pressed: drupal_node_ID == -1,
-
                     scope: this
                 },
                 {
@@ -1008,7 +1018,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     }
                 },
                 {
-					id: "zoomMenuButton",
+                    id: "zoomMenuButton",
                     text: '',
                     iconCls: 'zoom-icon',
                     handler: function() {},
@@ -1038,7 +1048,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             },
             {
 
-                hidden: (is_embed || (! is_editor)),
+                hidden: (is_embed || (!is_editor)),
                 xtype: 'buttongroup',
                 columns: config_columns,
                 height: 95,
@@ -1115,7 +1125,8 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                                         name: 'stimestep',
                                         id: 'stimestep',
                                         allowBlank: false,
-                                        minValue: 0.00000001,step:.1,
+                                        minValue: 0.00000001,
+                                        step: .1,
                                         decimalPrecision: 8
                                     }),
                                     {
@@ -1172,7 +1183,8 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                                         store: solutionAlgorithms,
                                         displayField: 'name',
                                         valueField: 'abbr',
-                                        id: 'sSolutionAlgo', editable:false
+                                        id: 'sSolutionAlgo',
+                                        editable: false
                                     })
                                     ],
 
@@ -1261,7 +1273,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     },
                     scope: this
                 },
-                
+
                 {
                     id: 'embed_but',
                     text: 'Embed',
@@ -1288,6 +1300,28 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                                 icon: Ext.MessageBox.INFO
                             });
                         }
+                    },
+                    scope: this
+                },
+				{
+                    hidden: (!is_editor) || is_embed,
+                    id: 'scratchpad',
+                    text: 'Scratchpad',
+                    iconCls: 'scratchpad-icon',
+                    tooltip: 'Draw notes on your diagram',enableToggle:true,
+                    handler: function()
+                    {
+						if(scratchPadStatus=="shown"){
+							Ext.get("mainGraph").setDisplayed("none");
+							scratchPadStatus="hidden";
+						}else if(scratchPadStatus=="hidden"){
+							Ext.get("mainGraph").setDisplayed("block");
+							scratchPadStatus="shown";
+						}else{
+							Ext.get("mainGraph").setDisplayed("block");
+							Scratchpad($('#mainGraph'));
+							scratchPadStatus="shown";
+						}
                     },
                     scope: this
                 }
@@ -1353,8 +1387,8 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 hidden: is_embed,
                 xtype: 'buttongroup',
                 columns: 1,
-                height: 95,
                 title: 'Simulate',
+                height: 95,
                 items: [{
                     iconAlign: 'top',
                     scale: 'large',
@@ -1367,7 +1401,8 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     handler: runHandler,
                     scope: this
                 }]
-            },"->",
+            },
+            "->",
             new Ext.Component({
                 autoEl: {
                     tag: 'a',

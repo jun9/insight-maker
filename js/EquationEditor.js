@@ -245,8 +245,11 @@ Ext.MultiSelectWindow = function(args)
 
 
 function insertAtCursor(myValue) {
+	
+        codeEditor.setValue(codeEditor.getValue()+myValue);
+		return;
     var myField = codeEditor.getEl();
-	var startPosition = doGetCaretPosition(myField);
+	var startPosition = 0;//doGetCaretPosition(myField);
 	
     if (document.selection) {
         myField.focus();
@@ -265,9 +268,11 @@ function insertAtCursor(myValue) {
 function doGetCaretPosition (ctrl) {
 	var CaretPos = 0;	// IE Support
 	if (document.selection) {
-	ctrl.focus ();
+		ctrl.focus ();
 		var Sel = document.selection.createRange ();
-		Sel.moveStart ('character', -ctrl.value.length);
+		//alert(ctrl);
+		//alert(ctrl.value);
+		Sel.moveStart ('character', - ctrl.value.length);
 		CaretPos = Sel.text.length;
 	}
 	// Firefox support

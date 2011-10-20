@@ -39,6 +39,10 @@ require("SharedHeader.php")
    	<script type="text/javascript" src="/builder/js/EquationEditor.js"></script>
    	<script type="text/javascript" src="/builder/js/ConverterEditor.js"></script>
    	<script type="text/javascript" src="/builder/js/UnitsEditor.js"></script>
+    <script type="text/javascript" src="/builder/js/jquery.js"></script> 
+    <script type="text/javascript" src="/builder/js/raphael.js"></script>
+    <script type="text/javascript" src="/builder/js/scratchpad.js"></script>
+
    	<script type="text/javascript">var editLocation="graph";</script> 	
 </body>
 </html>

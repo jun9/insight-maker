@@ -437,7 +437,6 @@ function getSetting() {
 }
 
 function parseResult(res) {
-    //alert(res);
     Ext.MessageBox.hide();
     if (!/[^\s]/.test(res)) {
         Ext.MessageBox.show({
@@ -478,8 +477,9 @@ function parseResult(res) {
                 tableCount++;
                 var data = items[2 + tableCount];
                 var rows = data.split("\n");
-                var header = rows[0].split(",");
-
+                var header = rows[0].replace(/\[/g, "(").replace(/\]/g, ")").split(",");
+				
+				
                 var storeData = [];
                 for (k = 1; k < rows.length; k++) {
                     if (Ext.String.trim(rows[k]) != "") {
@@ -509,6 +509,7 @@ function parseResult(res) {
                         };
                     });
                 }
+
                 var store = new Ext.data.Store({
                     fields: storeFields,
                     data: storeData
@@ -546,7 +547,7 @@ function parseResult(res) {
                         xtype: 'chart',
                         animate: false,
                         shadow: false,
-                        store: store,
+                        store: store,theme:"Category2",
                         legend: {
                             position: 'top'
                         },
@@ -917,5 +918,7 @@ function replaceAll(txt, replace, with_this) {
 }
 
 function loadBackgroundColor(){
-	mainPanel.body.dom.style["background-color"]=getSetting().getAttribute("BackgroundColor");
+	mainPanel.body.dom.style["background-color"] = getSetting().getAttribute("BackgroundColor");
+	
+	mainPanel.body.dom.style.backgroundColor = getSetting().getAttribute("BackgroundColor");
 }

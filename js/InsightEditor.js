@@ -212,9 +212,10 @@ function main()
 
     mainPanel = Ext.create('Ext.Panel', {
         region: 'center',
-        border: false
+        border: false, html:"<div id='mainGraph' style='z-index:1000;position:absolute; width:100%;height:100%;display:none;'></div>"
     });
 
+	
     mainPanel.on('resize',
     function()
     {
