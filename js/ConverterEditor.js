@@ -228,14 +228,20 @@ Ext.ConverterWindow = function(args)
                 position: 'left',
                 fields: ["yVal"],
                 title: "Output",
-                grid: true
+                grid: true,
+				labelTitle: {
+					font: '14px Verdana'
+				}
             },
             {
                 type: 'Numeric',
                 position: 'bottom',
                 fields: ["xVal"],
                 title: "Input (" + sourceName + ")",
-                grid: true
+                grid: true,
+				labelTitle: {
+					font: '14px Verdana'
+				}
             }],
 
             series: [{

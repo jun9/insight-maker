@@ -56,18 +56,20 @@ if (isset($_GET["init"]))
   // is used as a prefix for new cell ids.
   $ns = md5(uniqid(rand(), true));
   //mxLog::debug("session $sid initialized: ns=$ns");
-  echo "<state session-id=\"$sid\" namespace=\"$ns\">";
+  echo "<message namespace=\"$ns\">";
 
+  echo "<delta>";
   if (is_file($delta))
   {
-    echo "<delta>";
     $fp = fopen($delta, "r+");
     fpassthru($fp);
     fclose($fp);
-    echo "</delta>";
   }
+
+	
+  echo "</delta>";
   
-  echo "</state>";
+  echo "</message>";
 
   // Deletes existing buffer
   if (is_file($filename))
@@ -88,16 +90,46 @@ else
   if (isset($_POST["xml"]))
   {
 	  $xml = str_replace("\n", "&#xa;", stripslashes($_POST["xml"]));
-	
+	  
+	  // TODO: Take only the edits from the XML
+	  $edits = "";
+	  $doc = mxUtils::parseXml($xml);
+	  
+	  $child = $doc->documentElement;
+	  
+	  if ($child->nodeName == "message")
+	  {
+	  	$child = $child->firstChild;
+
+	  	while ($child != null)
+	  	{
+		  	if ($child->nodeName == "delta")
+		  	{
+	  			$edit = $child->firstChild;
+	  			
+	  			while ($edit != null)
+	  			{
+	  				if ($edit->nodeName == "edit")
+	  				{
+	  					$edits .= $doc->saveXML($edit);
+	  				}
+	  				
+	  				$edit = $edit->nextSibling;
+	  			}
+	  		}
+	  		
+	  		$child = $child->nextSibling;
+	  	}
+	  }
+	  
 	  // Appends the change to all connected sessions except the incoming
 	  // session and the global delta file
-	  if ($xml != null)
+	  if (strlen($edits) > 0)
 	  {
-	    //mxLog::debug("received changes from ".session_id().": ".strlen($xml)." bytes");
-	  
 	    // Makes sure the global delta file exists so that the change is
 	    // appended below
-	    if (!is_file($delta)) {
+	    if (!is_file($delta))
+	    {
 	      touch($delta);
 	      chmod($delta, 0777);
 	    }
@@ -105,7 +137,7 @@ else
 	    // Clears out the delta file if this change contains a mxRootChange
 	    // in which case the previous changes will no longer be visible and
 	    // just waste bandwidth.
-	    if (strpos($xml, "mxRootChange") > 0)
+	    if (strpos($edits, "mxRootChange") > 0)
 	    {
 	      $fp = fopen($delta, "r+");
 	      fpassthru($fp);
@@ -113,7 +145,6 @@ else
 	      fflush($fp);
 	      fclose($fp);
 	    }
-	 
 
 	    // Dispatches the XML to all sessions except the incoming session
 	    // TODO: Remove dead sessions
@@ -123,17 +154,16 @@ else
 	    {
 	      if ($filename!= "." &&
 	        $filename != ".." &&
-	        !is_dir("$root/$document/$filename") &&
+	        !is_dir("$document/$filename") &&
 	        $filename != session_id())
 	      {
-	       
 	        $tmp = fopen("$root/$document/$filename", "a");
-	        fwrite($tmp, $xml);
+	        fwrite($tmp, $edits);
 	        fflush($tmp);
 	        fclose($tmp);
 	      }
 	    }
-	  
+	    
 	    flush();
 	  }
   }
@@ -188,6 +218,7 @@ else
         header("Content-Type: application/xhtml+xml");
         
         // Sends the changes to the client
+		echo "<message>";
         echo "<delta>";
         $fp = fopen($filename, "r+");
         fpassthru($fp);
@@ -195,6 +226,7 @@ else
         fflush($fp);
         fclose($fp);
         echo "</delta>";
+        echo "</message>";
       }
       else
       {

@@ -18,8 +18,8 @@
 		<add as="fillColor" value="#85BFFF"/>
 	</add>
 	<add as="textArea" extend="defaultVertex">
-		<add as="strokeColor" value="#FFFFFF"/>
-		<add as="fillColor" value="#FFFFFF"/>
+		<add as="strokeColor" value="none"/>
+		<add as="fillColor" value="none"/>
 		<add as="fontColor" value="black"/>
 		<add as="fontSize" value="30"/>
 		<add as="fontStyle" value="4"/>

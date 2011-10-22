@@ -128,14 +128,14 @@ function sendGraphtoServer(graph) {
     });
 }
 
-function getCellbyID(id){
-	var items = primitives();
-	for(i=0; i<items.length; i++){
-		if(id==items[i].id){
-			return items[i];
-		}
-	}
-	return null;
+function getCellbyID(id) {
+    var items = primitives();
+    for (i = 0; i < items.length; i++) {
+        if (id == items[i].id) {
+            return items[i];
+        }
+    }
+    return null;
 }
 
 function validPrimitiveName(name) {
@@ -329,7 +329,7 @@ function setPicture(cell) {
             styleString = mxUtils.setStyle(styleString, "shape", "ellipse");
         }
     } else {
-	//alert(cell.getAttribute("Image"));
+        //alert(cell.getAttribute("Image"));
         if (cell.getAttribute("Image").substring(0, 4).toLowerCase() == "http") {
             styleString = mxUtils.setStyle(styleString, "image", cell.getAttribute("Image"));
         } else {
@@ -389,14 +389,14 @@ function linkBroken(edge) {
             testConverterSource(myCells[i]);
         }
     }
-	if((edge.getTerminal(false) != null) && edge.getTerminal(false).value.nodeName=="Converter"){
-		//alert("hi");
-		if(typeof(edge.getTerminal(true)) != "undefined"){
-			if( isValued(edge.getTerminal(true)) ){
-				edge.getTerminal(false).setAttribute("Source", edge.getTerminal(true).id);
-			}
-		}
-	}
+    if ((edge.getTerminal(false) != null) && edge.getTerminal(false).value.nodeName == "Converter") {
+        //alert("hi");
+        if (typeof(edge.getTerminal(true)) != "undefined") {
+            if (isValued(edge.getTerminal(true))) {
+                edge.getTerminal(false).setAttribute("Source", edge.getTerminal(true).id);
+            }
+        }
+    }
 
 }
 
@@ -478,8 +478,8 @@ function parseResult(res) {
                 var data = items[2 + tableCount];
                 var rows = data.split("\n");
                 var header = rows[0].replace(/\[/g, "(").replace(/\]/g, ")").split(",");
-				
-				
+
+
                 var storeData = [];
                 for (k = 1; k < rows.length; k++) {
                     if (Ext.String.trim(rows[k]) != "") {
@@ -547,23 +547,30 @@ function parseResult(res) {
                         xtype: 'chart',
                         animate: false,
                         shadow: false,
-                        store: store,theme:"Category2",
+                        store: store,
+                        theme: "Category2",
                         legend: {
-                            position: 'top'
+                            position: 'top', boxStroke: "#fff"
                         },
                         axes: [{
                             type: 'Numeric',
                             position: 'bottom',
                             fields: h2[0],
                             title: quickLabel(displays[tableCount - 1].getAttribute("xAxis"), displays[tableCount - 1].getAttribute("name"), displayItems.join(", ")),
-                            grid: true
+                            grid: true,
+                            labelTitle: {
+                                font: '14px Verdana'
+                            }
                         },
                         {
                             type: 'Numeric',
                             position: 'left',
                             fields: displayItems,
                             grid: true,
-                            title: quickLabel(displays[tableCount - 1].getAttribute("yAxis"), displays[tableCount - 1].getAttribute("name"), displayItems.join(", "))
+                            title: quickLabel(displays[tableCount - 1].getAttribute("yAxis"), displays[tableCount - 1].getAttribute("name"), displayItems.join(", ")),
+                            labelTitle: {
+                                font: '14px Verdana'
+                            }
 
                         }],
                         series: Ext.Array.map(displayItems,
@@ -730,7 +737,10 @@ function updateProperties() {
     if (!propertiesWin) {
         propertiesWin = new Ext.Window({
             applyTo: 'property-win',
-            layout: {type:'vbox', align:"stretch"},
+            layout: {
+                type: 'vbox',
+                align: "stretch"
+            },
             modal: true,
             width: 400,
             title: "Save Insight",
@@ -738,31 +748,35 @@ function updateProperties() {
             closable: false,
             resizable: false,
             closeAction: 'hide',
-	        defaults: {
-	            width: 230, labelWidth:110
-	        },
+            defaults: {
+                width: 230,
+                labelWidth: 110
+            },
             items: [new Ext.form.TextField({
-	            fieldLabel: 'Insight Title',
-	            name: 'sinsightTitle',
-	            id: 'sinsightTitle',
-	            allowBlank: false,
-	            selectOnFocus: true,
-	            value: model_title, margin:2
-	        }), new Ext.form.TextField({
-	            fieldLabel: 'Tags',
-	            name: 'sinsightTags',
-	            id: 'sinsightTags',
-	            allowBlank: true,
-	            emptyText: "Environment, Business, Engineering",
-	            value: graph_tags, margin:2
-	        }), new Ext.form.TextArea({
-	            fieldLabel: 'Insight Description',
-	            name: 'sinsightDescription',
-	            id: 'sinsightDescription',
-	            allowBlank: true,
-	            emptyText: "Enter a brief description of the Insight.",
-	            value: graph_description, margin:2
-	        })],
+                fieldLabel: 'Insight Title',
+                name: 'sinsightTitle',
+                id: 'sinsightTitle',
+                allowBlank: false,
+                selectOnFocus: true,
+                value: model_title,
+                margin: 2
+            }), new Ext.form.TextField({
+                fieldLabel: 'Tags',
+                name: 'sinsightTags',
+                id: 'sinsightTags',
+                allowBlank: true,
+                emptyText: "Environment, Business, Engineering",
+                value: graph_tags,
+                margin: 2
+            }), new Ext.form.TextArea({
+                fieldLabel: 'Insight Description',
+                name: 'sinsightDescription',
+                id: 'sinsightDescription',
+                allowBlank: true,
+                emptyText: "Enter a brief description of the Insight.",
+                value: graph_description,
+                margin: 2
+            })],
 
             buttons: [{
                 text: 'Save',
@@ -917,8 +931,8 @@ function replaceAll(txt, replace, with_this) {
     return txt.replace(new RegExp(replace, 'g'), with_this);
 }
 
-function loadBackgroundColor(){
-	mainPanel.body.dom.style["background-color"] = getSetting().getAttribute("BackgroundColor");
-	
-	mainPanel.body.dom.style.backgroundColor = getSetting().getAttribute("BackgroundColor");
+function loadBackgroundColor() {
+    mainPanel.body.dom.style["background-color"] = getSetting().getAttribute("BackgroundColor");
+
+    mainPanel.body.dom.style.backgroundColor = getSetting().getAttribute("BackgroundColor");
 }

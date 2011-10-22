@@ -901,7 +901,7 @@ function main()
             queryMode: 'local',
 			forceSelection:false,
             selectOnFocus: true,
-			listConfig: {
+			listConfig: {emptyText:"No primitives exist in your model",
 			        getInnerTpl: function() {
 			            return '<center><div class="x-combo-list-item" style=\"white-space:normal\";><img src="/builder/images/SD/{text}.png" width=48 height=48/></div></center>';
 			        }
@@ -1177,18 +1177,7 @@ function main()
             });
         } else if (cellType == "Display") {
             iHs = "Displays configure the display of the the results of the simulation. You can have graphical charts or interactive tables as your displays. You can have an unlimited number of displays in your Insight. By default, displays show nothing; add nodes to the display's 'Displayed Items' field to make them visible in displays.";
-            properties.push({
-                'name': 'Type',
-                'text': 'Display Type',
-                'value': cell.getAttribute("Type"),
-                'group': ' Configuration',
-                'editor': new Ext.form.ComboBox({
-                    triggerAction: "all",
-                    store: ['Time Series', 'Scatterplot', 'Tabular', 'Steady State'],
-                    selectOnFocus: true
-                })
-            });
-
+           
             properties.push({
                 'name': 'AutoAddPrimitives',
                 'text': 'Auto Add Nodes',
@@ -1226,10 +1215,9 @@ function main()
                 'editor': new Ext.form.ComboBox({
                     store: allPrimitives,
                     queryMode: 'local',
-                    triggerAction: 'all'
-                    ,editable:false,
-                    hideOnSelect: false
-                    ,
+                    triggerAction: 'all',
+					editable: false,
+                    hideOnSelect: false,
                     multiSelect: true,
                     forceSelection: true,
                     typeAhead: true,
@@ -1237,6 +1225,23 @@ function main()
                 }),
                 'renderer': primitiveRenderer
             });
+
+			 properties.push({
+	                'name': 'Type',
+	                'text': 'Display Type',
+	                'value': cell.getAttribute("Type"),
+	                'group': ' Configuration',
+	                'editor': new Ext.form.ComboBox({
+	                    store: ['Time Series', 'Scatterplot', 'Tabular', 'Steady State'],
+	                    queryMode: 'local',
+	                    triggerAction: "all",
+						editable: false,
+	                    hideOnSelect: false,
+	                    forceSelection: true,
+	                    typeAhead: true
+	                })
+	            });
+
 
         } else if (cellType == "Ghost") {
             iHs = "This item is a 'Ghost' of another primitive. It mirrors the values and properties of its source primitive. You cannot edit the properties of the Ghost. You need to instead edit the properties of its source.";

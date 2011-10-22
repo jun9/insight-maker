@@ -7,9 +7,9 @@ require("SharedHeader.php")
 	<script type="text/javascript">
 		var storeData = <?php 
 		if ($node->field_ui[0]['value'] != ""){
-		 print(str_replace("script","scriptscript",$node->field_ui[0]['value']));
+			print(str_replace("script","scriptscript",$node->field_ui[0]['value']));
 		}else{
-		 print("[]");
+			print("[]");
 		}
 		?>;
 	</script>

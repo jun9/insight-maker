@@ -36,6 +36,10 @@ var refstore = new Ext.data.Store({
     data: []
 });
 
+refstore.loadData(Ext.Array.map(storeData, function(x){
+	return {type: x[0], name: x[1], data: x[2], frame: x[3]};
+}));
+
 function ReplaceAll(Source,stringToFind,stringToReplace){
   var temp = Source;
     var index = temp.indexOf(stringToFind);
@@ -285,11 +289,13 @@ setEnabled()
         codeArea.enable();
         Ext.getCmp('delete-but').enable();
         frameBox.enable();
+		Ext.getCmp('testbut').enable();
     } else {
         nameField.disable();
         codeArea.disable();
         Ext.getCmp('delete-but').disable();
         frameBox.disable();
+		Ext.getCmp('testbut').disable();
     }
 }
 
@@ -319,7 +325,7 @@ function flattenUI() {
         saveData.push([r.data["type"], r.data["name"], r.data["data"], r.data["frame"]]);
     });
 
-    return Ext.util.JSON.encode(saveData);
+    return Ext.JSON.encode(saveData);
 }
 
 ribbonPanel.doComponentLayout();
