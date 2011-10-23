@@ -186,7 +186,7 @@ function main()
 	converter.setAttribute('Image', 'None');
 
     var flow = doc.createElement('Flow');
-    flow.setAttribute('name', 'New Flow');
+    flow.setAttribute('name', 'Flow');
     flow.setAttribute('Note', '');
     flow.setAttribute('FlowRate', '0');
     flow.setAttribute('OnlyPositive', true);
