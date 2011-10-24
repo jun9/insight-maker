@@ -452,14 +452,14 @@ function main()
 
 
     if (true && is_editor && drupal_node_ID != -1) {
-        var sharer = new mxSession(graph.getModel(), "/builder/hub.php?init&id=" + drupal_node_ID, "/builder/hub.php?id=" + drupal_node_ID, "/builder/hub.php?id=" + drupal_node_ID);
+       /* var sharer = new mxSession(graph.getModel(), "/builder/hub.php?init&id=" + drupal_node_ID, "/builder/hub.php?id=" + drupal_node_ID, "/builder/hub.php?id=" + drupal_node_ID);
         sharer.start();
         sharer.createUndoableEdit = function(changes)
         {
             var edit = mxSession.prototype.createUndoableEdit(changes);
             edit.changes.animate = true;
             return edit;
-        }
+        }*/
     }
 
     if (graph_source_data != null && graph_source_data.length > 0)
@@ -1069,9 +1069,9 @@ function main()
             });
 
             properties.push({
-                'name': 'NonNegative',
-                'text': 'Non-Negative',
-                'value': isTrue(cell.getAttribute("NonNegative")),
+                'name': 'AllowNegatives',
+                'text': 'Allow Negatives',
+                'value': ! isTrue(cell.getAttribute("NonNegative")),
                 'group': ' Configuration'
             });
 

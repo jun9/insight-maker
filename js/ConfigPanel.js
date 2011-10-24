@@ -175,6 +175,11 @@ function createGrid(properties, description) {
                         graph.getModel().execute(edit);
                     }
 
+					if (selectedPrimitive.value.nodeName == "Stock" && itemId=="AllowNegatives") {
+						var edit = new mxCellAttributeChange(selectedPrimitive, "NonNegative", String(! isTrue(e.value)));
+	                    graph.getModel().execute(edit);
+                    }
+
                     if (selectedPrimitive.value.nodeName == "Flow") {
                         if (isTrue(selectedPrimitive.getAttribute("OnlyPositive"))) {
                             graph.setCellStyles(mxConstants.STYLE_STARTARROW, "");
