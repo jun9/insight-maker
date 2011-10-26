@@ -321,7 +321,7 @@ function hasDisplay() {
 
 function setPicture(cell) {
     var styleString = cell.getStyle();
-    if (cell.getAttribute("Image") == "None") {
+    if (cell.getAttribute("Image") == "None" || cell.getAttribute("Image")=="" || cell.getAttribute("Image")==" " || cell.getAttribute("Image")=="null") {
         styleString = mxUtils.setStyle(styleString, "image", "None");
         if (cell.value.nodeName == "Display" || cell.value.nodeName == "Stock") {
             styleString = mxUtils.setStyle(styleString, "shape", "rectangle");
