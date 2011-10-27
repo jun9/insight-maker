@@ -697,6 +697,8 @@ function main()
 
     graph.container.focus();
 
+	
+    setTopLinks();
     if (!is_topBar) {
         toggle_toolbar();
     }
@@ -1375,7 +1377,6 @@ function main()
     }
 
     handelCursors();
-    setTopLinks();
 
     if ((!is_editor) && (is_zoom == 1)) {
         graph.getView().setScale(0.25);
