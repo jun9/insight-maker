@@ -477,17 +477,19 @@ function parseResult(res) {
                 tableCount++;
                 var data = items[2 + tableCount];
                 var rows = data.split("\n");
-                var header = rows[0].replace(/\[/g, "(").replace(/\]/g, ")").split(",");
+                var header = rows[0].replace(/\[/g, "(").replace(/\]/g, ")").split(",");//Extjs can't handle square brackets. Used for units
 
-
+				var times = [];
                 var storeData = [];
                 for (k = 1; k < rows.length; k++) {
                     if (Ext.String.trim(rows[k]) != "") {
                         var rowitems = rows[k].split(",");
-                        storeData.push({});
+						storeData.push({});
+						times.push(parseFloat(rowitems[0]));
                         for (j = 0; j < header.length; j++) {
-                            storeData[k - 1][header[j]] = rowitems[j];
+                            storeData[k - 1][header[j]] = parseFloat(rowitems[j]);
                         }
+ 						storeData[k - 1]["Time"] = k-1;
                     }
                 }
 
@@ -509,6 +511,7 @@ function parseResult(res) {
                         };
                     });
                 }
+				storeFields.push({type:"float", name:"Time"});
 
                 var store = new Ext.data.Store({
                     fields: storeFields,
@@ -555,12 +558,17 @@ function parseResult(res) {
                         axes: [{
                             type: 'Numeric',
                             position: 'bottom',
-                            fields: h2[0],
+                            fields: "Time",
                             title: quickLabel(displays[tableCount - 1].getAttribute("xAxis"), displays[tableCount - 1].getAttribute("name"), displayItems.join(", ")),
                             grid: true,
                             labelTitle: {
-                                font: '14px Verdana'
-                            }
+                                font: '12px Verdana'
+                            }	,
+								label: {
+					                renderer: function(x){
+										return times[x];
+									}
+					            }
                         },
                         {
                             type: 'Numeric',
@@ -569,16 +577,15 @@ function parseResult(res) {
                             grid: true,
                             title: quickLabel(displays[tableCount - 1].getAttribute("yAxis"), displays[tableCount - 1].getAttribute("name"), displayItems.join(", ")),
                             labelTitle: {
-                                font: '14px Verdana'
+                                font: '12px Verdana'
                             }
-
                         }],
                         series: Ext.Array.map(displayItems,
                         function(x) {
                             return {
                                 type: 'line',
                                 axis: "left",
-                                xField: h2[0],
+                                xField: "Time",
                                 yField: x,
                                 showMarkers: false,
                                 highlight: true,
@@ -594,7 +601,7 @@ function parseResult(res) {
                                     trackMouse: true,
                                     width: 120,
                                     renderer: function(storeItem, item) {
-                                        this.setTitle("<center>(" + item.value[0] + ", " + item.value[1] + ")</center>");
+                                        this.setTitle("<center>(" + times[item.value[0]] + ", " + item.value[1] + ")</center>");
                                     }
                                 }
                             };
@@ -619,14 +626,20 @@ function parseResult(res) {
                             position: 'bottom',
                             fields: displayItems[0],
                             grid: true,
-                            title: quickLabel(displays[tableCount - 1].getAttribute("xAxis"), displays[tableCount - 1].getAttribute("name"), displayItems[0])
+                            title: quickLabel(displays[tableCount - 1].getAttribute("xAxis"), displays[tableCount - 1].getAttribute("name"), displayItems[0]),
+                            labelTitle: {
+                                font: '12px Verdana'
+                            }
                         },
                         {
                             type: 'Numeric',
                             position: 'left',
                             fields: displayItems[1],
                             grid: true,
-                            title: quickLabel(displays[tableCount - 1].getAttribute("yAxis"), displays[tableCount - 1].getAttribute("name"), displayItems[1])
+                            title: quickLabel(displays[tableCount - 1].getAttribute("yAxis"), displays[tableCount - 1].getAttribute("name"), displayItems[1]),
+                            labelTitle: {
+                                font: '12px Verdana'
+                            }
                         }],
                         series: [{
                             type: 'scatter',
