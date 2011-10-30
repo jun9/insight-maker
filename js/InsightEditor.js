@@ -1330,7 +1330,7 @@ function main()
                 }
 
                 for (var i = 0; i < slids.length; i++) {
-                    var perc = Math.floor( - (Math.log(slids[i].getAttribute("SliderMax")) / Math.log(10) - 4));
+                    var perc = Math.floor( - (Math.log(Math.max(.1,slids[i].getAttribute("SliderMax")-slids[i].getAttribute("SliderMin"))) / Math.log(10) - 4));
                     sliders.push(new Ext.Slider({
                         renderTo: 'slider' + slids[i].id,
                         width: slider_width,

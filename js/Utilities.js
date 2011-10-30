@@ -587,10 +587,9 @@ function parseResult(res) {
                                 axis: "left",
                                 xField: "Time",
                                 yField: x,
-                                showMarkers: false,
-                                highlight: true,
+                                showMarkers: true,
                                 highlight: {
-                                    size: 7,
+									size:3,
                                     radius: 7
                                 },
                                 smooth: false,
