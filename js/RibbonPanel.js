@@ -520,7 +520,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
     };
 	if( (! is_embed) && is_editor){
 		zoomMenu.items.push(
-        '-',
+        /*'-',
         {
             text: 'Vertical Hierarchical Layout',
             scope: this,
@@ -539,7 +539,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 mxConstants.DIRECTION_WEST);
                 executeLayout(layout, true);
             }
-        },
+        },*/
         '-',
         {
             text: 'Organic Layout',

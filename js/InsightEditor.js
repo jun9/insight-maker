@@ -332,14 +332,14 @@ function main()
                         vertex.setConnectable(true);
                         setPicture(vertex);
                     }
-                    /*
+                    
                     panel.getComponent('stock').toggle(false);
                     panel.getComponent('variable').toggle(false);
                     panel.getComponent('text').toggle(false);
                     panel.getComponent('display').toggle(false);
                     panel.getComponent('converter').toggle(false);
                     panel.getComponent('picture').toggle(false);
-                    */
+                    
 
 
                     if (isValued(vertex)) {
