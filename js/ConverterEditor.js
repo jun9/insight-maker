@@ -245,7 +245,7 @@ Ext.ConverterWindow = function(args)
             }],
 
             series: [{
-                type: 'line',
+                type: 'scatter',
                 axis: 'left',
                 showMarkers: true,
                 highlight: false,
