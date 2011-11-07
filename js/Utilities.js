@@ -899,23 +899,24 @@ function currentStyleIs(val) {
 }
 
 function setStyles() {
-    var selected = !graph.isSelectionEmpty();
-
-    if (selected) {
-        ribbonPanelItems().getComponent('style').getComponent('bold').toggle(currentStyleIs(mxConstants.FONT_BOLD));
-        ribbonPanelItems().getComponent('style').getComponent('italic').toggle(currentStyleIs(mxConstants.FONT_ITALIC));
-        ribbonPanelItems().getComponent('style').getComponent('underline').toggle(currentStyleIs(mxConstants.FONT_UNDERLINE));
-        var style = graph.getCellStyle(graph.getSelectionCell());
-        sizeCombo.setValue(style[mxConstants.STYLE_FONTSIZE]);
-        fontCombo.setValue(style[mxConstants.STYLE_FONTFAMILY]);
-    } else {
-        ribbonPanelItems().getComponent('style').getComponent('bold').toggle(false);
-        ribbonPanelItems().getComponent('style').getComponent('italic').toggle(false);
-        ribbonPanelItems().getComponent('style').getComponent('underline').toggle(false);
-        sizeCombo.setValue("");
-        fontCombo.setValue("");
-    }
-
+	if(! is_embed){
+	    var selected = !graph.isSelectionEmpty();
+	
+	    if (selected) {
+	        ribbonPanelItems().getComponent('style').getComponent('bold').toggle(currentStyleIs(mxConstants.FONT_BOLD));
+	        ribbonPanelItems().getComponent('style').getComponent('italic').toggle(currentStyleIs(mxConstants.FONT_ITALIC));
+	        ribbonPanelItems().getComponent('style').getComponent('underline').toggle(currentStyleIs(mxConstants.FONT_UNDERLINE));
+	        var style = graph.getCellStyle(graph.getSelectionCell());
+	        sizeCombo.setValue(style[mxConstants.STYLE_FONTSIZE]);
+	        fontCombo.setValue(style[mxConstants.STYLE_FONTFAMILY]);
+	    } else {
+	        ribbonPanelItems().getComponent('style').getComponent('bold').toggle(false);
+	        ribbonPanelItems().getComponent('style').getComponent('italic').toggle(false);
+	        ribbonPanelItems().getComponent('style').getComponent('underline').toggle(false);
+	        sizeCombo.setValue("");
+	        fontCombo.setValue("");
+	    }
+	}
 }
 
 function quickLabel(label, title, objects) {
