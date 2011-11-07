@@ -341,7 +341,7 @@ function main()
                     panel.getComponent('display').toggle(false);
                     panel.getComponent('converter').toggle(false);
                     panel.getComponent('picture').toggle(false);
-                    
+                	
 
 
                     if (isValued(vertex)) {
@@ -1332,34 +1332,37 @@ function main()
                 }
 
                 for (var i = 0; i < slids.length; i++) {
-                    var perc = Math.floor( - (Math.log(Math.max(.1,slids[i].getAttribute("SliderMax")-slids[i].getAttribute("SliderMin"))) / Math.log(10) - 4));
-                    sliders.push(new Ext.Slider({
-                        renderTo: 'slider' + slids[i].id,
-                        width: slider_width,
-                        minValue: parseFloat(slids[i].getAttribute("SliderMin")),
-                        sliderCell: slids[i],
-                        value: parseFloat(getValue(slids[i])),
-                        maxValue: parseFloat(slids[i].getAttribute("SliderMax")),
-                        decimalPrecision: perc,
-                        listeners: {
-                            change: function(slider, newValue)
-                            {
-                                var other = "sliderVal" + slider.sliderCell.id;
-                                Ext.get(other).dom.value = parseFloat(newValue);
-                                setValue(slider.sliderCell, parseFloat(newValue));
-                            }
-                        }
-                    }));
+					if(Ext.get('slider' + slids[i].id) != null){
+                    	var perc = Math.floor( - (Math.log(Math.max(.1,slids[i].getAttribute("SliderMax")-slids[i].getAttribute("SliderMin"))) / Math.log(10) - 4));
+	                    sliders.push(new Ext.Slider({
+	                        renderTo: 'slider' + slids[i].id,
+	                        width: slider_width,
+	                        minValue: parseFloat(slids[i].getAttribute("SliderMin")),
+	                        sliderCell: slids[i],
+	                        value: parseFloat(getValue(slids[i])),
+	                        maxValue: parseFloat(slids[i].getAttribute("SliderMax")),
+	                        decimalPrecision: perc,
+	                        listeners: {
+	                            change: function(slider, newValue)
+	                            {
+	                                var other = "sliderVal" + slider.sliderCell.id;
+	                                Ext.get(other).dom.value = parseFloat(newValue);
+	                                setValue(slider.sliderCell, parseFloat(newValue));
+	                            }
+	                        }
+	                    }));
 
 
                
-                    Ext.get("sliderVal" + sliders[i].sliderCell.id).dom.value = parseFloat(getValue(slids[i]));
-
+	                    Ext.get("sliderVal" + sliders[i].sliderCell.id).dom.value = parseFloat(getValue(slids[i]));
+					}
                 }
                 for (counter = 0; counter < slids.length; counter++) {
                     var f;
                     eval("f = function(e){var v=parseFloat(Ext.get('sliderVal" + slids[counter].id + "').getValue(), 10); if(! isNaN(v)){sliders[" + counter + "].setValue(v);}}");
-                    Ext.get('sliderVal' + slids[counter].id).on('keyup', f);
+					if( Ext.get('sliderVal' + slids[counter].id) != null){
+                    	Ext.get('sliderVal' + slids[counter].id).on('keyup', f);
+					}
                 }
 
             }
