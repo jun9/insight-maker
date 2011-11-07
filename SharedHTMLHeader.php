@@ -14,7 +14,7 @@
 
 
 </head>
-<body onload="main();" onbeforeunload="return confirmClose();">
+<body  onbeforeunload="return confirmClose();">
 
 
 <div id="loading-mask"></div>

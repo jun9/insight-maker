@@ -13,6 +13,8 @@ Insight Maker and Give Team are trademarks.
 
 */
 
+Ext.onReady(function(){main();});
+
 window.onerror = function (err, file, line) {
 	alert("Javascript Error\n\n"+err+"\n\n("+file+" "+line+")\n\nIf this error persists, please contact us for support.");
 	return true;
@@ -699,10 +701,10 @@ function main()
 
 	
     setTopLinks();
-    if (!is_topBar) {
+    if (! is_topBar) {
         toggle_toolbar();
     }
-    if (!is_sideBar) {
+    if (! is_sideBar) {
         configPanel.collapse(Ext.Component.DIRECTION_RIGHT, false);
     }
 
