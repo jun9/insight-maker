@@ -321,7 +321,7 @@ function hasDisplay() {
 
 function setPicture(cell) {
     var styleString = cell.getStyle();
-    if (cell.getAttribute("Image") == "None" || cell.getAttribute("Image")=="" || cell.getAttribute("Image")==" " || cell.getAttribute("Image")=="null") {
+    if (cell.getAttribute("Image") == "None" || cell.getAttribute("Image") == "" || cell.getAttribute("Image") == " " || cell.getAttribute("Image") == "null") {
         styleString = mxUtils.setStyle(styleString, "image", "None");
         if (cell.value.nodeName == "Display" || cell.value.nodeName == "Stock") {
             styleString = mxUtils.setStyle(styleString, "shape", "rectangle");
@@ -437,6 +437,7 @@ function getSetting() {
 }
 
 function parseResult(res) {
+
     Ext.MessageBox.hide();
     if (!/[^\s]/.test(res)) {
         Ext.MessageBox.show({
@@ -450,6 +451,7 @@ function parseResult(res) {
 
         var displays = primitives("Display");
         res = res.substring(7);
+        
         if (/^ERROR/.test(res)) {
             res = res.substring(5);
             Ext.MessageBox.show({
@@ -477,19 +479,19 @@ function parseResult(res) {
                 tableCount++;
                 var data = items[2 + tableCount];
                 var rows = data.split("\n");
-                var header = rows[0].replace(/\[/g, "(").replace(/\]/g, ")").split(",");//Extjs can't handle square brackets. Used for units
-
-				var times = [];
+                var header = rows[0].replace(/\[/g, "(").replace(/\]/g, ")").split(",");
+                //Extjs can't handle square brackets. Used for units
+                var times = [];
                 var storeData = [];
                 for (k = 1; k < rows.length; k++) {
                     if (Ext.String.trim(rows[k]) != "") {
                         var rowitems = rows[k].split(",");
-						storeData.push({});
-						times.push(parseFloat(rowitems[0]));
+                        storeData.push({});
+                        times.push(parseFloat(rowitems[0]));
                         for (j = 0; j < header.length; j++) {
                             storeData[k - 1][header[j]] = parseFloat(rowitems[j]);
                         }
- 						storeData[k - 1]["Time"] = k-1;
+                        storeData[k - 1]["Time"] = k - 1;
                     }
                 }
 
@@ -511,7 +513,10 @@ function parseResult(res) {
                         };
                     });
                 }
-				storeFields.push({type:"float", name:"Time"});
+                storeFields.push({
+                    type: "float",
+                    name: "Time"
+                });
 
                 var store = new Ext.data.Store({
                     fields: storeFields,
@@ -550,10 +555,10 @@ function parseResult(res) {
                         xtype: 'chart',
                         animate: false,
                         shadow: false,
-                        store: store,
-                        theme: "Category2",
+                        store: store,theme:"Category2",
                         legend: {
-                            position: 'top', boxStroke: "#fff"
+                            position: 'top',
+                            boxStroke: "#fff"
                         },
                         axes: [{
                             type: 'Numeric',
@@ -563,12 +568,12 @@ function parseResult(res) {
                             grid: true,
                             labelTitle: {
                                 font: '12px Verdana'
-                            }	,
-								label: {
-					                renderer: function(x){
-										return times[x];
-									}
-					            }
+                            },
+                            label: {
+                                renderer: function(x) {
+                                    return times[x];
+                                }
+                            }
                         },
                         {
                             type: 'Numeric',
@@ -588,11 +593,10 @@ function parseResult(res) {
                                 xField: "Time",
                                 yField: x,
                                 showMarkers: true,
-                                highlight: {
-									size:3,
-                                    radius: 7
-                                },
-                                smooth: false,
+                                smooth: false,markerConfig: {
+								type: 'circle',
+								radius: 3
+								},
                                 style: {
                                     'stroke-width': 3
                                 },
@@ -899,24 +903,24 @@ function currentStyleIs(val) {
 }
 
 function setStyles() {
-	if(! is_embed){
-	    var selected = !graph.isSelectionEmpty();
-	
-	    if (selected) {
-	        ribbonPanelItems().getComponent('style').getComponent('bold').toggle(currentStyleIs(mxConstants.FONT_BOLD));
-	        ribbonPanelItems().getComponent('style').getComponent('italic').toggle(currentStyleIs(mxConstants.FONT_ITALIC));
-	        ribbonPanelItems().getComponent('style').getComponent('underline').toggle(currentStyleIs(mxConstants.FONT_UNDERLINE));
-	        var style = graph.getCellStyle(graph.getSelectionCell());
-	        sizeCombo.setValue(style[mxConstants.STYLE_FONTSIZE]);
-	        fontCombo.setValue(style[mxConstants.STYLE_FONTFAMILY]);
-	    } else {
-	        ribbonPanelItems().getComponent('style').getComponent('bold').toggle(false);
-	        ribbonPanelItems().getComponent('style').getComponent('italic').toggle(false);
-	        ribbonPanelItems().getComponent('style').getComponent('underline').toggle(false);
-	        sizeCombo.setValue("");
-	        fontCombo.setValue("");
-	    }
-	}
+    if (!is_embed) {
+        var selected = !graph.isSelectionEmpty();
+
+        if (selected) {
+            ribbonPanelItems().getComponent('style').getComponent('bold').toggle(currentStyleIs(mxConstants.FONT_BOLD));
+            ribbonPanelItems().getComponent('style').getComponent('italic').toggle(currentStyleIs(mxConstants.FONT_ITALIC));
+            ribbonPanelItems().getComponent('style').getComponent('underline').toggle(currentStyleIs(mxConstants.FONT_UNDERLINE));
+            var style = graph.getCellStyle(graph.getSelectionCell());
+            sizeCombo.setValue(style[mxConstants.STYLE_FONTSIZE]);
+            fontCombo.setValue(style[mxConstants.STYLE_FONTFAMILY]);
+        } else {
+            ribbonPanelItems().getComponent('style').getComponent('bold').toggle(false);
+            ribbonPanelItems().getComponent('style').getComponent('italic').toggle(false);
+            ribbonPanelItems().getComponent('style').getComponent('underline').toggle(false);
+            sizeCombo.setValue("");
+            fontCombo.setValue("");
+        }
+    }
 }
 
 function quickLabel(label, title, objects) {
