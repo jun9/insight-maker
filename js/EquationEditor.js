@@ -245,53 +245,74 @@ Ext.MultiSelectWindow = function(args)
 
 
 function insertAtCursor(myValue) {
+	var document_id = codeEditor.getFocusEl().id;
+	            var text_field = document.getElementById(document_id);
+				
+				text_field.focus();
+	            var startPos = getInputSelection(text_field).start;
+	            var endPos = getInputSelection(text_field).end;
+
+	            codeEditor.setValue(codeEditor.getValue().substring(0, startPos)
+	            + myValue
+	            + codeEditor.getValue().substring(endPos, codeEditor.getValue().length));
+
+	            codeEditor.getFocusEl().focus();
 	
-        codeEditor.setValue(codeEditor.getValue()+myValue);
-		return;
-    var myField = codeEditor.getEl();
-	var startPosition = 0;//doGetCaretPosition(myField);
-	
-    if (document.selection) {
-        myField.focus();
-        sel = document.selection.createRange();
-        sel.text = myValue;
-    } else if (myField.selectionStart || myField.selectionStart == '0') {
-        var startPos = myField.selectionStart;
-        var endPos = myField.selectionEnd;
-        myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length);
+				if (text_field.setSelectionRange) {
+				text_field.focus();
+				text_field.setSelectionRange(endPos+myValue.length,endPos+myValue.length);
+				}
+				else if (text_field.createTextRange) {
+				var range = text_field.createTextRange();
+				range.collapse(true);
+				range.moveEnd('character', endPos+myValue.length);
+				range.moveStart('character', endPos+myValue.length);
+				range.select();
+				}
+}
+
+function getInputSelection(el) {
+    var start = 0, end = 0, normalizedValue, range,
+        textInputRange, len, endRange;
+
+    if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
+        start = el.selectionStart;
+        end = el.selectionEnd;
     } else {
-        codeEditor.setValue(codeEditor.getValue()+myValue);
+        range = document.selection.createRange();
+
+        if (range && range.parentElement() == el) {
+            len = el.value.length;
+            normalizedValue = el.value.replace(/\r\n/g, "\n");
+
+            // Create a working TextRange that lives only in the input
+            textInputRange = el.createTextRange();
+            textInputRange.moveToBookmark(range.getBookmark());
+
+            // Check if the start and end of the selection are at the very end
+            // of the input, since moveStart/moveEnd doesn't return what we want
+            // in those cases
+            endRange = el.createTextRange();
+            endRange.collapse(false);
+
+            if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
+                start = end = len;
+            } else {
+                start = -textInputRange.moveStart("character", -len);
+                start += normalizedValue.slice(0, start).split("\n").length - 1;
+
+                if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
+                    end = len;
+                } else {
+                    end = -textInputRange.moveEnd("character", -len);
+                    end += normalizedValue.slice(0, end).split("\n").length - 1;
+                }
+            }
+        }
     }
-	setCaretPosition(myField, startPosition+myValue.length );
-}
 
-function doGetCaretPosition (ctrl) {
-	var CaretPos = 0;	// IE Support
-	if (document.selection) {
-		ctrl.focus ();
-		var Sel = document.selection.createRange ();
-		//alert(ctrl);
-		//alert(ctrl.value);
-		Sel.moveStart ('character', - ctrl.value.length);
-		CaretPos = Sel.text.length;
-	}
-	// Firefox support
-	else if (ctrl.selectionStart || ctrl.selectionStart == '0')
-		CaretPos = ctrl.selectionStart;
-	return (CaretPos);
-}
-
-function setCaretPosition(ctrl, pos){
-	if(ctrl.setSelectionRange)
-	{
-		ctrl.focus();
-		ctrl.setSelectionRange(pos,pos);
-	}
-	else if (ctrl.createTextRange) {
-		var range = ctrl.createTextRange();
-		range.collapse(true);
-		range.moveEnd('character', pos);
-		range.moveStart('character', pos);
-		range.select();
-	}
+    return {
+        start: start,
+        end: end
+    };
 }
