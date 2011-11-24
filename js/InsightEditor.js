@@ -65,7 +65,7 @@ function main()
 
     graph.isHtmlLabel = function(cell)
     {
-        var isHTML = cell != null && cell.value != null && (cell.value.nodeName != "Folder" && cell.value.nodeName != "Flow" && cell.value.nodeName != "Display" && cell.value.nodeName != "Picture");
+        var isHTML = cell != null && cell.value != null && (cell.value.nodeName != "Folder" && cell.value.nodeName != "Flow" && cell.value.nodeName != "Display");
 
         return isHTML;
     };
@@ -98,7 +98,7 @@ function main()
     var cellLabelChanged = graph.cellLabelChanged;
     graph.labelChanged = function(cell, newValue, evt)
     {
-        if ((!isPrimitive(cell)) || cell.value.nodeName == "Link" || cell.value.nodeName == "Folder" || validPrimitiveName(newValue)) {
+        if ((!isPrimitive(cell)) || cell.value.nodeName == "Link" || cell.value.nodeName == "Picture" || cell.value.nodeName == "Folder" || validPrimitiveName(newValue)) {
             var edit = new mxCellAttributeChange(cell, "name", newValue);
             graph.getModel().execute(edit);
 			selectionChanged(false);

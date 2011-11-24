@@ -4,6 +4,8 @@
  
  	<link rel="stylesheet" type="text/css" href="/builder/js/ext/resources/css/ext-all.css" />
 
+ 	<link rel="stylesheet" type="text/css" href="/builder/css/BoxSelect.css" />
+
 	<meta name="keywords" content="system dynamics, systems thinking, simulation, complexity, visual modeling, environment, modeling, modelling, model, simulate" />
 	<meta name="description" content="Develop and run systems thinking and system dynamics models on the internet. Open and powerful simulation tool." />
 

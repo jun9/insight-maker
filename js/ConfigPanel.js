@@ -141,7 +141,8 @@ function createGrid(properties, description) {
 
         grid = Ext.create('Ext.grid.property.Grid', {
             width: panel_width,
-            store: gstore,hideHeaders:true,
+            store: gstore,
+			hideHeaders:true,
             border: false,
             id: 'propGrid',
             features: [groupingFeature],
