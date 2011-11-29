@@ -43,38 +43,27 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
         if (item.id == "stock" && pressed) {
             topItems.getComponent('valued').getComponent('variable').toggle(false);
             topItems.getComponent('valued').getComponent('text').toggle(false);
-            topItems.getComponent('valued').getComponent('display').toggle(false);
             topItems.getComponent('valued').getComponent('converter').toggle(false);
             topItems.getComponent('valued').getComponent('picture').toggle(false);
         } else if (item.id == "variable" && pressed) {
             topItems.getComponent('valued').getComponent('stock').toggle(false);
             topItems.getComponent('valued').getComponent('text').toggle(false);
-            topItems.getComponent('valued').getComponent('display').toggle(false);
             topItems.getComponent('valued').getComponent('converter').toggle(false);
             topItems.getComponent('valued').getComponent('picture').toggle(false);
         } else if (item.id == "text" && pressed) {
             topItems.getComponent('valued').getComponent('stock').toggle(false);
             topItems.getComponent('valued').getComponent('variable').toggle(false);
-            topItems.getComponent('valued').getComponent('display').toggle(false);
-            topItems.getComponent('valued').getComponent('converter').toggle(false);
-            topItems.getComponent('valued').getComponent('picture').toggle(false);
-        } else if (item.id == "display" && pressed) {
-            topItems.getComponent('valued').getComponent('stock').toggle(false);
-            topItems.getComponent('valued').getComponent('variable').toggle(false);
-            topItems.getComponent('valued').getComponent('text').toggle(false);
             topItems.getComponent('valued').getComponent('converter').toggle(false);
             topItems.getComponent('valued').getComponent('picture').toggle(false);
         } else if (item.id == "converter" && pressed) {
             topItems.getComponent('valued').getComponent('stock').toggle(false);
             topItems.getComponent('valued').getComponent('variable').toggle(false);
             topItems.getComponent('valued').getComponent('text').toggle(false);
-            topItems.getComponent('valued').getComponent('display').toggle(false);
             topItems.getComponent('valued').getComponent('picture').toggle(false);
         } else if (item.id == "picture" && pressed) {
             topItems.getComponent('valued').getComponent('stock').toggle(false);
             topItems.getComponent('valued').getComponent('variable').toggle(false);
             topItems.getComponent('valued').getComponent('text').toggle(false);
-            topItems.getComponent('valued').getComponent('display').toggle(false);
             topItems.getComponent('valued').getComponent('converter').toggle(false);
         }
         handelCursors();
@@ -127,15 +116,6 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
     };
     var runHandler = function()
     {
-        if (!hasDisplay()) {
-            Ext.MessageBox.show({
-                title: 'No Display',
-                msg: 'You must add at least one Display to your insight in order to show you the results.',
-                buttons: Ext.MessageBox.OK,
-                animEl: 'mb9',
-                icon: Ext.MessageBox.ERROR
-            });
-        } else {
             Ext.MessageBox.show({
                 msg: 'Simulation Running...',
                 width: 300,
@@ -160,6 +140,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     parseResult(result.responseText);
                 },
                 failure: function(result, request) {
+                	modelRes = result;
                     Ext.MessageBox.hide();
                     Ext.MessageBox.show({
                         title: 'Simulation Error',
@@ -170,7 +151,6 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     });
                 }
             });
-        }
     };
 
     var fillColorMenu = Ext.create("Ext.menu.ColorPicker",
@@ -616,26 +596,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     scope: this
                 }
                 ,
-                {
-                    id: 'display',
-                    text: 'Display',
-                    iconCls: 'display-icon',
-                    tooltip: 'Create a new chart or table Display by clicking on the canvas',
-                    enableToggle: true,
-                    toggleHandler: handlePrimToggle,
-                    pressed: false,
-                    scope: this
-                },
-                {
-                    id: 'text',
-                    text: 'Text',
-                    iconCls: 'font-icon',
-                    tooltip: 'Create a new Text Area by clicking on the canvas',
-                    enableToggle: true,
-                    toggleHandler: handlePrimToggle,
-                    pressed: false,
-                    scope: this
-                },
+                
                 {
                     id: 'converter',
                     text: 'Converter',
@@ -645,17 +606,17 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     toggleHandler: handlePrimToggle,
                     pressed: false,
                     scope: this
-                },
-                {
-                    id: 'picture',
-                    text: 'Picture',
-                    iconCls: 'picture-icon',
-                    tooltip: 'Create a new Picture by clicking on the canvas',
-                    enableToggle: true,
-                    toggleHandler: handlePrimToggle,
-                    pressed: false,
-                    scope: this
-                },
+                },	{
+	                    id: 'text',
+	                    text: 'Text',
+	                    iconCls: 'font-icon',
+	                    tooltip: 'Create a new Text Area by clicking on the canvas',
+	                    enableToggle: true,
+	                    toggleHandler: handlePrimToggle,
+	                    pressed: false,
+	                    scope: this
+	                },
+                
                 {
                     id: 'ghostBut',
                     text: 'Ghost',
@@ -679,7 +640,16 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                         graph.getModel().endUpdate();
 
                     }
-                },
+                },	{
+	                    id: 'picture',
+	                    text: 'Picture',
+	                    iconCls: 'picture-icon',
+	                    tooltip: 'Create a new Picture by clicking on the canvas',
+	                    enableToggle: true,
+	                    toggleHandler: handlePrimToggle,
+	                    pressed: false,
+	                    scope: this
+	                },
                 {
                     id: 'folder',
                     text: 'Folder',
@@ -1248,7 +1218,29 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                         configWin.show();
                     },
                     scope: this
-                },
+                },	
+					{
+	                    hidden: (!is_editor) || is_embed,
+	                    id: 'scratchpad',
+	                    text: 'Scratchpad',
+	                    iconCls: 'scratchpad-icon',
+	                    tooltip: 'Draw notes on your diagram',enableToggle:true,
+	                    handler: function()
+	                    {
+							if(scratchPadStatus=="shown"){
+								Ext.get("mainGraph").setDisplayed("none");
+								scratchPadStatus="hidden";
+							}else if(scratchPadStatus=="hidden"){
+								Ext.get("mainGraph").setDisplayed("block");
+								scratchPadStatus="shown";
+							}else{
+								Ext.get("mainGraph").setDisplayed("block");
+								Scratchpad($('#mainGraph'));
+								scratchPadStatus="shown";
+							}
+	                    },
+	                    scope: this
+	                },
                 {
                     hidden: (!is_editor) || is_embed,
                     id: 'download',
@@ -1300,28 +1292,6 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                                 icon: Ext.MessageBox.INFO
                             });
                         }
-                    },
-                    scope: this
-                },
-				{
-                    hidden: (!is_editor) || is_embed,
-                    id: 'scratchpad',
-                    text: 'Scratchpad',
-                    iconCls: 'scratchpad-icon',
-                    tooltip: 'Draw notes on your diagram',enableToggle:true,
-                    handler: function()
-                    {
-						if(scratchPadStatus=="shown"){
-							Ext.get("mainGraph").setDisplayed("none");
-							scratchPadStatus="hidden";
-						}else if(scratchPadStatus=="hidden"){
-							Ext.get("mainGraph").setDisplayed("block");
-							scratchPadStatus="shown";
-						}else{
-							Ext.get("mainGraph").setDisplayed("block");
-							Scratchpad($('#mainGraph'));
-							scratchPadStatus="shown";
-						}
                     },
                     scope: this
                 }

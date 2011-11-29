@@ -1,9 +1,9 @@
-#!/var/www/i/insight/builder/bin/Simgua
+#!/Library/WebServer/Documents/builder/bin/Simgua
 
 #include("SimguaModelCreator.smr")
 
 dim i as integer
-dim m as model = SimguaModelCreator.CreateModel(options.value("Model"))
+dim m as model = SimguaModelCreator.CreateModel(options.value("Model"), false)
 dim r as results = m.runSilently()
 write "SUCCESS"
 
@@ -19,25 +19,46 @@ if r.errorCount>0 then
 	write "</ul>"
 else
 	dim primitives() as primitive = m.root.flatten
-	dim resID as string = hex(rnd*1000000)
-	dim resFolder as folderitem = new Folderitem
-	
-	resFolder = resFolder.child(resID)
-	call resFolder.CreateAsDirectory
-	
-	dim displayNames() as string
-	dim tables() as string
+	dim rootDisplay as display
 	for i=0 to primitives.ubound
 		if primitives(i) isa display then
-			displayNames.append display(primitives(i)).type
-			displayNames.append primitives(i).name
-			tables.append r.DisplayCSV(display(primitives(i)))
+			rootDisplay = display(primitives(i))
 		end if
 	next
 	
+	//dim resID as string = hex(rnd*1000000)
+	//dim resFolder as folderitem = new Folderitem
 	
-	write resID+chr(10)+"<sfrdiv>"+chr(10)
-	write displayNames.join("/")+chr(10)+"<sfrdiv>"+chr(10)
-	write escapeentities(r.console)+chr(10)+"<sfrdiv>"+chr(10)
-	write tables.join(chr(10)+"<sfrdiv>"+chr(10))
+	//resFolder = resFolder.child(resID)
+	//call resFolder.CreateAsDirectory
+	
+	//dim displayNames() as string
+	//dim tables() as string
+	//for i=0 to primitives.ubound
+	//	if primitives(i) isa display then
+	//		displayNames.append display(primitives(i)).type
+	//		displayNames.append primitives(i).name
+	//		tables.append r.DisplayCSV(display(primitives(i)))
+	//	end if
+	//next
+	
+	
+	//write resID+chr(10)+"<sfrdiv>"+chr(10)
+	//write displayNames.join("/")+chr(10)+"<sfrdiv>"+chr(10)
+	//write escapeentities(r.console)+chr(10)+"<sfrdiv>"+chr(10)
+	//write tables.join(chr(10)+"<sfrdiv>"+chr(10))
+	
+	dim itemNames() as string
+	for i=0 to rootDisplay.count()-1
+		itemNames.append(rootDisplay.item(i).info)
+	next
+	
+	write "<SFRDIV>"
+	write itemNames.join(",")
+	write "<SFRDIV>"
+	write r.DisplayCSV(rootDisplay)
+	write "<SFRDIV>"
+	write escapeentities(r.console)
+
 end if
+

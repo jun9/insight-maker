@@ -233,8 +233,11 @@ Ext.MultiSelectWindow = function(args)
     neighList.on('beforeselect',
     function(view, node, items, options) {
         insertAtCursor("[" + node.data.name + "]");
+		codeEditor.focus(false, true);
 		return false;
     });
+
+
 
     obj.show = function()
     {
@@ -246,29 +249,31 @@ Ext.MultiSelectWindow = function(args)
 
 function insertAtCursor(myValue) {
 	var document_id = codeEditor.getFocusEl().id;
-	            var text_field = document.getElementById(document_id);
-				
-				text_field.focus();
-	            var startPos = getInputSelection(text_field).start;
-	            var endPos = getInputSelection(text_field).end;
-
-	            codeEditor.setValue(codeEditor.getValue().substring(0, startPos)
-	            + myValue
-	            + codeEditor.getValue().substring(endPos, codeEditor.getValue().length));
-
-	            codeEditor.getFocusEl().focus();
+	var text_field = document.getElementById(document_id);
 	
-				if (text_field.setSelectionRange) {
-				text_field.focus();
-				text_field.setSelectionRange(endPos+myValue.length,endPos+myValue.length);
-				}
-				else if (text_field.createTextRange) {
-				var range = text_field.createTextRange();
-				range.collapse(true);
-				range.moveEnd('character', endPos+myValue.length);
-				range.moveStart('character', endPos+myValue.length);
-				range.select();
-				}
+	text_field.focus();
+          var startPos = getInputSelection(text_field).start;
+          var endPos = getInputSelection(text_field).end;
+
+          codeEditor.setValue(codeEditor.getValue().substring(0, startPos)
+          + myValue
+          + codeEditor.getValue().substring(endPos, codeEditor.getValue().length));
+
+          codeEditor.getFocusEl().focus();
+
+	if (text_field.setSelectionRange) {
+	text_field.focus();
+	text_field.setSelectionRange(endPos+myValue.length,endPos+myValue.length);
+	}
+	else if (text_field.createTextRange) {
+	var range = text_field.createTextRange();
+	range.collapse(true);
+	range.moveEnd('character', endPos+myValue.length);
+	range.moveStart('character', endPos+myValue.length);
+	range.select();
+	}
+	
+	text_field.focus();
 }
 
 function getInputSelection(el) {

@@ -2,14 +2,15 @@ Module SimguaModelCreator
 	Private Const PrimitiveSeparator = "<insight-PrimSep>"
 	Private Const PropertySeparator  = "<insight-PropSep>"
 	
-	Protected Function CreateModel(MyModel as String) as Model
+	Protected Function CreateModel(MyModel as String, useNote as boolean = true) as Model
 		Dim PrimitiveInfo() as String = split(myModel, PrimitiveSeparator)
 		Dim Properties() as string
 		Dim Primitives() as Primitive
 		Dim indexes() as string
 		
 		dim m as Model = newModel()
-		m.root.item("Data Display").delete
+		dim rootDisplay as display = display(m.root.item("Data Display"))
+		//rootDisplay.delete
 		
 		dim timeUnits as string
 		dim customUnits() as string
@@ -18,7 +19,7 @@ Module SimguaModelCreator
 		dim f as flow
 		dim p as Parameter
 		dim l as link
-		dim disp as display
+		//dim disp as display
 		dim conv as converter
 		dim fold as folder
 		
@@ -64,6 +65,7 @@ Module SimguaModelCreator
 				s.nonNegative=(properties(8)="true")
 				loadConstraints(s, properties,9)
 				primitives.append s
+				rootDisplay.add(s)
 				case "flow"
 				f=m.root.createFlow(properties(2))
 				f.value=properties(6)
@@ -71,28 +73,30 @@ Module SimguaModelCreator
 				f.timeIndependent=(properties(8)="true")
 				loadConstraints(f, properties,9)
 				primitives.append f
+				rootDisplay.add(f)
 				case "parameter"
 				p=m.root.createParameter(properties(2))
 				p.value=properties(4)
 				loadConstraints(p, properties,5)
 				primitives.append p
+				rootDisplay.add(p)
 				case "setting"
 				primitives.append m.settings
 				case "link"
 				l=m.root.createLink(properties(2))
 				primitives.append l
-				case "display"
-				disp=m.root.createDisplay(properties(2))
-				disp.Type=properties(4)
-				disp.Chart3D=(properties(6)="true")
-				disp.XAxisLabel=properties(7)
-				disp.YAxisLabel=properties(8)
-				disp.TimeUnits=timeUnits
-				if disp.Type="Scatterplot" then
-					disp.legendPosition="Do not Show"
-				end if
-				
-				primitives.append disp
+				//case "display"
+				//disp=m.root.createDisplay(properties(2))
+				//disp.Type=properties(4)
+				//disp.Chart3D=(properties(6)="true")
+				//disp.XAxisLabel=properties(7)
+				//disp.YAxisLabel=properties(8)
+				//disp.TimeUnits=timeUnits
+				//if disp.Type="Scatterplot" then
+				//	disp.legendPosition="Do not Show"
+				//end if
+				//
+				//primitives.append disp
 				case "converter"
 				conv=m.root.createConverter(properties(2))
 				while conv.count>0 
@@ -112,12 +116,17 @@ Module SimguaModelCreator
 				next
 				loadConstraints(conv, properties,8)
 				primitives.append conv
+				rootDisplay.add(conv)
 				case "folder"
 				fold = m.root.createFolder(properties(2))
 				fold.expanded = false
 				primitives.append fold
 			end select
-			primitives(ubound(primitives)).info=replaceall(properties(3),"\n", eol)
+			if useNote then
+				primitives(ubound(primitives)).info=replaceall(properties(3),"\n", eol)
+			else
+				primitives(ubound(primitives)).info=replaceall(properties(1),"\n", eol)
+			end if
 			indexes.append properties(1)
 		next
 		
@@ -134,12 +143,12 @@ Module SimguaModelCreator
 				if Primitives(i) isa flow then
 					flow(primitives(i)).per=Microseconds(1,TimeUnits)
 				end if
-			elseif Primitives(i) isa display then
-				properties = split(primitiveInfo(i),PropertySeparator)
-				dim dids() as string=split(properties(5),",")
-				for j=0 to dids.ubound
-					display(primitives(i)).add(primitives(indexes.indexof(dids(j))))
-				next
+			//elseif Primitives(i) isa display then
+			//	properties = split(primitiveInfo(i),PropertySeparator)
+			//	dim dids() as string=split(properties(5),",")
+			//	for j=0 to dids.ubound
+			//		display(primitives(i)).add(primitives(indexes.indexof(dids(j))))
+			//	next
 			elseif Primitives(i) isa converter then
 				properties = split(primitiveInfo(i),PropertySeparator)
 				if properties(4)="Time" then

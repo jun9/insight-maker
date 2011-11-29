@@ -157,7 +157,7 @@ function cellsContainNodename(myCells, name) {
 
 function nodeInsertSelected() {
     var panel = ribbonPanelItems().getComponent('valued');
-    return (panel.getComponent('stock').pressed || panel.getComponent('variable').pressed || panel.getComponent('text').pressed || panel.getComponent('display').pressed || panel.getComponent('converter').pressed || panel.getComponent('picture').pressed)
+    return (panel.getComponent('stock').pressed || panel.getComponent('variable').pressed || panel.getComponent('text').pressed || panel.getComponent('converter').pressed || panel.getComponent('picture').pressed)
 }
 
 function connectionType() {
@@ -436,292 +436,6 @@ function getSetting() {
     return null;
 }
 
-function parseResult(res) {
-
-    Ext.MessageBox.hide();
-    if (!/[^\s]/.test(res)) {
-        Ext.MessageBox.show({
-            title: 'Simulation Timeout',
-            msg: 'The simulation could not be completed as it took too long. Simulations will be automatically terminated after one minute of processing.',
-            buttons: Ext.MessageBox.OK,
-            animEl: 'mb9',
-            icon: Ext.MessageBox.ERROR
-        });
-    } else if (/^SUCCESS/.test(res)) {
-
-        var displays = primitives("Display");
-        res = res.substring(7);
-        
-        if (/^ERROR/.test(res)) {
-            res = res.substring(5);
-            Ext.MessageBox.show({
-                title: 'Model Error',
-                msg: 'There is an error in your model that needs to be corrected before the simulation is run.<br/><br/><b>Details</b>:<br/><br/>' + res,
-                buttons: Ext.MessageBox.OK,
-                animEl: 'mb9',
-                icon: Ext.MessageBox.ERROR
-            });
-        } else {
-            var items = res.split("\n<sfrdiv>\n");
-            var names = items[1].split("/");
-            var cons = items[2];
-            var tabs = [];
-            if (/[^\s]/.test(cons)) {
-                tabs.push({
-                    title: "Console",
-                    html: "<pre style='margin:.5em; font-size: medium; font-family: Georgia,Serif;'>" + cons + "</pre>"
-                });
-            }
-            var tableCount = 0;
-
-            for (var i = 0; i < names.length; i++)
-            {
-                tableCount++;
-                var data = items[2 + tableCount];
-                var rows = data.split("\n");
-                var header = rows[0].replace(/\[/g, "(").replace(/\]/g, ")").split(",");
-                //Extjs can't handle square brackets. Used for units
-                var times = [];
-                var storeData = [];
-                for (k = 1; k < rows.length; k++) {
-                    if (Ext.String.trim(rows[k]) != "") {
-                        var rowitems = rows[k].split(",");
-                        storeData.push({});
-                        times.push(parseFloat(rowitems[0]));
-                        for (j = 0; j < header.length; j++) {
-                            storeData[k - 1][header[j]] = parseFloat(rowitems[j]);
-                        }
-                        storeData[k - 1]["Time"] = k - 1;
-                    }
-                }
-
-                var storeFields;
-                if (names[i] == "Steady State") {
-                    storeFields = Ext.Array.map(header,
-                    function(x) {
-                        return {
-                            type: "string",
-                            name: x
-                        };
-                    });
-                } else {
-                    storeFields = Ext.Array.map(header,
-                    function(x) {
-                        return {
-                            type: "float",
-                            name: x
-                        };
-                    });
-                }
-                storeFields.push({
-                    type: "float",
-                    name: "Time"
-                });
-
-                var store = new Ext.data.Store({
-                    fields: storeFields,
-                    data: storeData
-                });
-                if (names[i] == "Tabular" || names[i] == "Steady State") {
-                    var cols = [];
-                    for (var j = 0; j < header.length; j++) {
-                        cols.push({
-                            header: header[j],
-                            sortable: true,
-                            flex: 1,
-                            dataIndex: header[j]
-                        });
-                    }
-                    var grid = new Ext.grid.GridPanel({
-                        store: store,
-                        columns: cols,
-                        stripeRows: true,
-                        border: false,
-                        frame: false,
-                        header: false
-
-                    });
-
-                    tabs.push({
-                        title: names[i + 1],
-                        items: [grid],
-                        layout: "fit"
-                    });
-                } else if (names[i] == "Time Series") {
-                    var h2 = header;
-                    var displayItems = h2.splice(1, h2.length - 1);
-
-                    var chart = Ext.create("Ext.chart.Chart", {
-                        xtype: 'chart',
-                        animate: false,
-                        shadow: false,
-                        store: store,theme:"Category2",
-                        legend: {
-                            position: 'top',
-                            boxStroke: "#fff"
-                        },
-                        axes: [{
-                            type: 'Numeric',
-                            position: 'bottom',
-                            fields: "Time",
-                            title: quickLabel(displays[tableCount - 1].getAttribute("xAxis"), displays[tableCount - 1].getAttribute("name"), displayItems.join(", ")),
-                            grid: true,
-                            labelTitle: {
-                                font: '12px Verdana'
-                            },
-                            label: {
-                                renderer: function(x) {
-                                    return times[x];
-                                }
-                            }
-                        },
-                        {
-                            type: 'Numeric',
-                            position: 'left',
-                            fields: displayItems,
-                            grid: true,
-                            title: quickLabel(displays[tableCount - 1].getAttribute("yAxis"), displays[tableCount - 1].getAttribute("name"), displayItems.join(", ")),
-                            labelTitle: {
-                                font: '12px Verdana'
-                            }
-                        }],
-                        series: Ext.Array.map(displayItems,
-                        function(x) {
-                            return {
-                                type: 'line',
-                                axis: "left",
-                                xField: "Time",
-                                yField: x,
-                                showMarkers: true,
-                                smooth: false,markerConfig: {
-								type: 'circle',
-								radius: 3
-								},
-                                style: {
-                                    'stroke-width': 3
-                                },
-                                tips: {
-                                    trackMouse: true,
-                                    width: 120,
-                                    renderer: function(storeItem, item) {
-                                        this.setTitle("<center>(" + times[item.value[0]] + ", " + item.value[1] + ")</center>");
-                                    }
-                                }
-                            };
-                        })
-                    });
-                    tabs.push({
-                        title: names[i + 1],
-                        items: [chart],
-                        layout: "fit"
-                    });
-                } else if (names[i] == "Scatterplot") {
-                    var h2 = header;
-                    var displayItems = h2.splice(1, h2.length - 1);
-
-                    var chart = Ext.create("Ext.chart.Chart", {
-                        xtype: 'chart',
-                        animate: false,
-                        shadow: false,
-                        store: store,
-                        axes: [{
-                            type: 'Numeric',
-                            position: 'bottom',
-                            fields: displayItems[0],
-                            grid: true,
-                            title: quickLabel(displays[tableCount - 1].getAttribute("xAxis"), displays[tableCount - 1].getAttribute("name"), displayItems[0]),
-                            labelTitle: {
-                                font: '12px Verdana'
-                            }
-                        },
-                        {
-                            type: 'Numeric',
-                            position: 'left',
-                            fields: displayItems[1],
-                            grid: true,
-                            title: quickLabel(displays[tableCount - 1].getAttribute("yAxis"), displays[tableCount - 1].getAttribute("name"), displayItems[1]),
-                            labelTitle: {
-                                font: '12px Verdana'
-                            }
-                        }],
-                        series: [{
-                            type: 'scatter',
-                            axis: "left",
-                            xField: displayItems[0],
-                            yField: displayItems[1],
-                            highlight: true,
-                            highlight: {
-                                size: 7,
-                                radius: 7
-                            },
-                            smooth: false,
-                            tips: {
-                                trackMouse: true,
-                                width: 120,
-                                renderer: function(storeItem, item) {
-                                    this.setTitle("<center>(" + item.value[0] + ", " + item.value[1] + ")</center>");
-                                }
-                            }
-                        }
-                        ]
-                    });
-                    tabs.push({
-                        title: names[i + 1],
-                        items: [chart],
-                        layout: "fit"
-                    });
-                }
-
-                i++;
-            }
-
-
-            var charts = new Ext.TabPanel({
-                margins: '3 3 3 0',
-                activeTab: 0,
-                deferredRender: false,
-                frame: false,
-                border: false,
-                enableTabScroll: true,
-                defaults: {
-                    autoScroll: true
-                },
-                items: tabs
-            });
-
-            analysisCount++;
-            var win = new Ext.Window({
-                title: 'Simulation Results ' + analysisCount,
-                closable: true,
-                width: 540,
-                height: 425,
-                resizable: true,
-                maximizable: true,
-                layout: 'fit',
-                items: [charts]
-            });
-
-            win.show();
-        }
-    } else if (/^ACCESS DENIED/.test(res)) {
-        Ext.MessageBox.show({
-            title: 'Create an Insight Maker Account',
-            msg: 'You must create an Insight Maker account before you can run Insights. This is quick and free. Just go to:<br><br><a target="_BLANK" href="http://InsightMaker.com/user/register">http://InsightMaker.com/user/register</a><br><br>If you already have an account, you can log in here:<br><br><a target="_BLANK" href="http://InsightMaker.com/user">http://InsightMaker.com/user</a>',
-            buttons: Ext.MessageBox.OK,
-            animEl: 'mb9',
-            icon: Ext.MessageBox.ERROR
-        });
-    } else {
-        Ext.MessageBox.show({
-            title: 'Server Error',
-            msg: 'A server error occurred:<br/><br/>' + res + '',
-            buttons: Ext.MessageBox.OK,
-            animEl: 'mb9',
-            icon: Ext.MessageBox.ERROR
-        });
-    }
-}
-
 function getText(obj) {
     if (document.all) {
         // IE;
@@ -760,7 +474,7 @@ function updateProperties() {
             modal: true,
             width: 400,
             title: "Save Insight",
-            height: 195,
+            height: 235,
             closable: false,
             resizable: false,
             closeAction: 'hide',
@@ -795,6 +509,14 @@ function updateProperties() {
             })],
 
             buttons: [{
+                text: 'Cancel',
+                    scale: "large",
+                    iconCls: "cancel-icon",
+                handler: function() {
+                    propertiesWin.hide();
+                }},{	
+                        iconCls: "apply-icon",
+                        scale: "large",
                 text: 'Save',
                 handler: function() {
                     propertiesWin.hide();
@@ -803,14 +525,10 @@ function updateProperties() {
                     graph_tags = Ext.getCmp('sinsightTags').getValue();
                     setSaveEnabled(true);
                     sendGraphtoServer(graph);
+					selectionChanged(false);
                 }
-            },
-            {
-                text: 'Cancel',
-                handler: function() {
-                    propertiesWin.hide();
-                }
-            }]
+            }
+            ]
 
 
         });
@@ -952,4 +670,8 @@ function loadBackgroundColor() {
     mainPanel.body.dom.style["background-color"] = getSetting().getAttribute("BackgroundColor");
 
     mainPanel.body.dom.style.backgroundColor = getSetting().getAttribute("BackgroundColor");
+}
+
+function isUndefined(item){
+	return typeof(item)=="undefined";
 }

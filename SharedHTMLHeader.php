@@ -3,7 +3,6 @@
     <title>Insight Maker</title>
  
  	<link rel="stylesheet" type="text/css" href="/builder/js/ext/resources/css/ext-all.css" />
-
  	<link rel="stylesheet" type="text/css" href="/builder/css/BoxSelect.css" />
 
 	<meta name="keywords" content="system dynamics, systems thinking, simulation, complexity, visual modeling, environment, modeling, modelling, model, simulate" />

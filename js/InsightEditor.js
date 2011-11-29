@@ -35,6 +35,9 @@ var graph;
 var ghost;
 var sliders = [];
 var settingCell;
+var display;
+var selectionChanged;
+
 function main()
  {
     Ext.QuickTips.init();
@@ -75,11 +78,11 @@ function main()
         return (!is_editor);
     }
     graph.isCellSelectable = function(cell) {
-        return (cell.value.nodeName != "Setting");
+        return (cell.value.nodeName != "Setting" && cell.value.nodeName != "Display");
         //(is_editor && (cell.value.nodeName!="Setting"));
     }
     graph.isCellEditable = function(cell) {
-        return (cell.value.nodeName != "Setting" && cell.value.nodeName != "Ghost");
+        return (cell.value.nodeName != "Display" && cell.value.nodeName != "Setting" && cell.value.nodeName != "Ghost");
     }
 
     graph.convertValueToString = function(cell)
@@ -137,7 +140,7 @@ function main()
     picture.setAttribute('FlipVertical', false);
 
     var doc = mxUtils.createXmlDocument();
-    var display = doc.createElement('Display');
+    display = doc.createElement('Display');
     display.setAttribute('name', 'New Display');
     display.setAttribute('Note', '');
     display.setAttribute('Type', 'Time Series');
@@ -202,7 +205,7 @@ function main()
 
     var setting = doc.createElement('Setting');
     setting.setAttribute('Note', '');
-    setting.setAttribute('Version', '8');
+    setting.setAttribute('Version', '10');
     setting.setAttribute('TimeLength', '100');
     setting.setAttribute('TimeStart', '0');
     setting.setAttribute('TimeStep', '1');
@@ -217,7 +220,6 @@ function main()
         border: false, html:"<div id='mainGraph' style='z-index:1000;position:absolute; width:100%;height:100%;display:none;'></div>"
     });
 
-	
     mainPanel.on('resize',
     function()
     {
@@ -233,7 +235,6 @@ function main()
         padding: '19 5 5 5',
         items: [ribbonPanel]
     });
-
 
     var connectionChangeHandler = function(sender, evt) {
         var item = evt.getProperty("edge");
@@ -277,7 +278,7 @@ function main()
         var cells = evt.getProperty('cells');
         for (var i = 0; i < cells.length; i++) {
             deletePrimitive(cells[i]);
-            if (cells[i].value.nodeName = "Folder") {
+            if (cells[i].value.nodeName == "Folder") {
                 var children = childrenCells(cells[i]);
                 if (children != null) {
                     for (var j = 0; j < children.length; j++) {
@@ -324,9 +325,6 @@ function main()
                     } else if (panel.getComponent('text').pressed) {
                         vertex = graph.insertVertex(parent, null, textAreaThing.cloneNode(true), pt.x - 100-x0, pt.y - 25-y0, 200, 50, "textArea");
                         vertex.setConnectable(false);
-                    } else if (panel.getComponent('display').pressed) {
-                        vertex = graph.insertVertex(parent, null, display.cloneNode(true), pt.x - 32-x0, pt.y - 32-y0, 64, 64, "display");
-                        vertex.setConnectable(false);
                     } else if (panel.getComponent('converter').pressed) {
                         vertex = graph.insertVertex(parent, null, converter.cloneNode(true), pt.x - 50-x0, pt.y - 25-y0, 120, 50, "converter");
                     } else if (panel.getComponent('picture').pressed) {
@@ -338,7 +336,6 @@ function main()
                     panel.getComponent('stock').toggle(false);
                     panel.getComponent('variable').toggle(false);
                     panel.getComponent('text').toggle(false);
-                    panel.getComponent('display').toggle(false);
                     panel.getComponent('converter').toggle(false);
                     panel.getComponent('picture').toggle(false);
                 	
@@ -395,6 +392,7 @@ function main()
         settingCell = graph.insertVertex(parent, null, setting, 20, 20, 80, 40);
         settingCell.visible = false;
         var firstdisp = graph.insertVertex(parent, null, display.cloneNode(true), 50, 20, 64, 64, "roundImage;image=/builder/images/DisplayFull.png;");
+		firstdisp.visible = false;
         firstdisp.setAttribute("AutoAddPrimitives", true);
         firstdisp.setConnectable(false);
         firstdisp.setAttribute("name", "Data Display");
@@ -530,6 +528,16 @@ function main()
 		if (getSetting().getAttribute("Version") < 9) {
             getSetting().setAttribute("BackgroundColor", "white");
             getSetting().setAttribute("Version", 9);
+        }
+
+		if (getSetting().getAttribute("Version") < 10) {
+            var displays = primitives("Display");
+            
+            for (var i = 0; i < displays.length; i++) {
+                displays[i].setVisible(false);
+            }
+            getSetting().setAttribute("Version", 10);
+			graph.refresh()
         }
 
         setConnectability();
@@ -893,7 +901,7 @@ function main()
         'Positive Feedback Clockwise', 'Positive Feedback Counterclockwise',
         'Negative Feedback Clockwise', 'Negative Feedback Counterclockwise',
         'Unknown Feedback Clockwise', 'Unknown Feedback Counterclockwise', 'Plus', 'Minus',
-        'Checkmark', 'Prohibited', 'Idea', 'Book', 'Clock', 'Computer', 'Dice', 'Gear', 'Hammer', 'Smiley', 'Heart', 'Question', 'Warning', 'Info', 'Key', 'Lock', 'Loudspeaker', 'Footprints', 'Mail', 'Network', 'Notes', 'Pushpin', 'Paperclip', 'People', 'Person', 'Wallet', 'Money', 'Flag', 'Trash', "Display"
+        'Checkmark', 'Prohibited', 'Idea', 'Book', 'Clock', 'Computer', 'Dice', 'Gear', 'Hammer', 'Smiley', 'Heart', 'Question', 'Warning', 'Info', 'Key', 'Lock', 'Loudspeaker', 'Footprints', 'Mail', 'Network', 'Notes', 'Pushpin', 'Paperclip', 'People', 'Person', 'Wallet', 'Money', 'Flag', 'Trash'
         ];
 
 		return new Ext.form.ComboBox({
@@ -915,9 +923,8 @@ function main()
 
     var allPrimitives = [];
 
-    selectionChanged(false);
 
-    function selectionChanged(forceClear) {
+    selectionChanged = function(forceClear) {
         if (! (typeof grid == "undefined")) {
             grid.plugins[0].completeEdit();
             //access the cell editing plugin, then terminate
@@ -1048,7 +1055,20 @@ function main()
             if (drupal_node_ID == -1) {
                 iHs = "<br><br><center><a href='/builder/resources/QuickStart.pdf' target='_blank'><img src='/builder/images/Help.jpg' /></a><br/><br/><br/>Or take a look at the <a href='http://InsightMaker.com/help' target='_blank'>Detailed Insight Maker Manual</a><br/><br/>There is also a <a href=' http://www.systemswiki.org/index.php?title=Insight_Maker' target='_blank'>free, on-line education course</a> which teaches you how to think in a systems manner using Insight Maker.</center>";
             } else {
-                iHs = "<big>" + graph_description + "</big>";
+				var descTxt = graph_description;
+				if(descTxt == ""){
+					if(is_editor){
+						descTxt = "<span style='color: gray'>You haven't entered a description for this Insight yet. Please enter one to help others understand it.</span>";
+					}
+				}
+
+                iHs = "<big>" + descTxt + "</big><br/>";
+				if(is_editor){
+					iHs = iHs +"<div style='text-align:right; width: 100%;'><a href='#' onclick='updateProperties()'>Edit description</a></div><br/>";
+				}else{
+					iHs=iHs+"<br/>";
+				}
+
                 var slids = sliderPrimitives();
                 if (slids.length > 0) {
                     slidersShown = true;
@@ -1368,6 +1388,9 @@ function main()
             }
         }
     }
+
+
+    selectionChanged(false);
 
     if (drupal_node_ID == -1) {
         setSaveEnabled(true);

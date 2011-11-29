@@ -53,7 +53,7 @@
 			return false;
 		}
 		$n=$cell->value->nodeName;
-		return ($n == "Folder" || $n == "Stock" || $n == "Converter" || $n == "Parameter" || $n == "Display" || $n == "Link" || $n == "Flow" || $n == "Setting");
+		return ($n == "Folder" || $n == "Stock" || $n == "Converter" || $n == "Parameter"  || $n == "Link" || $n == "Flow" || $n == "Setting");
 		}
 		
 	function connectionValue($cell){
@@ -193,7 +193,7 @@
 				array_push($properties, connectionValue(orig($cell->source)));
 				array_push($properties, connectionValue(orig($cell->target)));
 				break;
-			case "Display":
+			/*case "Display":
 				array_push($properties, "display");
 				array_push($properties, $cell->id);
 				array_push($properties, $cell->getAttribute("name"));
@@ -211,7 +211,7 @@
 				array_push($properties, $cell->getAttribute("ThreeDimensional"));
 				array_push($properties, $cell->getAttribute("xAxis"));
 				array_push($properties, $cell->getAttribute("yAxis"));
-				break;
+				break;*/
 			case "Folder":
 				array_push($properties, "folder");
 				array_push($properties, $cell->id);

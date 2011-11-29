@@ -36,9 +36,13 @@ if(in_array("authenticated user", $user->roles) || in_array("unsecure", $user->r
 	$modelData=rawurldecode($_POST["code"]);
 	$modelData=str_replace("\\'","'",str_replace("\\\"",'"',$modelData));
 	chdir("./builder");
+	
 	require("./GraphToIntermediate.php");
+	#print("test1");
     exec("bin/Simgua run.smr Model \"".$modelData."\"", $output);
+    #print("test2");
 	echo join("\n",$output)."\n";
+    #print("test3");
 }else{
 ?>ACCESS DENIED<?php
 }
