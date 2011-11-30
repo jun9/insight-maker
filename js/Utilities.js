@@ -675,3 +675,7 @@ function loadBackgroundColor() {
 function isUndefined(item){
 	return typeof(item)=="undefined";
 }
+
+function isTouch() {
+	return /android|iphone|ipad/i.test(navigator.userAgent.toLowerCase());
+};

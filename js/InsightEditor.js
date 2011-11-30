@@ -47,6 +47,11 @@ function main()
 
     mxConstants.DEFAULT_HOTSPOT = 0.3;
 
+	//Change the settings for touch devices
+	if (isTouch()){
+    	mxConstants.HANDLE_SIZE = 14;
+	    mxConstants.DEFAULT_HOTSPOT = 0.5;
+	}
 
     graph = new mxGraph();
 
