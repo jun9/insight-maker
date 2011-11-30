@@ -131,6 +131,7 @@ Module SimguaModelCreator
 		next
 		
 		//carry out linking
+		rootDisplay.timeUnits = timeUnits
 		for i=0 to ubound(primitives)
 			if Primitives(i) isa connection then
 				properties = split(primitiveInfo(i),PropertySeparator)
