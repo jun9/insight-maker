@@ -1,7 +1,7 @@
 <html>
 <head>
     <title><?php if($nid>-1){
-		echo htmlentities($node->title)." | Insight Maker";
+		echo htmlentities(strip_tags($node->title))." | Insight Maker";
 	}else{
 		echo "Insight Maker";
 }?></title>
@@ -11,7 +11,7 @@
 
 	<meta name="keywords" content="system dynamics, systems thinking, simulation, complexity, visual modeling, environment, modeling, modelling, model, simulate" />
 	<meta name="description" content="<?php if($nid>-1){
-			echo htmlentities($node->body);
+			echo htmlentities(strip_tags($node->body));
 		}else{	
 			echo "Develop and run systems thinking and system dynamics models on the internet. Open and powerful simulation tool.";
 		}?>" />
