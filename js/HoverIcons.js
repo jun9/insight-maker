@@ -59,7 +59,7 @@ function mxIconSet(state)
     }
 
 
-    if (Ext.String.trim(state.cell.value.getAttribute("Note")) != "") {
+    if (state.cell.value.getAttribute("Note")!=null && Ext.String.trim(state.cell.value.getAttribute("Note")) != "") {
         // Note
         var img = mxUtils.createImage('/builder/images/note.png');
         img.setAttribute('title', '');
