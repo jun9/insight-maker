@@ -125,6 +125,8 @@ function main()
         }
     };
 
+	setupHoverIcons();
+
     var doc = mxUtils.createXmlDocument();
 
     var textAreaThing = doc.createElement('Text');
@@ -150,7 +152,7 @@ function main()
     display.setAttribute('Note', '');
     display.setAttribute('Type', 'Time Series');
     display.setAttribute('xAxis', 'Time (%u)');
-    display.setAttribute('yAxis', '%o');
+    display.setAttribute('yAxis', '');
     display.setAttribute('ThreeDimensional', false);
     display.setAttribute('Primitives', '');
     display.setAttribute('AutoAddPrimitives', false);
@@ -384,7 +386,7 @@ function main()
     graph.setSplitEnabled(false);
     graph.connectionHandler.connectImage = new mxImage('/builder/images/connector.gif', 16, 16);
     graph.setPanning(true);
-    graph.setTooltips(true);
+    graph.setTooltips(false);
     graph.connectionHandler.setCreateTarget(false);
 
     var rubberband = new mxRubberband(graph);
@@ -1342,7 +1344,43 @@ function main()
             });
         }
 		configPanel.removeAll();
+iHs =iHs + '<br/><div style="text-align:right; vertical-align:middle">Share <span  id="st_facebook_button" displayText="Facebook"></span><span  id="st_twitter_button" displayText="Tweet"></span><span  id="st_linkedin_button" displayText="LinkedIn"></span><br/><br/></div>';		
         createGrid(properties, iHs);
+
+		if(drupal_node_ID!=-1){
+			try{
+			stWidget.addEntry({
+	                 "service":"twitter",
+	                 "element":document.getElementById('st_twitter_button'),
+	                 "url": "http://InsightMaker.com/insight/"+drupal_node_ID,
+	                 "title": graph_title,
+					"type":"chicklet",
+	                 "image":"http://insightmaker.com/sites/default/files/logo.png"	,
+					"summary":graph_description
+	         });
+			stWidget.addEntry({
+		                 "service":"facebook",
+		                 "element":document.getElementById('st_facebook_button'),
+		                 "url": "http://InsightMaker.com/insight/"+drupal_node_ID,
+		                 "title": graph_title,
+						"type":"chicklet",
+		                 "image":"http://insightmaker.com/sites/default/files/logo.png"	,
+						"summary":graph_description
+		         });
+				stWidget.addEntry({
+			                 "service":"linkedin",
+			                 "element":document.getElementById('st_linkedin_button'),
+			                 "url": "http://InsightMaker.com/insight/"+drupal_node_ID,
+			                 "title": graph_title,
+							"type":"chicklet",
+			                 "image":"http://insightmaker.com/sites/default/files/logo.png",
+							"summary":graph_description
+			         });
+			}catch(err){
+				
+			}
+	}
+
 
         if (slidersShown == true) {
             var slids = sliderPrimitives();

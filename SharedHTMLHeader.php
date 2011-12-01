@@ -10,9 +10,10 @@
 
 	<link rel="shortcut icon" href="/builder/favicon.ico" type="image/x-icon" />
 
+	
+	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script><script type="text/javascript">try{stLight.options({publisher:'da2cd4bd-9b31-489c-90a9-64291ed98633'});}catch(err){}</script>
 
     <link rel="stylesheet" type="text/css" href="/builder/css/insighteditor.css" />
-
 
 </head>
 <body  onbeforeunload="return confirmClose();">

@@ -32,6 +32,9 @@ require("SharedHeader.php")
 	var mxLoadStylesheets = false;
 	</script>
 	<script type="text/javascript" src="http://mxclient.jgraph.com/demo/mxgraph/src/js/mxclient.php?version=1.8.0.3"></script>
+
+	
+	
     <script type="text/javascript" src="/builder/js/InsightEditor.js"></script>
 	<script type="text/javascript" src="/builder/js/Utilities.js"></script>		
 	<script type="text/javascript" src="/builder/js/RibbonPanel.js"></script>
@@ -44,6 +47,8 @@ require("SharedHeader.php")
     <script type="text/javascript" src="/builder/js/raphael.js"></script>
     <script type="text/javascript" src="/builder/js/scratchpad.js"></script>
     <script type="text/javascript" src="/builder/js/BoxSelect.js"></script>
+    <script type="text/javascript" src="/builder/js/HoverIcons.js"></script>
+
 	
 
    	<script type="text/javascript">var editLocation="graph";</script> 	

@@ -1372,7 +1372,6 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     scope: this
                 }]
             },
-            "->",
             new Ext.Component({
                 autoEl: {
                     tag: 'a',

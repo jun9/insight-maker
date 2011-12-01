@@ -202,10 +202,16 @@ Ext.ConverterWindow = function(args)
 
     var sourceName = "";
 
-    if (graph.getSelectionCell().getAttribute("Source") == "Time") {
+	var cell;
+	if(obj.args.parent != ""){
+		cell = graph.getSelectionCell();
+	}else{
+		cell = obj.args.cell;
+	}
+    if (cell.getAttribute("Source") == "Time") {
         sourceName = "Time";
     } else {
-        sourceName = getCellbyID(graph.getSelectionCell().getAttribute("Source")).getAttribute("name");
+        sourceName = getCellbyID(cell.getAttribute("Source")).getAttribute("name");
     }
 
     var chart = new Ext.Panel({
@@ -289,7 +295,9 @@ Ext.ConverterWindow = function(args)
             handler: function()
             {
                 obj.win.close();
-                obj.args.parent.resumeEvents();
+				if(obj.args.parent!=""){
+                	obj.args.parent.resumeEvents();
+				}
             }
         },
         {
@@ -297,11 +305,20 @@ Ext.ConverterWindow = function(args)
             iconCls: "apply-icon",
             text: 'Apply',
             handler: function()
-            {
-                obj.args.parent.setValue(getKeys());
+            {	
+				if(obj.args.parent !=""){
+                	obj.args.parent.setValue(getKeys());
+				}else{
+					obj.args.cell.setAttribute("Data", getKeys())
+				}
+			
                 obj.win.close();
-                obj.args.parent.resumeEvents();
-                grid.plugins[0].completeEdit();
+				
+				
+				if(obj.args.parent !=""){
+                		obj.args.parent.resumeEvents();
+                	grid.plugins[0].completeEdit();
+				}
             }
         }]
 

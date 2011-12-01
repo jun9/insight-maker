@@ -288,7 +288,7 @@ function openDisplayConfigure(win) {
                                         Ext.getCmp("yAxisLabel").setValue("%o");
                                     } else if (newV == "Time Series") {
                                         Ext.getCmp("xAxisLabel").setValue("Time (%u)");
-                                        Ext.getCmp("yAxisLabel").setValue("%o");
+                                        Ext.getCmp("yAxisLabel").setValue("");
                                     }
                                 }
                             }

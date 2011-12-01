@@ -677,5 +677,5 @@ function isUndefined(item){
 }
 
 function isTouch() {
-	return /android|iphone|ipad/i.test(navigator.userAgent.toLowerCase());
+	return mxClient.IS_TOUCH;
 };
