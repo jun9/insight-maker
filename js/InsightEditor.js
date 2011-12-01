@@ -1344,7 +1344,10 @@ function main()
             });
         }
 		configPanel.removeAll();
-iHs =iHs + '<br/><div style="text-align:right; vertical-align:middle">Share <span  id="st_facebook_button" displayText="Facebook"></span><span  id="st_twitter_button" displayText="Tweet"></span><span  id="st_linkedin_button" displayText="LinkedIn"></span><br/><br/></div>';		
+		if(drupal_node_ID != -1){
+			console.log(drupal_node_ID)
+iHs =iHs + '<br/><div style="text-align:right; vertical-align:middle">Share <span  id="st_facebook_button" displayText="Facebook"></span><span  id="st_twitter_button" displayText="Tweet"></span><span  id="st_linkedin_button" displayText="LinkedIn"></span><span  id="st_mail_button" displayText="EMail"></span><br/><br/></div>';
+		}
         createGrid(properties, iHs);
 
 		if(drupal_node_ID!=-1){
@@ -1376,6 +1379,15 @@ iHs =iHs + '<br/><div style="text-align:right; vertical-align:middle">Share <spa
 			                 "image":"http://insightmaker.com/sites/default/files/logo.png",
 							"summary":graph_description
 			         });
+			stWidget.addEntry({
+						                 "service":"email",
+						                 "element":document.getElementById('st_mail_button'),
+						                 "url": "http://InsightMaker.com/insight/"+drupal_node_ID,
+						                 "title": graph_title,
+										"type":"chicklet",
+						                 "image":"http://insightmaker.com/sites/default/files/logo.png",
+										"summary":graph_description
+						         });
 			}catch(err){
 				
 			}
