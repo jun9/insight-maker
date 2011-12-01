@@ -162,7 +162,7 @@ Ext.EquationWindow = function(args)
         }
     }
 
-	var equal = new Ext.Component({html:"<big><big><big>=</big></big></big>",region:"west",margin: '0 0 0 3',});
+	var equal = new Ext.Component({html:"<big><big><big>=</big></big></big>",region:"west",margin: '0 0 0 3'});
 
     var tabs = new Ext.TabPanel({region: 'south',
 	        height: 85,
