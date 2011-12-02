@@ -1345,7 +1345,6 @@ function main()
         }
 		configPanel.removeAll();
 		if(drupal_node_ID != -1){
-			console.log(drupal_node_ID)
 iHs =iHs + '<br/><div style="text-align:right; vertical-align:middle">Share <span  id="st_facebook_button" displayText="Facebook"></span><span  id="st_twitter_button" displayText="Tweet"></span><span  id="st_linkedin_button" displayText="LinkedIn"></span><span  id="st_mail_button" displayText="EMail"></span><br/><br/></div>';
 		}
         createGrid(properties, iHs);
