@@ -48,6 +48,10 @@ require("SharedHeader.php")
     <script type="text/javascript" src="/builder/js/scratchpad.js"></script>
     <script type="text/javascript" src="/builder/js/BoxSelect.js"></script>
     <script type="text/javascript" src="/builder/js/HoverIcons.js"></script>
+	<script type="text/javascript" src="/builder/js/LegendItem.js"></script>
+	<script type="text/javascript" src="/builder/js/Legend.js"></script>
+	<script type="text/javascript" src="/builder/js/SmartLegendItem.js"></script>
+	<script type="text/javascript" src="/builder/js/SmartLegend.js"></script>
 
 	
 

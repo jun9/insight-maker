@@ -663,6 +663,10 @@ function processLabel(label, title, objects, units, timeStep, algorithm) {
 }
 
 function replaceAll(txt, replace, with_this) {
+	
+	if(isUndefined(txt)){
+		return "";
+	}
     return txt.replace(new RegExp(replace, 'g'), with_this);
 }
 

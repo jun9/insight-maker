@@ -108,8 +108,8 @@ function parseResult(res) {
                 primitiveIds: ids,
                 primitiveNames: header,
                 times: times,
-                width: 540,
-                height: 425,
+                width: 550,
+                height: 460,
                 resizable: true,
                 maximizable: true,
                 minimizable: true,
@@ -489,10 +489,6 @@ function renderDisplay(display, store, ids, names, times) {
             shadow: false,
             store: store,
             theme: "Category2",
-            legend: {
-                position: 'top',
-                boxStroke: "#fff"
-            },
             axes: [{
                 type: 'Numeric',
                 position: 'bottom',
@@ -520,7 +516,13 @@ function renderDisplay(display, store, ids, names, times) {
             }],
             series: displaySeries
         });
-
+		chart.legend = Ext.create('Ext.ux.chart.SmartLegend', {
+	        position:       'top',
+	        chart:          chart,
+	        boxStrokeWidth: 0,
+			itemSpacing:5,padding:1,
+			isVertical:  false
+	    });
         return chart;
 
     } else if (type == "Scatterplot") {
