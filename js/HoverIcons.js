@@ -5,7 +5,10 @@ function mxIconSet(state)
     var graph = state.view.graph;
     var md = (mxClient.IS_TOUCH) ? 'touchstart': 'mousedown';
 
-    if (isValued(state.cell) && is_editor) {
+	
+		var cell = orig(state.cell);
+		
+    if (isValued(cell) && is_editor) {
         //equation
         var img = mxUtils.createImage('/builder/images/equal.png');
         img.setAttribute('title', '');
@@ -33,19 +36,19 @@ function mxIconSet(state)
         mxUtils.bind(this,
         function(evt)
         {
-            if (state.cell.value.nodeName == "Converter") {
+            if (cell.value.nodeName == "Converter") {
                 var editorWindow = new Ext.ConverterWindow({
                     parent: "",
-                    cell: state.cell,
-                    oldKeys: state.cell.getAttribute("Data"),
-                    interpolation: state.cell.getAttribute("Interpolation")
+                    cell: cell,
+                    oldKeys: cell.getAttribute("Data"),
+                    interpolation: cell.getAttribute("Interpolation")
                 });
                 editorWindow.show();
             } else {
                 var editorWindow = new Ext.EquationWindow({
                     parent: "",
-                    cell: state.cell,
-                    code: getValue(state.cell)
+                    cell: cell,
+                    code: getValue(cell)
                 });
                 editorWindow.show();
             }
@@ -59,7 +62,7 @@ function mxIconSet(state)
     }
 
 
-    if (state.cell.value.getAttribute("Note")!=null && Ext.String.trim(state.cell.value.getAttribute("Note")) != "") {
+    if (cell.value.getAttribute("Note")!=null && Ext.String.trim(cell.value.getAttribute("Note")) != "") {
         // Note
         var img = mxUtils.createImage('/builder/images/note.png');
         img.setAttribute('title', '');
@@ -85,16 +88,16 @@ function mxIconSet(state)
         mxUtils.bind(this,
         function(evt)
         {
-            var x = Ext.getCmp("note" + state.cell.id);
+            var x = Ext.getCmp("note" + cell.id);
             if (isUndefined(x)) {
                 var tooltip = new Ext.ToolTip(
                 {
-                    html: "<big>" + state.cell.value.getAttribute("Note") + "</big>",
+                    html: "<big>" + cell.value.getAttribute("Note") + "</big>",
                     autoHide: false,
                     closable: true,
                     draggable: true,
-                    id: "note" + state.cell.id,
-                    title: state.cell.value.getAttribute("name")
+                    id: "note" + cell.id,
+                    title: cell.value.getAttribute("name")
                 });
                 //console.log(evt);
                 tooltip.showAt([evt.clientX + 17, evt.clientY - 8]);
