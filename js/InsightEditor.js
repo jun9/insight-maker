@@ -87,6 +87,9 @@ function main()
         //(is_editor && (cell.value.nodeName!="Setting"));
     }
     graph.isCellEditable = function(cell) {
+		if(!is_editor){
+			return false;
+		}
         return (cell.value.nodeName != "Display" && cell.value.nodeName != "Setting" && cell.value.nodeName != "Ghost");
     }
 

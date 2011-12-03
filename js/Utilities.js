@@ -682,4 +682,8 @@ function isUndefined(item){
 
 function isTouch() {
 	return mxClient.IS_TOUCH;
-};
+}
+
+function showURL(url){
+	window.open(url,'myIMwindow'+Math.floor(Math.random()*11),'width=800,height=580,toolbar=yes, location=yes,directories=yes,status=yes,menubar=yes,scrollbars=yes,copyhistory=yes,resizable=yes');
+}

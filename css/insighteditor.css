@@ -167,8 +167,17 @@ html, body {
 .connect-icon {
     background-image:url(../images/connect.gif) !important;
 }
+.register-icon {
+    background-image:url(../images/register.png) !important;
+}
+.login-icon {
+    background-image:url(../images/login.png) !important;
+}
 .scratchpad-icon {
     background-image:url(../images/scratchpad.png) !important;
+}
+.scratchpad-large-icon {
+    background-image:url(../images/scratchpad-large.png) !important;
 }
 .bold-icon {
     background-image:url(../images/bold.gif) !important;

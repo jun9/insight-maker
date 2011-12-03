@@ -13,12 +13,27 @@ Insight Maker and Give Team are trademarks.
 
 */
 
-var scratchPadStatus ="";
+var scratchPadStatus = "";
 
 function ribbonPanelItems() {
     var z = ribbonPanel.getDockedItems()[0];
     return z;
 }
+
+var scratchpadFn = function()
+ {
+    if (scratchPadStatus == "shown") {
+        Ext.get("mainGraph").setDisplayed("none");
+        scratchPadStatus = "hidden";
+    } else if (scratchPadStatus == "hidden") {
+        Ext.get("mainGraph").setDisplayed("block");
+        scratchPadStatus = "shown";
+    } else {
+        Ext.get("mainGraph").setDisplayed("block");
+        Scratchpad($('#mainGraph'));
+        scratchPadStatus = "shown";
+    }
+};
 
 var config_columns;
 if ((!is_editor) || is_embed) {
@@ -116,41 +131,41 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
     };
     var runHandler = function()
     {
-            Ext.MessageBox.show({
-                msg: 'Simulation Running...',
-                width: 300,
-                wait: true,
-                waitConfig: {
-                    interval: 300
-                },
-                icon: 'run-icon',
-                animEl: 'mb7'
-            });
-            var myCode = getGraphXml(graph);
+        Ext.MessageBox.show({
+            msg: 'Simulation Running...',
+            width: 300,
+            wait: true,
+            waitConfig: {
+                interval: 300
+            },
+            icon: 'run-icon',
+            animEl: 'mb7'
+        });
+        var myCode = getGraphXml(graph);
 
 
-            Ext.Ajax.request({
-                url: '/builder/run.php',
-                method: 'POST',
-                params: {
-                    code: myCode
-                },
+        Ext.Ajax.request({
+            url: '/builder/run.php',
+            method: 'POST',
+            params: {
+                code: myCode
+            },
 
-                success: function(result, request) {
-                    parseResult(result.responseText);
-                },
-                failure: function(result, request) {
-                	modelRes = result;
-                    Ext.MessageBox.hide();
-                    Ext.MessageBox.show({
-                        title: 'Simulation Error',
-                        msg: 'The simulation could not be completed. Perhaps the server is not running. Please try again in a few minutes.',
-                        buttons: Ext.MessageBox.OK,
-                        animEl: 'mb9',
-                        icon: Ext.MessageBox.ERROR
-                    });
-                }
-            });
+            success: function(result, request) {
+                parseResult(result.responseText);
+            },
+            failure: function(result, request) {
+                modelRes = result;
+                Ext.MessageBox.hide();
+                Ext.MessageBox.show({
+                    title: 'Simulation Error',
+                    msg: 'The simulation could not be completed. Perhaps the server is not running. Please try again in a few minutes.',
+                    buttons: Ext.MessageBox.OK,
+                    animEl: 'mb9',
+                    icon: Ext.MessageBox.ERROR
+                });
+            }
+        });
     };
 
     var fillColorMenu = Ext.create("Ext.menu.ColorPicker",
@@ -498,8 +513,8 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             }
         }]
     };
-	if( (! is_embed) && is_editor){
-		zoomMenu.items.push(
+    if ((!is_embed) && is_editor) {
+        zoomMenu.items.push(
         /*'-',
         {
             text: 'Vertical Hierarchical Layout',
@@ -539,7 +554,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 executeLayout(new mxCircleLayout(graph), true);
             }
         });
-	}
+    }
 
 
     var configWin;
@@ -596,7 +611,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     scope: this
                 }
                 ,
-                
+
                 {
                     id: 'converter',
                     text: 'Converter',
@@ -606,17 +621,18 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     toggleHandler: handlePrimToggle,
                     pressed: false,
                     scope: this
-                },	{
-	                    id: 'text',
-	                    text: 'Text',
-	                    iconCls: 'font-icon',
-	                    tooltip: 'Create a new Text Area by clicking on the canvas',
-	                    enableToggle: true,
-	                    toggleHandler: handlePrimToggle,
-	                    pressed: false,
-	                    scope: this
-	                },
-                
+                },
+                {
+                    id: 'text',
+                    text: 'Text',
+                    iconCls: 'font-icon',
+                    tooltip: 'Create a new Text Area by clicking on the canvas',
+                    enableToggle: true,
+                    toggleHandler: handlePrimToggle,
+                    pressed: false,
+                    scope: this
+                },
+
                 {
                     id: 'ghostBut',
                     text: 'Ghost',
@@ -640,16 +656,17 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                         graph.getModel().endUpdate();
 
                     }
-                },	{
-	                    id: 'picture',
-	                    text: 'Picture',
-	                    iconCls: 'picture-icon',
-	                    tooltip: 'Create a new Picture by clicking on the canvas',
-	                    enableToggle: true,
-	                    toggleHandler: handlePrimToggle,
-	                    pressed: false,
-	                    scope: this
-	                },
+                },
+                {
+                    id: 'picture',
+                    text: 'Picture',
+                    iconCls: 'picture-icon',
+                    tooltip: 'Create a new Picture by clicking on the canvas',
+                    enableToggle: true,
+                    toggleHandler: handlePrimToggle,
+                    pressed: false,
+                    scope: this
+                },
                 {
                     id: 'folder',
                     text: 'Folder',
@@ -1000,10 +1017,23 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 hidden: (is_editor || is_embed),
                 id: 'control-no-edit',
                 xtype: 'buttongroup',
-                columns: 1,
+                columns: 2,
                 height: 95,
                 title: 'Explore',
                 items: [{
+                    iconAlign: 'top',
+                    id: 'scratchpadLarge',
+                    text: 'Scratchpad',
+                    iconCls: 'scratchpad-large-icon',
+                    tooltip: 'Draw notes on your diagram',
+                    enableToggle: true,
+                    scale: 'large',
+                    cls: 'button',
+                    rowspan: 3,
+                    handler: scratchpadFn,
+                    scope: this
+                },
+                {
                     iconAlign: 'top',
                     scale: 'large',
                     cls: 'button',
@@ -1218,29 +1248,17 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                         configWin.show();
                     },
                     scope: this
-                },	
-					{
-	                    hidden: (!is_editor) || is_embed,
-	                    id: 'scratchpad',
-	                    text: 'Scratchpad',
-	                    iconCls: 'scratchpad-icon',
-	                    tooltip: 'Draw notes on your diagram',enableToggle:true,
-	                    handler: function()
-	                    {
-							if(scratchPadStatus=="shown"){
-								Ext.get("mainGraph").setDisplayed("none");
-								scratchPadStatus="hidden";
-							}else if(scratchPadStatus=="hidden"){
-								Ext.get("mainGraph").setDisplayed("block");
-								scratchPadStatus="shown";
-							}else{
-								Ext.get("mainGraph").setDisplayed("block");
-								Scratchpad($('#mainGraph'));
-								scratchPadStatus="shown";
-							}
-	                    },
-	                    scope: this
-	                },
+                },
+                {
+                    hidden: (!is_editor) || is_embed,
+                    id: 'scratchpad',
+                    text: 'Scratchpad',
+                    iconCls: 'scratchpad-icon',
+                    tooltip: 'Draw notes on your diagram',
+                    enableToggle: true,
+                    handler: scratchpadFn,
+                    scope: this
+                },
                 {
                     hidden: (!is_editor) || is_embed,
                     id: 'download',
@@ -1302,13 +1320,27 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             {
                 hidden: (!is_embed),
                 iconAlign: 'top',
+                id: 'scratchpadLargeEmbed',
+                text: 'Scratchpad',
+                iconCls: 'scratchpad-large-icon',
+                tooltip: 'Draw notes on your diagram',
+                enableToggle: true,
+                scale: 'large',
+                cls: 'button',
+                rowspan: 3,
+                handler: scratchpadFn,
+                scope: this
+            },
+            {
+                hidden: (!is_embed),
+                iconAlign: 'top',
                 scale: 'large',
                 cls: 'button',
                 rowspan: 3,
                 text: 'Zoom',
                 iconCls: 'zoom-large-icon',
                 tooltip: 'Zoom Diagram',
-                id: 'zoomlargebut',
+                id: 'zoomlargebutEmbed',
                 handler: function(menu) {},
                 menu: zoomMenu
             },

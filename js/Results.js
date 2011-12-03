@@ -195,13 +195,44 @@ function parseResult(res) {
             win.show();
         }
     } else if (/^ACCESS DENIED/.test(res)) {
-        Ext.MessageBox.show({
-            title: 'Create an Insight Maker Account',
-            msg: 'You must create an Insight Maker account before you can run Insights. This is quick and free. Just go to:<br><br><a target="_BLANK" href="http://InsightMaker.com/user/register">http://InsightMaker.com/user/register</a><br><br>If you already have an account, you can log in here:<br><br><a target="_BLANK" href="http://InsightMaker.com/user">http://InsightMaker.com/user</a>',
-            buttons: Ext.MessageBox.OK,
-            animEl: 'mb9',
-            icon: Ext.MessageBox.ERROR
+        var regWin = new Ext.Window({
+            layout: 'fit',
+            modal: true,
+            width: 345,
+            height: 180,
+            resizable: false,
+            closeAction: 'hide',
+            plain: false,
+            title: 'Please Log In',
+            html: '<p style="padding:1em;">You must be logged into Insight Maker before you can run Insights.<br/><br/> Registering for an Insight Maker account is quick and free.</p> ',
+            buttons: [{
+                scale: "large",
+                iconCls: "cancel-icon",
+                text: 'Cancel',
+                handler: function() {
+                    regWin.hide();
+                }
+            },'->',	{
+	                scale: "large",
+	                iconCls: "register-icon",
+	                text: 'Register',
+	                handler: function() {
+						showURL("http://insightmaker.com/user/register");
+	                    regWin.hide();
+	                }
+	            },
+				{
+		                scale: "large",
+		                iconCls: "login-icon",
+		                text: 'Log In',
+		                handler: function() {
+							showURL("http://insightmaker.com/user");
+		                    regWin.hide();
+		                }
+			}
+			]
         });
+		regWin.show();
     } else {
         Ext.MessageBox.show({
             title: 'Server Error',
@@ -304,11 +335,13 @@ function openDisplayConfigure(win) {
                         store: displayConfigStore,
                         emptyText: 'Select which data to display'
                     }),
-					                {xtype:'checkboxfield',
-					                    fieldLabel  : 'Add New',
-					                    name      : 'autoAdd',
-					                    id        : 'autoAdd', boxLabel: "Add series when primitives are created"
-					                }
+                    {
+                        xtype: 'checkboxfield',
+                        fieldLabel: 'Add New',
+                        name: 'autoAdd',
+                        id: 'autoAdd',
+                        boxLabel: "Add series when primitives are created"
+                    }
 
                     ]
                 },
@@ -400,10 +433,10 @@ function openDisplayConfigure(win) {
     Ext.getCmp("chartType").setValue(d.getAttribute("Type"));
     Ext.getCmp("xAxisLabel").setValue(d.getAttribute("xAxis"));
     Ext.getCmp("yAxisLabel").setValue(d.getAttribute("yAxis"));
-	
+
     Ext.getCmp("autoAdd").setValue(d.getAttribute("AutoAddPrimitives"));
-	
-        Ext.getCmp("chartPrimitives").setValue([]);
+
+    Ext.getCmp("chartPrimitives").setValue([]);
     if (!isUndefined(d.getAttribute("Primitives"))) {
         Ext.getCmp("chartPrimitives").setValue(d.getAttribute("Primitives").split(","));
     }
@@ -516,13 +549,14 @@ function renderDisplay(display, store, ids, names, times) {
             }],
             series: displaySeries
         });
-		chart.legend = Ext.create('Ext.ux.chart.SmartLegend', {
-	        position:       'top',
-	        chart:          chart,
-	        boxStrokeWidth: 0,
-			itemSpacing:5,padding:1,
-			isVertical:  false
-	    });
+        chart.legend = Ext.create('Ext.ux.chart.SmartLegend', {
+            position: 'top',
+            chart: chart,
+            boxStrokeWidth: 0,
+            itemSpacing: 5,
+            padding: 1,
+            isVertical: false
+        });
         return chart;
 
     } else if (type == "Scatterplot") {
