@@ -728,6 +728,16 @@ function main()
 
     var keyHandler = new mxKeyHandler(graph);
 
+	keyHandler.getFunction = function(evt)
+	{
+	  if (evt != null)
+	  {
+	    return (mxEvent.isControlDown(evt) || (mxClient.IS_MAC && evt.metaKey)) ? this.controlKeys[evt.keyCode] : this.normalKeys[evt.keyCode];
+	  }
+
+	  return null;
+	};
+
     keyHandler.bindKey(13,
     function()
     {
