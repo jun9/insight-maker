@@ -1350,6 +1350,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 xtype: 'buttongroup',
                 columns: 1,
                 height: 95,
+				width:90,
                 title: 'Save',
                 items: [{
                     hidden: (!is_editor) || is_embed,

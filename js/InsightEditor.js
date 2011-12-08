@@ -1420,6 +1420,9 @@ iHs =iHs + '<br/><div style="text-align:right; vertical-align:middle">Share <spa
 
                 for (var i = 0; i < slids.length; i++) {
 					if(Ext.get('slider' + slids[i].id) != null){
+						if(isNaN(getValue(slids[i]))){
+							setValue(slids[i], (parseFloat(slids[i].getAttribute("SliderMin"))+parseFloat(slids[i].getAttribute("SliderMax")))/2);
+						}
                     	var perc = Math.floor( - (Math.log(Math.max(.1,slids[i].getAttribute("SliderMax")-slids[i].getAttribute("SliderMin"))) / Math.log(10) - 4));
 	                    sliders.push(new Ext.Slider({
 	                        renderTo: 'slider' + slids[i].id,
