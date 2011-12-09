@@ -553,6 +553,7 @@ function renderDisplay(display, store, ids, names, times) {
             position: 'top',
             chart: chart,
             boxStrokeWidth: 0,
+			boxStroke: '#fff',
             itemSpacing: 5,
             padding: 1,
             isVertical: false
