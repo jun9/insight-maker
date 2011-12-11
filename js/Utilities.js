@@ -495,7 +495,7 @@ function updateProperties() {
                 name: 'sinsightTags',
                 id: 'sinsightTags',
                 allowBlank: true,
-                emptyText: "Environment, Business, Engineering",
+                emptyText: "Environment, Unintended Consequences",
                 value: graph_tags,
                 margin: 2
             }), new Ext.form.TextArea({
@@ -519,13 +519,17 @@ function updateProperties() {
                         scale: "large",
                 text: 'Save',
                 handler: function() {
-                    propertiesWin.hide();
-                    graph_title = Ext.getCmp('sinsightTitle').getValue();
-                    graph_description = Ext.getCmp('sinsightDescription').getValue();
-                    graph_tags = Ext.getCmp('sinsightTags').getValue();
-                    setSaveEnabled(true);
-                    sendGraphtoServer(graph);
-					selectionChanged(false);
+					if(Ext.getCmp("sinsightTitle").validate()){
+                    	propertiesWin.hide();
+                    	graph_title = Ext.getCmp('sinsightTitle').getValue();
+                    	graph_description = Ext.getCmp('sinsightDescription').getValue();
+                    	graph_tags = Ext.getCmp('sinsightTags').getValue();
+                    	setSaveEnabled(true);
+                    	sendGraphtoServer(graph);
+						selectionChanged(false);
+					}else{
+						mxUtils.alert("You must specify a name for the primitive.");
+					}
                 }
             }
             ]
@@ -686,4 +690,11 @@ function isTouch() {
 
 function showURL(url){
 	window.open(url,'myIMwindow'+Math.floor(Math.random()*11),'width=800,height=580,toolbar=yes, location=yes,directories=yes,status=yes,menubar=yes,scrollbars=yes,copyhistory=yes,resizable=yes');
+}
+
+function clearModel(){
+	graph.getModel().beginUpdate();
+	graph.selectAll();
+	graph.removeCells(graph.getSelectionCells(), false);
+	graph.getModel().endUpdate();
 }

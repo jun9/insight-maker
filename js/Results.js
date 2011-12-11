@@ -554,8 +554,8 @@ function renderDisplay(display, store, ids, names, times) {
             chart: chart,
             boxStrokeWidth: 0,
 			boxStroke: '#fff',
-            itemSpacing: 5,
-            padding: 1,
+            itemSpacing: 4,
+            padding: 0,
             isVertical: false
         });
         return chart;

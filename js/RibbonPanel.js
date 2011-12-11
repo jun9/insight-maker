@@ -592,7 +592,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     tooltip: 'Create a new Stock by clicking on the canvas',
                     enableToggle: true,
                     toggleHandler: handlePrimToggle,
-                    pressed: drupal_node_ID == -1,
+                    pressed: false,
                     scope: this
                 },
                 {

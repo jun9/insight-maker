@@ -20,10 +20,14 @@ window.onerror = function (err, file, line) {
 	return true;
 }
 
+try{
 mxUtils.alert = function(message)
  {
     Ext.example.msg(message, '', '');
 };
+}catch(err){
+	alert("Insight Maker failed to load all its resources. Check your network connection and try to reload Insight Maker.");
+}
 
 
 GraphEditor = {};
@@ -42,9 +46,11 @@ function main()
  {
     Ext.QuickTips.init();
 
-
+	try{
     mxEvent.disableContextMenu(document.body);
-
+	}catch(err){
+		return;// resources not loaded. error message should already have been shown.
+	}
     mxConstants.DEFAULT_HOTSPOT = 0.3;
 
 	//Change the settings for touch devices
@@ -395,10 +401,8 @@ function main()
     var rubberband = new mxRubberband(graph);
 
     var parent = graph.getDefaultParent();
-    graph.getModel().beginUpdate();
 
-    try
-    {
+
         settingCell = graph.insertVertex(parent, null, setting, 20, 20, 80, 40);
         settingCell.visible = false;
         var firstdisp = graph.insertVertex(parent, null, display.cloneNode(true), 50, 20, 64, 64, "roundImage;image=/builder/images/DisplayFull.png;");
@@ -406,11 +410,8 @@ function main()
         firstdisp.setAttribute("AutoAddPrimitives", true);
         firstdisp.setConnectable(false);
         firstdisp.setAttribute("name", "Data Display");
-    }
-    finally
-    {
-        graph.getModel().endUpdate();
-    }
+
+    
 
     graph.getEdgeValidationError = function(edge, source, target)
     {
@@ -472,9 +473,16 @@ function main()
         }*/
     }
 
-    if (graph_source_data != null && graph_source_data.length > 0)
+    if ((graph_source_data != null && graph_source_data.length > 0) || drupal_node_ID==-1)
     {
-        var doc = mxUtils.parseXml(graph_source_data);
+		var code;
+		if(drupal_node_ID == -1){
+			code = blankGraphTemplate;
+		}else{
+			code = graph_source_data;
+		}
+		
+        var doc = mxUtils.parseXml(code);
         var dec = new mxCodec(doc);
         dec.decode(doc.documentElement, graph.getModel());
         if (getSetting().getAttribute("Version") < 3) {
@@ -828,6 +836,30 @@ function main()
         graph.selectAll();
     });
 
+	//bold
+ 	keyHandler.bindControlKey(66,
+    function()
+    {
+        graph.toggleCellStyleFlags(mxConstants.STYLE_FONTSTYLE, mxConstants.FONT_BOLD);
+        setStyles();
+    });
+
+	//italics
+	keyHandler.bindControlKey(73,
+    function()
+    {
+        graph.toggleCellStyleFlags(mxConstants.STYLE_FONTSTYLE, mxConstants.FONT_ITALIC);
+        setStyles();
+    });
+	
+	//underline
+	keyHandler.bindControlKey(85,
+    function()
+    {
+        graph.toggleCellStyleFlags(mxConstants.STYLE_FONTSTYLE, mxConstants.FONT_UNDERLINE);
+        setStyles();
+    });
+
     keyHandler.bindControlKey(89,
     function()
     {
@@ -862,12 +894,6 @@ function main()
     function()
     {
         graph.setSelectionCell(graph.groupCells(null, 20));
-    });
-
-    keyHandler.bindControlKey(85,
-    function()
-    {
-        graph.setSelectionCells(graph.ungroupCells());
     });
 
     graph.getSelectionModel().addListener(mxEvent.CHANGE,
@@ -1528,5 +1554,5 @@ Ext.round = function(n, d) {
     return result;
 };
 
-
+var blankGraphTemplate = "<mxGraphModel>\n  <root>\n    <mxCell id=\"0\"\/>\n    <mxCell id=\"1\" parent=\"0\"\/>\n    <Picture name=\"\" Note=\"\" Image=\"http:\/\/insightmaker.com\/builder\/images\/rabbit.jpg\" FlipHorizontal=\"false\" FlipVertical=\"false\" id=\"17\">\n      <mxCell style=\"picture;image=http:\/\/localhost\/builder\/images\/rabbit.jpg;imageFlipV=0;imageFlipH=0;shape=image\" parent=\"1\" vertex=\"1\">\n        <mxGeometry x=\"10\" y=\"192.75\" width=\"210\" height=\"224.25\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Picture>\n    <Setting Note=\"\" Version=\"10\" TimeLength=\"20\" TimeStart=\"0\" TimeStep=\"1\" TimeUnits=\"Years\" Units=\"\" HiddenUIGroups=\"Validation,User Interface\" SolutionAlgorithm=\"RK1\" BackgroundColor=\"white\" id=\"2\">\n      <mxCell parent=\"1\" vertex=\"1\" visible=\"0\">\n        <mxGeometry x=\"20\" y=\"20\" width=\"80\" height=\"40\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Setting>\n    <Display name=\"Data Display\" Note=\"\" Type=\"Time Series\" xAxis=\"Time (%u)\" yAxis=\"Rabbit Population\" ThreeDimensional=\"false\" Primitives=\"4\" AutoAddPrimitives=\"false\" ScatterplotOrder=\"X Primitive, Y Primitive\" Image=\"Display\" id=\"3\">\n      <mxCell style=\"roundImage;image=\/builder\/images\/DisplayFull.png;\" parent=\"1\" vertex=\"1\" connectable=\"0\" visible=\"0\">\n        <mxGeometry x=\"50\" y=\"20\" width=\"64\" height=\"64\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Display>\n    <Stock name=\"Rabbits\" Note=\"The number of rabbits currently alive.\" InitialValue=\"200\" StockMode=\"Store\" Delay=\"10\" Volume=\"100\" NonNegative=\"false\" Units=\"Unitless\" MaxConstraintUsed=\"false\" MinConstraintUsed=\"false\" MaxConstraint=\"100\" MinConstraint=\"0\" ShowSlider=\"true\" SliderMax=\"1000\" SliderMin=\"0\" Image=\"None\" id=\"4\">\n      <mxCell style=\"stock\" parent=\"1\" vertex=\"1\">\n        <mxGeometry x=\"407.5\" y=\"422\" width=\"100\" height=\"40\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Stock>\n    <Flow name=\"Births\" Note=\"The number of rabbits born each year.\" FlowRate=\"[Rabbits]*[Rabbit Birth Rate]\" OnlyPositive=\"true\" TimeIndependent=\"false\" Units=\"Unitless\" MaxConstraintUsed=\"false\" MinConstraintUsed=\"false\" MaxConstraint=\"100\" MinConstraint=\"0\" ShowSlider=\"false\" SliderMax=\"100\" SliderMin=\"0\" id=\"5\">\n      <mxCell style=\"\" parent=\"1\" target=\"4\" edge=\"1\">\n        <mxGeometry x=\"47.5\" y=\"32\" width=\"100\" height=\"100\" as=\"geometry\">\n          <mxPoint x=\"457.5\" y=\"184.5\" as=\"sourcePoint\"\/>\n          <mxPoint x=\"57.5\" y=\"282\" as=\"targetPoint\"\/>\n          <mxPoint x=\"-0.5\" y=\"5\" as=\"offset\"\/>\n        <\/mxGeometry>\n      <\/mxCell>\n    <\/Flow>\n    <Parameter name=\"Rabbit Birth Rate\" Note=\"The proportional increase in the number of rabbits per year.\" Equation=\"0.1\" Units=\"Unitless\" MaxConstraintUsed=\"false\" MinConstraintUsed=\"false\" MaxConstraint=\"100\" MinConstraint=\"0\" ShowSlider=\"true\" SliderMax=\"1\" SliderMin=\"0\" Image=\"None\" id=\"6\">\n      <mxCell style=\"parameter\" parent=\"1\" vertex=\"1\">\n        <mxGeometry x=\"551.25\" y=\"157\" width=\"140\" height=\"50\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Parameter>\n    <Text name=\"&amp;larr; This is a Stock\" id=\"8\">\n      <mxCell style=\"textArea;fontStyle=1;fontFamily=Verdana;fontSize=14;strokeColor=none;fontColor=#000000\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"536.25\" y=\"392\" width=\"160\" height=\"50\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n    <Text name=\"Stocks store things like money or water or, in this case, rabbits.\" id=\"9\">\n      <mxCell style=\"textArea;fontStyle=0;fontFamily=Verdana;fontSize=14;strokeColor=none;fontColor=#000000\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"516.25\" y=\"428.5\" width=\"210\" height=\"50\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n    <Text name=\"This is a Flow &amp;rarr;\" id=\"10\">\n      <mxCell style=\"textArea;fontStyle=1;fontFamily=Verdana;fontSize=14;strokeColor=none;fontColor=#000000\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"267.5\" y=\"182\" width=\"150\" height=\"50\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n    <Text name=\"Flows move material between Stocks. In this case it represents the birth of new rabbits.\" id=\"11\">\n      <mxCell style=\"textArea;fontStyle=0;fontFamily=Verdana;fontSize=14;strokeColor=none;fontColor=#000000\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"227.5\" y=\"224.5\" width=\"210\" height=\"70\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n    <Text name=\"This is a Variable&#xa;\" id=\"12\">\n      <mxCell style=\"textArea;fontStyle=1;fontFamily=Verdana;fontSize=14;strokeColor=none;fontColor=#000000\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"496.25\" y=\"62\" width=\"245\" height=\"35\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n    <Link name=\"Link\" Note=\"\" BiDirectional=\"false\" id=\"7\">\n      <mxCell style=\"entity\" parent=\"1\" source=\"6\" target=\"5\" edge=\"1\" connectable=\"0\">\n        <mxGeometry x=\"47.5\" y=\"32\" width=\"100\" height=\"100\" as=\"geometry\">\n          <mxPoint x=\"47.5\" y=\"132\" as=\"sourcePoint\"\/>\n          <mxPoint x=\"147.5\" y=\"32\" as=\"targetPoint\"\/>\n        <\/mxGeometry>\n      <\/mxCell>\n    <\/Link>\n    <Text name=\"&amp;larr; This is a Link\" id=\"13\">\n      <mxCell style=\"textArea;fontStyle=1;fontFamily=Verdana;fontSize=14;strokeColor=none;fontColor=#000000\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"511.25\" y=\"247\" width=\"210\" height=\"30\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n    <Text name=\"It allows the equation for &lt;i&gt;Births&lt;\/i&gt; to reference the &lt;i&gt;Rabbit Birth Rate&lt;\/i&gt;.\" id=\"14\">\n      <mxCell style=\"textArea;fontStyle=0;fontFamily=Verdana;fontSize=14;strokeColor=none;fontColor=#000000;align=center\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"516.25\" y=\"271.5\" width=\"210\" height=\"70\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n    <Text name=\"Here is a simple model to get you started. It simulates a rabbit population over the course of 20 years. Luckily for these rabbits, there is no rabbit mortality! &#xa;&#xa;Click the &lt;i&gt;Run Simulation&lt;\/i&gt; button on the right of the toolbar to see how the rabbit population will grow over time.\" id=\"15\">\n      <mxCell style=\"textArea;fontStyle=0;fontFamily=Times New Roman;fontSize=18;strokeColor=none;fontColor=#333300;align=left;fillColor=none;labelBackgroundColor=none\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"15\" y=\"12.75\" width=\"405\" height=\"150\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n    <Text name=\" Move your mouse over it and click the &quot;=&quot; to inspect its value.&#xa;&amp;darr;\" id=\"18\">\n      <mxCell style=\"textArea;fontStyle=0;fontFamily=Verdana;fontSize=14;strokeColor=none;fontColor=#000000\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"492.5\" y=\"92\" width=\"257.5\" height=\"60\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n    <Text name=\"&lt;a href=&quot;#&quot; onclick=&quot;clearModel()&quot;&gt;Clear Sample Model&lt;\/a&gt;\" id=\"19\">\n      <mxCell style=\"textArea;fontStyle=1;fontSize=20;fontFamily=Helvetica;fillColor=#FFFF99;labelBackgroundColor=#FFFF99;strokeColor=#FFCC00\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"100\" y=\"428.5\" width=\"210\" height=\"50\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n    <Text name=\"&lt;b&gt;Adding Primitives:&lt;\/b&gt; Select type in toolbar and then click in the canvas.&#xa;&lt;b&gt;Adding Connections:&lt;\/b&gt; Select type in toolbar, hover mouse over connectable primitive and drag arrow.\" id=\"21\">\n      <mxCell style=\"textArea;fontStyle=0;fontFamily=Verdana;fontSize=14;strokeColor=none;fontColor=#808080;align=center\" parent=\"1\" vertex=\"1\" connectable=\"0\">\n        <mxGeometry x=\"5\" y=\"500\" width=\"745\" height=\"70\" as=\"geometry\"\/>\n      <\/mxCell>\n    <\/Text>\n  <\/root>\n<\/mxGraphModel>\n";
 

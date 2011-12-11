@@ -77,7 +77,7 @@ Ext.define('Ext.ux.chart.SmartLegendItem', {
         // Mask sprite height equals overall Item height and it's set
         // approximately twice font height to give Items some breathing space
         me.mask.setAttributes({
-            height: fontHeight * 2
+            height: fontHeight * 1.2 //XXX FIXME SFR change
         }, false);
         
         // Now go over items and adjust their positions and dimensions
