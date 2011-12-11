@@ -394,16 +394,17 @@ function openDisplayConfigure(win) {
                     if (Ext.getCmp("chartTitle").validate() && Ext.getCmp("chartType").validate() && Ext.getCmp("chartPrimitives").validate()) {
 
                         graph.getModel().beginUpdate();
-                        d.setAttribute("name", Ext.getCmp("chartTitle").getValue());
+						graph.getModel().execute(new mxCellAttributeChange(d, "name", Ext.getCmp("chartTitle").getValue()));
                         w.tabs.getActiveTab().setTitle(Ext.getCmp("chartTitle").getValue());
-                        d.setAttribute("Type", Ext.getCmp("chartType").getValue());
-                        d.setAttribute("AutoAddPrimitives", Ext.getCmp("autoAdd").getValue());
+graph.getModel().execute(new mxCellAttributeChange(d, "Type", Ext.getCmp("chartType").getValue()));
+graph.getModel().execute(new mxCellAttributeChange(d, "AutoAddPrimitives", Ext.getCmp("autoAdd").getValue()));
 
-                        d.setAttribute("xAxis", Ext.getCmp("xAxisLabel").getValue());
-                        d.setAttribute("yAxis", Ext.getCmp("yAxisLabel").getValue());
-                        d.setAttribute("xAxis", Ext.getCmp("xAxisLabel").getValue());
 
-                        d.setAttribute("Primitives", Ext.getCmp("chartPrimitives").getValue().join(","));
+graph.getModel().execute(new mxCellAttributeChange(d, "xAxis", Ext.getCmp("xAxisLabel").getValue()));
+graph.getModel().execute(new mxCellAttributeChange(d, "yAxis", Ext.getCmp("yAxisLabel").getValue()));
+
+graph.getModel().execute(new mxCellAttributeChange(d, "Primitives", Ext.getCmp("chartPrimitives").getValue().join(",")));
+                       
                         w.tabs.getActiveTab().removeAll();
                         w.tabs.getActiveTab().add(renderDisplay(d, w.store, w.primitiveIds, w.primitiveNames, w.times));
                         displayConfigWin.hide();

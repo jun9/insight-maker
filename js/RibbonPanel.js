@@ -181,7 +181,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#' + color);
 
                 if (graph.isSelectionEmpty()) {
-                    getSetting().setAttribute("BackgroundColor", '#' + color);
+                    graph.getModel().execute(new mxCellAttributeChange(getSetting(), "BackgroundColor",'#' + color));
                     loadBackgroundColor();
                 }
 
@@ -200,7 +200,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
             graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, mxConstants.NONE);
             if (graph.isSelectionEmpty()) {
 
-                getSetting().setAttribute("BackgroundColor", 'white');
+                graph.getModel().execute(new mxCellAttributeChange(getSetting(), "BackgroundColor","white"));
                 loadBackgroundColor();
 
             }
