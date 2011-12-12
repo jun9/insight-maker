@@ -178,8 +178,15 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
 
                 graph.getModel().beginUpdate();
                 graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, '#' + color);
-                graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#' + color);
-
+				var p = graph.getSelectionCells(),
+				cells = [];
+				for(var i=0; i<p.length; i++){
+					if(p[i].value.nodeName == "Link" || p[i].value.nodeName == "Flow"){
+						cells.push(p[i]);
+					}
+				}
+	            graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#' + color, cells);
+				
                 if (graph.isSelectionEmpty()) {
                     graph.getModel().execute(new mxCellAttributeChange(getSetting(), "BackgroundColor",'#' + color));
                     loadBackgroundColor();
@@ -197,7 +204,15 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
 
             graph.getModel().beginUpdate();
             graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
-            graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, mxConstants.NONE);
+            var p = graph.getSelectionCells(),
+			cells = [];
+			for(var i=0; i<p.length; i++){
+				if(p[i].value.nodeName == "Link" || p[i].value.nodeName == "Flow"){
+					cells.push(p[i]);
+				}
+			}
+            graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, mxConstants.NONE, cells);
+
             if (graph.isSelectionEmpty()) {
 
                 graph.getModel().execute(new mxCellAttributeChange(getSetting(), "BackgroundColor","white"));

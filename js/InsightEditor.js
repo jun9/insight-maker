@@ -558,6 +558,14 @@ function main()
 			graph.refresh()
         }
 
+		if (getSetting().getAttribute("Version") < 11) {
+            var cells = primitives("Stock").concat(primitives("Parameter"), primitives("Converter"), primitives("Text"));
+
+            graph.setCellStyles(mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, mxConstants.NONE, cells);
+           
+            getSetting().setAttribute("Version", 11);
+        }
+
         setConnectability();
     }
 	loadBackgroundColor();
