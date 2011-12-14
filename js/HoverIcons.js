@@ -163,7 +163,7 @@ function setupHoverIcons() {
             var tmp = graph.view.getState(me.getCell());
 
             // Ignores everything but vertices
-            if (graph.isMouseDown || (tmp != null && !(graph.getModel().isEdge(tmp.cell) || graph.getModel().isVertex(tmp.cell))))
+            if (graph.isMouseDown || (tmp != null && tmp.cell.value.nodeName == "Folder") ||(tmp != null && !(graph.getModel().isEdge(tmp.cell) || graph.getModel().isVertex(tmp.cell))))
             {
                 tmp = null;
             }
