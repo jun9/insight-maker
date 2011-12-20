@@ -594,7 +594,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                 xtype: 'buttongroup',
                 columns: 4,
                 height: 95,
-                title: 'Add Primitives',
+                title: 'Primitives',
                 id: 'valued',
                 items: [{
                     iconAlign: 'top',
