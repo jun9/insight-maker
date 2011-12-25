@@ -782,7 +782,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     id: 'undo',
                     text: 'Undo',
                     iconCls: 'undo-icon',
-                    tooltip: 'Undo',
+                    tooltip: 'Undo chnage',
                     handler: function()
                     {
                         history.undo();
@@ -793,7 +793,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     id: 'redo',
                     text: 'Redo',
                     iconCls: 'redo-icon',
-                    tooltip: 'Redo',
+                    tooltip: 'Redo change',
                     handler: function()
                     {
                         history.redo();
@@ -1279,18 +1279,16 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     id: 'download',
                     text: 'Download',
                     iconCls: 'download-icon',
-                    tooltip: 'Download the Insight to Your Computer',
+                    tooltip: 'Download this Insight to your computer',
                     handler: function()
                     {
-                        Ext.MessageBox.buttonText.yes = 'Download';
-                        Ext.MessageBox.buttonText.no = 'Cancel';
                         Ext.Msg.show({
                             icon: Ext.MessageBox.INFO,
                             title: 'Download Insight',
                             msg: 'You may download your Insights for further analysis or backup purposes. Insights are saved in a text-based format. One software package that can edit and carry out advanced analysis on the downloaded Insights is <a href="http://simgua.com" target="_blank">Simgua</a>.',
-                            buttons: Ext.MessageBox.YESNO,
+                            buttons: Ext.MessageBox.OKCANCEL,
                             fn: function(btn) {
-                                if (btn == "yes") {
+                                if (btn == "ok") {
                                     downloadModel();
                                 }
                             }
@@ -1304,7 +1302,7 @@ RibbonPanel = function(graph, history, mainPanel, configPanel)
                     text: 'Embed',
                     hidden: (!is_editor) || is_embed,
                     iconCls: 'embed-icon',
-                    tooltip: 'Embed this Insight in Another Web Page',
+                    tooltip: 'Embed this Insight in another web page',
                     handler: function()
                     {
                         if (drupal_node_ID == -1) {

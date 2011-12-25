@@ -55,7 +55,48 @@ require("SharedHeader.php")
 
 	
 
-   	<script type="text/javascript">var editLocation="graph";</script> 	
+   	<script type="text/javascript">var editLocation="graph";</script>
+	
+	<?php if($nid==-1){ ?>
+		
+		<!-- Google Code for New Model Conversion Page -->
+		<script type="text/javascript">
+		/* <![CDATA[ */
+		var google_conversion_id = 1022635102;
+		var google_conversion_language = "en";
+		var google_conversion_format = "3";
+		var google_conversion_color = "ffffff";
+		var google_conversion_label = "jLRkCPLTzwIQ3tjQ5wM";
+		var google_conversion_value = 0;
+		/* ]]> */
+		</script>
+		<script type="text/javascript" src="http://www.googleadservices.com/pagead/conversion.js">
+		</script>
+		<noscript>
+		<div style="display:inline;">
+		<img height="1" width="1" style="border-style:none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1022635102/?label=jLRkCPLTzwIQ3tjQ5wM&amp;guid=ON&amp;script=0"/>
+		</div>
+		</noscript>
+	<?php }else{ ?>
+		<!-- Google Code for View Model Conversion Page -->
+		<script type="text/javascript">
+		/* <![CDATA[ */
+		var google_conversion_id = 1022635102;
+		var google_conversion_language = "en";
+		var google_conversion_format = "3";
+		var google_conversion_color = "ffffff";
+		var google_conversion_label = "UMxMCOrUzwIQ3tjQ5wM";
+		var google_conversion_value = 0;
+		/* ]]> */
+		</script>
+		<script type="text/javascript" src="http://www.googleadservices.com/pagead/conversion.js">
+		</script>
+		<noscript>
+		<div style="display:inline;">
+		<img height="1" width="1" style="border-style:none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1022635102/?label=UMxMCOrUzwIQ3tjQ5wM&amp;guid=ON&amp;script=0"/>
+		</div>
+		</noscript>
+	<?php }?>
 </body>
 </html>
 
