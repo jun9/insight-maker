@@ -31,7 +31,7 @@ require("SharedHeader.php")
 	var mxLoadResources = false;
 	var mxLoadStylesheets = false;
 	</script>
-	<script type="text/javascript" src="http://mxclient.jgraph.com/demo/mxgraph/src/js/mxclient.php?version=1.8.0.3"></script>
+	<script type="text/javascript" src="http://mxclient.jgraph.com/demo/mxgraph/src/js/mxclient.php?version=1.8.0.6"></script>
 
 	
 	
